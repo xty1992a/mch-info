@@ -1,8 +1,8 @@
 /*
-* 使用vue-router的全局路由进行鉴权
-* 每次跳转前,检查将前往的路由是否在用户可访问的路由表中
-* 是则放行,否则拦截到错误页
-* */
+ * 使用vue-router的全局路由进行鉴权
+ * 每次跳转前,检查将前往的路由是否在用户可访问的路由表中
+ * 是则放行,否则拦截到错误页
+ * */
 
 import router, { routes } from "./index";
 import { isLogin } from "../utils/auth";
@@ -20,7 +20,8 @@ const names = getName(routes);
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
   document.title = to.meta.title || "进件";
-  const log = (...args) => console.log(`%c path to ${to.path}`, LOG_STYLE, ...args);
+  const log = (...args) =>
+    console.log(`%c path to ${to.path}`, LOG_STYLE, ...args);
   const login = isLogin();
 
   // region 自由页面直接放过
@@ -47,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
   // endregion
 
   // region 拉取用户信息并生成路由表
-  if (!store.state.User.roleInfo) {
+  if (!store.state.User.userInfo) {
     log("no info");
     // 先拉取用户信息,获取角色
     let userResult = await store.dispatch("User/getUserInfo");
@@ -57,7 +58,10 @@ router.beforeEach(async (to, from, next) => {
       return;
     }
     // 根据用户角色生成路由表
-    const authList = genAuthList(routes, it => it.meta.free || it.meta.roles.includes(userResult.data.role));
+    const authList = genAuthList(
+      routes,
+      it => it.meta.free || it.meta.roles.includes(userResult.data.role)
+    );
     store.commit("User/SET_AUTH_LIST", getName(authList));
   }
   // endregion

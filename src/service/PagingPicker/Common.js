@@ -1,3 +1,5 @@
+const SHOULD_CACHED_KEYS = ["query", "list", "totalLength", "list"];
+
 export default {
   data() {
     return {
@@ -9,6 +11,13 @@ export default {
       totalLength: 30,
       list: []
     };
+  },
+  created() {
+    const cacheData = this.$storage.getItem("pagingPicker__data");
+    if (!cacheData) return;
+    SHOULD_CACHED_KEYS.forEach(key => {
+      this[key] = cacheData[key] || "";
+    });
   },
   methods: {
     pickItem(row) {
@@ -23,10 +32,15 @@ export default {
       this.show = false;
     },
     close() {
-      this.$destroy(true);
+      this.$destroy();
     }
   },
   beforeDestroy() {
+    const data = SHOULD_CACHED_KEYS.reduce(
+      (p, k) => ({ ...p, [k]: this[k] }),
+      {}
+    );
+    this.$storage.setItem("pagingPicker__data", data);
     this.$el && this.$el.remove();
   }
 };

@@ -9,8 +9,7 @@ function createVm(opt) {
   let Com;
   if (isMobile) {
     Com = Vue.extend(Mobile);
-  }
-  else {
+  } else {
     Com = Vue.extend(Main);
   }
 
@@ -23,14 +22,16 @@ const dftOpt = {
   value: "",
   title: "请选择",
   placeholder: "请输入商家账号/门店名称",
+  columns: [],
   request: async query => {
     await sleep(100);
     return { success: true, data: [] };
   }
 };
 
-export default (opt = {}) => new Promise(resolve => {
-  opt = { ...dftOpt, ...opt, resolve, value: copy(opt.value) };
-  let vm = createVm(opt);
-  vm.show = true;
-})
+export default (opt = {}) =>
+  new Promise(resolve => {
+    opt = { ...dftOpt, ...opt, resolve, value: copy(opt.value) };
+    let vm = createVm(opt);
+    vm.show = true;
+  });

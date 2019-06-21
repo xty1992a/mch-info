@@ -1,4 +1,4 @@
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 
 const mockData = [
   { key: 1, title: "asdfasdf", cf: "而天通苑", sj: "去玩儿", ddd: "UI哦" },
@@ -52,19 +52,27 @@ export default {
         options: []
       });
     },
+    // 点击添加按钮，代理商需要先选择商户
     async addItem() {
       const result = await this.$services.pickItemAsync({
         value: "",
         columns: [
+          // 表格展示项
           { label: "吃饭", prop: "cf" },
           { label: "睡觉", prop: "sj" },
           { label: "打豆豆", prop: "ddd" }
         ],
         request: async query => {
           await this.$utils.sleep(300);
-          return { success: true, data: mockData.map(it => ({ ...it, key: Math.random() })) };
+          return {
+            success: true,
+            data: mockData.map(it => ({ ...it, key: Math.random() }))
+          };
         }
       });
+
+      if (!result.success) return;
+      this.goToAddMchInfo();
 
       console.log(result);
     },
@@ -77,8 +85,7 @@ export default {
     // region actions 点击按钮后的回调
     // region 顶部按钮
 
-    exportList() {
-    },
+    exportList() {},
     // endregion
 
     checkItem(item) {
@@ -96,6 +103,7 @@ export default {
       this.onRequest = false;
     },
     editCart(item) {
+      this.$router.push({ name: "EditCard" });
       console.log(item);
     }
 
@@ -103,8 +111,6 @@ export default {
   },
 
   computed: {
-    ...mapState("LogList", [
-      "list"
-    ])
+    ...mapState("LogList", ["list"])
   }
 };
