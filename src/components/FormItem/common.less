@@ -1,0 +1,32 @@
+@import "../../styles/variable";
+
+.f-form-item {
+
+  .el-input {
+    width: 240px;
+  }
+
+  .upload-btn {
+    background-color: #EBEEF5;
+    border: 0;
+    height: 36px;
+    min-width: 120px;
+  }
+
+  .pick-holder {
+    position: relative;
+
+    .placeholder {
+      color: #999;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      left: 0;
+      width: 220px;
+    }
+  }
+}
