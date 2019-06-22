@@ -1,6 +1,4 @@
 import Vue from "vue";
-
-Vue.config.productionTip = false;
 import "./ui/index";
 import router from "./router/index.js";
 import store from "./store/index.js";
@@ -12,11 +10,13 @@ import "./router/permission.js";
 import services from "./service/index";
 import * as utils from "./utils";
 
+Vue.config.productionTip = false;
+
 Vue.prototype.$storage = storage;
 Vue.prototype.$utils = utils;
 Vue.prototype.$services = services;
 
-const APP = window.APPLIACTION = new Vue({
+window.APPLIACTION = new Vue({
   el: "#app",
   router,
   store,

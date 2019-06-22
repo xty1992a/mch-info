@@ -32,12 +32,12 @@
           finished-text="没有更多了"
           @load="loadData"
         >
-          <div v-for="item in list" :key="item.key" class="list-wrap">
+          <div v-for="item in list" :key="item.value" class="list-wrap">
             <p class="item" @click="pickItem(item)">
               <span>{{ item.title }}</span>
               <i
                 class="el-icon-success"
-                :class="item.key === value ? 'active' : ''"
+                :class="item.value === value ? 'active' : ''"
               ></i>
             </p>
           </div>

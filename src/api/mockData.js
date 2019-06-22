@@ -19,10 +19,7 @@ export const formItems = [
   {
     name: "婚否",
     filedName: "isMarry",
-    enumJson: [
-      { label: "是", value: "true" },
-      { label: "否", value: "false" }
-    ],
+    enumJson: [{ label: "是", value: "true" }, { label: "否", value: "false" }],
     validator: v => true,
     filedType: "switch", // 'text' || 'textarea' || 'radio' || 'checkbox' || 'picker' || 'date' || 'link-picker' || 'date-range' || 'image' || 'file',
     sourceUrl: "",
@@ -37,10 +34,7 @@ export const formItems = [
   {
     name: "性别",
     filedName: "gender",
-    enumJson: [
-      { label: "男", value: "m" },
-      { label: "女", value: "f" }
-    ],
+    enumJson: [{ label: "男", value: "m" }, { label: "女", value: "f" }],
     validator: v => true,
     filedType: "radio", // 'text' || 'textarea' || 'radio' || 'checkbox' || 'picker' || 'date' || 'link-picker' || 'date-range' || 'image' || 'file',
     sourceUrl: "",
@@ -184,6 +178,15 @@ export const formItems = [
   }
 ];
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+
+export const businessInfo = {
+  businessId: "asdfasdfasdf"
+};
+export const publicInfo = {
+  appid: "asdfasdfasdf",
+  principalName: "xx同城惠",
+  version: 8
+};
 
 export default async function(data) {
   const l = Loading.service();

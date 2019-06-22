@@ -4,19 +4,20 @@ import { sleep } from "@/utils";
 
 // region tools
 const checkMap = {
-  "tel": v => "",
-  "default": v => ""
+  tel: () => "",
+  default: () => ""
 };
 
 function getValidator(field) {
-//  0:无校验规则，1:正则校验，2:其它校验
+  //  0:无校验规则，1:正则校验，2:其它校验
   const message = field.checkMsg || field.name + "填写有误!";
   switch (field.checkType) {
     case 0:
-      return v => "";
+      return () => "";
     case 1:
-      const validate = field.checkExpression instanceof RegExp ? field.checkExpression : /.*/;
-      return v => validate.test(v) ? "" : message;
+      const validate =
+        field.checkExpression instanceof RegExp ? field.checkExpression : /.*/;
+      return v => (validate.test(v) ? "" : message);
     case 2:
       const valid = checkMap[field.checkExpression] || checkMap["default"];
       return v => valid(v) || "";
@@ -39,16 +40,15 @@ const typeMap = [
   "text",
   "display"
 ];
-const formatFields = fields => fields.map(item => ({
-  ...item,
-  "options": item.enumJson.map(it => ({ label: it.text, value: it.value })),
-  "validator": getValidator(item),
-  "filedType": typeMap[item.filedType],
-  // TODO 级联选择器的深度
-  selectLevel: 3
-}));
-
-const PRODUCTION = process.env.NODE_ENV === "production";
+const formatFields = fields =>
+  fields.map(item => ({
+    ...item,
+    options: item.enumJson.map(it => ({ label: it.text, value: it.value })),
+    validator: getValidator(item),
+    filedType: typeMap[item.filedType],
+    // TODO 级联选择器的深度
+    selectLevel: 3
+  }));
 
 // endregion
 
@@ -74,46 +74,49 @@ export default {
   },
   mutations: {
     CLEAR_STATE: state => {
-      state.currentPage = ''
-      state.checkPaymentId = 0
-      state.mainInfo = null
-      state.firstForm = null
-      state.secondForm = null
-      state.thirdForm = null
+      state.currentPage = "";
+      state.checkPaymentId = 0;
+      state.mainInfo = null;
+      state.firstForm = null;
+      state.secondForm = null;
+      state.thirdForm = null;
       state.formFields = {
         firstFields: [],
         secondFields: [],
         thirdFields: []
-      }
+      };
     },
     // 当前路由
-    SET_CURRENT_PAGE: (state, name) => state.currentPage = name,
-    SET_MAIN_INFO: (state, info) => state.mainInfo = info,
-    SET_FIRST_FORM: (state, info) => state.firstForm = info,
-    SET_SECOND_FORM: (state, info) => state.secondForm = info,
-    SET_THIRD_FORM: (state, info) => state.thirdForm = info,
-    SET_CHECK_PAYMENT_ID: (state, id) => state.checkPaymentId = id,
-    SET_FORM_FIELDS: (state, fields) => state.formFields = fields
+    SET_CURRENT_PAGE: (state, name) => (state.currentPage = name),
+    SET_MAIN_INFO: (state, info) => (state.mainInfo = info),
+    SET_FIRST_FORM: (state, info) => (state.firstForm = info),
+    SET_SECOND_FORM: (state, info) => (state.secondForm = info),
+    SET_THIRD_FORM: (state, info) => (state.thirdForm = info),
+    SET_CHECK_PAYMENT_ID: (state, id) => (state.checkPaymentId = id),
+    SET_FORM_FIELDS: (state, fields) => (state.formFields = fields)
   },
   actions: {
     // 提交能力表单,获取checkPaymentId
     async submitAbility({ commit }, data) {
       console.log(data);
       const res = await API.submitAbility(data);
-      commit("SET_MAIN_INFO", data);
-      console.log(res);
-      commit("SET_CHECK_PAYMENT_ID", 1);
-      // return res.success ? res.data.checkPaymentId : 0
-      return 1;
+      if (res.success) {
+        commit("SET_MAIN_INFO", data);
+        console.log(res);
+        commit("SET_CHECK_PAYMENT_ID", 1);
+      }
+      return res.success ? res.data.checkPaymentId : 0;
+      // return 1;
     },
     // 根据ID获取表单项,并初始化各页面的formData
     async getFields({ commit }, id) {
       const result = await API.getFormFields(id);
       console.log("get fields ----> ", result.data);
       if (result.success) {
-
-        result.data.secondFields = result.data.secondFields || result.data.firstFields;
-        result.data.thirdFields = result.data.thirdFields || result.data.firstFields;
+        result.data.secondFields =
+          result.data.secondFields || result.data.firstFields;
+        result.data.thirdFields =
+          result.data.thirdFields || result.data.firstFields;
 
         // 整理后端数据
         const data = Object.keys(result.data).reduce((obj, key) => {
@@ -171,7 +174,10 @@ export default {
   },
   getters: {
     // 当前步骤
-    currentStep: (state) => routeNames.findIndex(it => it.toLowerCase() === state.currentPage.toLowerCase()),
+    currentStep: state =>
+      routeNames.findIndex(
+        it => it.toLowerCase() === state.currentPage.toLowerCase()
+      ),
     prevStep: (state, getters) => getters.currentStep - 1,
     prevPage: (state, getters) => routeNames[getters.prevStep] || "",
     nextStep: (state, getters) => getters.currentStep + 1,

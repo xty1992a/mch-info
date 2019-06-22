@@ -1,35 +1,34 @@
-
-let elementStyle = document.createElement('div').style
+let elementStyle = document.createElement("div").style;
 
 let vendor = (() => {
   let transformNames = {
-    webkit: 'webkitTransform',
-    Moz: 'MozTransform',
-    O: 'OTransform',
-    ms: 'msTransform',
-    standard: 'transform'
-  }
+    webkit: "webkitTransform",
+    Moz: "MozTransform",
+    O: "OTransform",
+    ms: "msTransform",
+    standard: "transform"
+  };
 
   for (let key in transformNames) {
     if (elementStyle[transformNames[key]] !== undefined) {
-      return key
+      return key;
     }
   }
 
-  return false
-})()
+  return false;
+})();
 
 export function prefixStyle(style) {
   if (vendor === false) {
-    return false
+    return false;
   }
 
-  if (vendor === 'standard') {
-    if (style === 'transitionEnd') {
-      return 'transitionend'
+  if (vendor === "standard") {
+    if (style === "transitionEnd") {
+      return "transitionend";
     }
-    return style
+    return style;
   }
 
-  return vendor + style.charAt(0).toUpperCase() + style.substr(1)
+  return vendor + style.charAt(0).toUpperCase() + style.substr(1);
 }

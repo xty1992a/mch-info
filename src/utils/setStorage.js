@@ -1,25 +1,25 @@
 /**
  * Created by TY-xie on 2017/10/13.
  */
-const ss = window.sessionStorage
+const ss = window.sessionStorage;
 export default {
   getItem(key) {
-	try {
-	  return JSON.parse(ss.getItem(key))
-	} catch (err) {
-	  return null
-	}
+    try {
+      return JSON.parse(ss.getItem(key));
+    } catch (err) {
+      return null;
+    }
   },
   setItem(key, val) {
-	ss.setItem(key, JSON.stringify(val))
+    ss.setItem(key, JSON.stringify(val));
   },
   clear() {
-	ss.clear()
+    ss.clear();
   },
   keys() {
-	return ss.keys()
+    return ss.keys();
   },
   removeItem(key) {
-	ss.removeItem(key)
-  },
-}
+    ss.removeItem(key);
+  }
+};

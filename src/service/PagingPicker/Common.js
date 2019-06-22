@@ -1,4 +1,4 @@
-const SHOULD_CACHED_KEYS = ["query", "list", "totalLength", "list"];
+const SHOULD_CACHED_KEYS = ["query", "list", "totalLength", "finished"];
 
 export default {
   data() {
@@ -21,13 +21,18 @@ export default {
   },
   methods: {
     pickItem(row) {
-      this.value = row.key;
+      console.log("row", row);
+      this.value = row.value;
     },
     onCancel() {
       this.resolve({ success: false, value: this.value });
       this.show = false;
     },
     onConfirm() {
+      if (!this.value) {
+        this.$message("确定之前需要先选择一项");
+        return;
+      }
       this.resolve({ success: true, value: this.value });
       this.show = false;
     },

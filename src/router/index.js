@@ -190,7 +190,7 @@ export const routes = [
     meta: {
       isSide: false,
       isTag: false,
-      title: "结算信息修改申请",
+      title: "支付方式配置",
       icon: "",
       free: true
     }
@@ -208,7 +208,7 @@ export const routes = [
     meta: {
       isSide: false,
       isTag: false,
-      title: "结算信息修改申请",
+      title: "支付方式配置",
       icon: "",
       free: true
     }

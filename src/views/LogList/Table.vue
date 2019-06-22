@@ -18,17 +18,19 @@
             </el-table-column>
             <el-table-column prop="name" label="姓名" width="180">
             </el-table-column>
-            <el-table-column prop="address" label="地址"> </el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
 
             <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
-                <span class="set-btn" @click="checkItem(scope.row)">审核</span>
-                <span class="set-btn" @click="reAddMch(scope.row)"
+                <span class="set-btn" @click="checkItem(scope['row'])"
+                  >审核</span
+                >
+                <span class="set-btn" @click="reAddMch(scope['row'])"
                   >重新进件</span
                 >
                 <el-dropdown
                   trigger="click"
-                  @command="v => commandHandler(v, scope.row)"
+                  @command="v => commandHandler(v, scope['row'])"
                 >
                   <span class="set-btn ">
                     更多<i class="el-icon-arrow-down el-icon--right"></i>
@@ -36,14 +38,14 @@
                   <el-dropdown-menu slot="dropdown" class="log-set-dropdown">
                     <el-dropdown-item command="editItem">编辑</el-dropdown-item>
                     <el-dropdown-item command="deleteItem"
-                      >删除</el-dropdown-item
-                    >
+                      >删除
+                    </el-dropdown-item>
                     <el-dropdown-item command="editCart"
-                      >修改结算卡</el-dropdown-item
-                    >
+                      >修改结算卡
+                    </el-dropdown-item>
                     <el-dropdown-item command="editFee"
-                      >修改费率</el-dropdown-item
-                    >
+                      >修改费率
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>

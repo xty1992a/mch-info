@@ -4,19 +4,19 @@ export function param2Obj(url) {
     return {};
   }
   return JSON.parse(
-    "{\"" +
-    decodeURIComponent(search)
-      .replace(/"/g, "\\\"")
-      .replace(/&/g, "\",\"")
-      .replace(/=/g, "\":\"")
-      .replace(/\+/g, " ") +
-    "\"}"
+    '{"' +
+      decodeURIComponent(search)
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"')
+        .replace(/\+/g, " ") +
+      '"}'
   );
 }
 
 export const isMobile = (() => {
-  var userAgentInfo = navigator.userAgent;
-  var Agents = [
+  const userAgentInfo = navigator.userAgent;
+  const Agents = [
     "Android",
     "iPhone",
     "SymbianOS",
@@ -24,8 +24,8 @@ export const isMobile = (() => {
     "iPad",
     "iPod"
   ];
-  var flag = true;
-  for (var v = 0; v < Agents.length; v++) {
+  let flag = true;
+  for (let v = 0; v < Agents.length; v++) {
     if (userAgentInfo.indexOf(Agents[v]) > 0) {
       flag = false;
       break;

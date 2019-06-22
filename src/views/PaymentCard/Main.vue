@@ -1,7 +1,7 @@
 <template>
   <el-row class="edit-card" type="flex" justify="center">
     <el-col :md="20" :lg="18" :xl="14">
-      <h3>结算信息修改申请</h3>
+      <h3>支付方式配置</h3>
       <section class="content">
         <el-row class="title">
           <el-col class="pay-cell pay-chanel" :span="6">支付通道</el-col>
@@ -9,12 +9,16 @@
           <el-col class="pay-cell pay-set" :span="2">操作</el-col>
           <el-col class="pay-cell pay-index" :span="4">优先级调整</el-col>
         </el-row>
-        <Drag :data="list" @drag-over="swapIndex">
+
+        <el-alert style="padding: 16px;" :title="alertMessage" type="warning">
+        </el-alert>
+        <Drag :data="list" @drag-over="dragDone" ref="drag">
           <div>
             <ChanelItem
               @up="itemUp"
               @down="itemDown"
               @top="itemTop"
+              @resize="resize"
               v-for="(item, index) in list"
               :index="index"
               :key="item.key"
@@ -32,6 +36,7 @@
 </template>
 
 <script>
+import { Alert } from "element-ui";
 import Drag from "../../components/Drag";
 import Common from "./Common";
 import ChanelItem from "./children/ChanelItem";
@@ -39,9 +44,11 @@ import ChanelItem from "./children/ChanelItem";
 export default {
   name: "EditCard",
   mixins: [Common],
-  components: { Drag, ChanelItem },
+  components: { Drag, ChanelItem, ElAlert: Alert },
   data() {
     return {
+      alertMessage:
+        "提示：支付通道的选择按优先级顺序排列,排列顺序越靠前优先级越高。全局支付参数将用于商城、拼团、在线购券、团购、预约、在线计次购买等业务。",
       list: [
         { title: "乐刷通道", key: "ls" },
         { title: "一卡易网络新大陆通道", key: "yky" },
@@ -59,6 +66,14 @@ export default {
         return it;
       });
     },
+    dragDone({ source, target }) {
+      const list = this.list;
+      let temp = list.splice(source, 1);
+      // 截取开头到被交换位置的元素
+      let start = list.splice(0, target);
+      // 组装成结果数组
+      this.list = [...start, ...temp, ...list];
+    },
     itemTop(value) {
       this.list = [this.list.splice(value, 1)[0], ...this.list];
     },
@@ -67,6 +82,9 @@ export default {
     },
     itemDown(value) {
       this.swapIndex({ source: value, target: value + 1 });
+    },
+    resize() {
+      this.$refs.drag && this.$refs.drag.refresh();
     }
   },
   computed: {}
@@ -87,6 +105,7 @@ export default {
     border-radius: 8px;
     min-height: 500px;
     padding: 30px 0;
+    overflow: hidden;
   }
 
   .content {

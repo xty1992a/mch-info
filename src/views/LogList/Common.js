@@ -1,7 +1,7 @@
 import { mapState } from "vuex";
 
 const mockData = [
-  { key: 1, title: "asdfasdf", cf: "而天通苑", sj: "去玩儿", ddd: "UI哦" },
+  { key: 1, title: "奥迪", cf: "而天通苑", sj: "去玩儿", ddd: "UI哦" },
   { key: 2, title: "阿斯蒂芬", cf: "的覆盖", sj: "覆盖", ddd: "UI哦" },
   { key: 3, title: "儿童", cf: "问题", sj: "asdfasdf", ddd: "退" },
   { key: 4, title: "分低功耗", cf: "的覆盖吧", sj: "阿萨德", ddd: "红狗" }
@@ -63,18 +63,22 @@ export default {
           { label: "打豆豆", prop: "ddd" }
         ],
         request: async query => {
+          console.log("request by ", query);
           await this.$utils.sleep(300);
           return {
             success: true,
-            data: mockData.map(it => ({ ...it, key: Math.random() }))
+            data: mockData.map(it => ({ ...it, value: Math.random() }))
           };
         }
       });
 
       if (!result.success) return;
+      const complete = await this.$store.dispatch(
+        "User/fetchMchInfo",
+        result.value
+      );
+      if (!complete) return;
       this.goToAddMchInfo();
-
-      console.log(result);
     },
 
     goToAddMchInfo() {

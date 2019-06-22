@@ -22,13 +22,13 @@ router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title || "进件";
   const log = (...args) =>
     console.log(`%c path to ${to.path}`, LOG_STYLE, ...args);
-  const login = isLogin();
+  const loged = isLogin();
 
   // region 自由页面直接放过
   if (to.meta.free) {
     log("free");
     // 已登录前往登录的,重定向首页
-    if (to.path.toLowerCase() === "/login" && login) {
+    if (to.path.toLowerCase() === "/login" && loged) {
       log("go to login");
       next({ name: "Root" });
       return;
@@ -40,7 +40,7 @@ router.beforeEach(async (to, from, next) => {
   // endregion
 
   // region 未登录重定向登录页
-  if (!login) {
+  if (!loged) {
     log(`you should login before visit this page!`);
     next(`/Login?redirect_url=${to.fullPath}`);
     return;
@@ -49,12 +49,14 @@ router.beforeEach(async (to, from, next) => {
 
   // region 拉取用户信息并生成路由表
   if (!store.state.User.userInfo) {
-    log("no info");
+    log("no user info");
     // 先拉取用户信息,获取角色
     let userResult = await store.dispatch("User/getUserInfo");
+    // 获取用户信息失败，可能是cookie已失效，重新登陆
     if (!userResult.success) {
       Cookie.remove("user");
-      next({ name: "NotFound" });
+      log("fetch userInfo fail; should login again");
+      next(`/Login?redirect_url=${to.fullPath}`);
       return;
     }
     // 根据用户角色生成路由表
@@ -66,12 +68,17 @@ router.beforeEach(async (to, from, next) => {
   }
   // endregion
 
+  // 用户可访问的路由表
   const { authList } = store.state.User;
 
-  // 命中路由表,但没有权限
+  // 前往没有权限且存在的路由，拦截到无权限页面
   if (!authList.includes(to.name) && names.includes(to.name)) {
     next("/Error/NoAuth");
     return;
+  }
+
+  if (!to.name) {
+    next({ name: "Home" });
   }
 
   // 正常访问(包括乱码,导去404)
@@ -102,7 +109,7 @@ function genAuthList(list, check) {
     if (it.children) {
       children = genAuthList(it.children, check);
     }
-    return check(it) ? [...p, it, ...children] : p; // [...p, it.name, ...children];
+    return check(it) ? [...p, it, ...children] : p;
   }, []);
 }
 

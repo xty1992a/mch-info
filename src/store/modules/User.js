@@ -1,90 +1,66 @@
-import * as API from "../../api";
 import Cookie from "js-cookie";
+import * as API from "@/api";
 
 const mockData = {
-  token: 'admin',
-  role: 'admin'
-}
+  token: "admin",
+  role: "admin"
+};
 
 export default {
   namespaced: true,
   state: {
-    userInfo: null,
-    roleInfo: null,
-    authList: [],
-    publicInfo: null,
-    businessInfo: null,
-    // roleList: [],
-    // userList: []
+    authList: [], // 允许访问的一维路由表
+    userInfo: null, // 用户信息，登陆即应获取
+    publicInfo: null, // 公众号信息，进入进件页面获取
+    businessInfo: null // 商家信息，进入进件页面获取
   },
   mutations: {
     CLEAR_STATE: state => {
+      state.authList = [];
       state.userInfo = null;
-      state.roleInfo = null;
-      state.roleList = [];
-      state.userList = [];
+      state.publicInfo = null;
+      state.businessInfo = null;
     },
-    SET_USER_INFO: (state, info) => state.userInfo = info,
-    SET_PUBLIC_INFO: (state, info) => state.publicInfo = info,
-    SET_BUSINESS_INFO: (state, info) => state.businessInfo = info,
-    SET_AUTH_LIST: (state, list) => state.authList = list,
-    // SET_USER_LIST: (state, info) => state.userList = info,
-    // SET_ROLE_INFO: (state, info) => state.roleInfo = info,
-    // SET_ROLE_LIST: (state, info) => state.roleList = info
+    SET_AUTH_LIST: (state, list) => (state.authList = list),
+    SET_USER_INFO: (state, info) => (state.userInfo = info),
+    SET_PUBLIC_INFO: (state, info) => (state.publicInfo = info),
+    SET_BUSINESS_INFO: (state, info) => (state.businessInfo = info)
   },
   actions: {
-    // 根据用户名登录并返回用户数据
+    // 调登陆接口，后端将写入一个cookie
     async LoginByUsername({ commit }, params) {
-      // let res = await API.login(params);
-      // console.log(res);
-      const res = { success: true, data: mockData};
+      const res = { success: true };
       if (res.success) {
         Cookie.set("user", res.data.token, { expires: 0.5 });
-        commit("SET_USER_INFO", res.data);
       }
       return res;
     },
-    // 读取用户cookie返回用户数据
+    // 获取用户信息
     async getUserInfo({ commit, state }) {
       if (state.userInfo) return { success: true, data: state.userInfo };
       // let res = await API.getUser();
-      const res = { success: true, data: mockData};
+      const res = { success: true, data: mockData };
       if (res.success) {
         commit("SET_USER_INFO", res.data);
       }
       return res;
     },
 
-/*    async getRoleInfo({ commit, state }, role) {
-      if (!role) {
-        if (!state.userInfo) return { success: false };
-        role = state.userInfo.role;
-      }
-      if (state.roleInfo) return { success: true, data: state.roleInfo };
-      let res = await API.getRole(role);
-      if (res.success) {
-        commit("SET_ROLE_INFO", res.data);
-      }
-      return res;
+    // 获取商户信息，包括公众号和商家信息
+    async fetchMchInfo({ commit }, businessId) {
+      const [pInfo, bInfo] = await Promise.all([
+        API.getPublicInfo(businessId),
+        API.getBusinessInfo(businessId)
+      ]);
+
+      if (!pInfo.success || !bInfo.success) return false;
+      commit("SET_PUBLIC_INFO", pInfo.data);
+      commit("SET_BUSINESS_INFO", bInfo.data);
+
+      return true;
     },
-    // 获取用户列表
-    async getUserList({ commit, state }) {
-      let res = await API.getUserList();
-      if (res.success) {
-        commit("SET_USER_LIST", res.data);
-      }
-      return res;
-    },
-    // 获取角色列表
-    async getRoleList({ commit, state }, getNew = true) {
-      // 调用者不需要最新数据
-      if (!getNew && state.roleList.length) return { success: true, data: state.roleList };
-      let res = await API.getRoleList();
-      if (res.success) {
-        commit("SET_ROLE_LIST", res.data);
-      }
-      return res;
-    },*/
+
+    // 登出，清除所有vuex数据
     Logout({ commit }) {
       return new Promise(resolve => {
         Cookie.remove("user");

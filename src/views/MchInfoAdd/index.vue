@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Steps from "./children/Steps";
 
 export default {
@@ -31,6 +31,7 @@ export default {
   created() {},
   methods: {},
   computed: {
+    ...mapState("App", ["isMobile"]),
     ...mapGetters("MchInfo", ["nextPage", "prevPage"])
   },
   watch: {
@@ -89,6 +90,10 @@ export default {
 
 .mobile-app {
   .mch-info-add-container {
+    h3 {
+      display: none;
+    }
+
     .main-foot {
       position: fixed;
       box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);

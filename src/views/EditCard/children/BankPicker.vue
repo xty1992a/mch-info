@@ -4,7 +4,7 @@
       <div class="bank-list">
         <div class="bank-item" v-for="item in 10">
           <i class="el-icon-platform-eleme"></i>
-          <span>中国工商银行</span>
+          <span>中国工商银行{{ item }}</span>
         </div>
       </div>
       <p style="font-size: 13px;color: #999;">

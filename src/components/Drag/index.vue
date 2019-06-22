@@ -5,17 +5,21 @@
 </template>
 
 <script>
-import Dragger from "@/utils/drag";
+import Sorter from "@redbuck/sorter";
 
 export default {
   name: "drag",
   components: {},
   data() {
     return {
-      dragger: null
+      sorter: null
     };
   },
   props: {
+    handler: {
+      type: String,
+      default: "handler"
+    },
     data: {
       type: Array,
       required: true
@@ -29,25 +33,32 @@ export default {
       setTimeout(() => {
         let list = this.$slots.default[0].elm;
         if (list) {
-          this.dragger = new Dragger(list, {});
-          this.dragger.on("drag-over", ({ source, target }) => {
+          this.sorter = new Sorter(list, {
+            handlerClassName: this.handler,
+            change: false
+          });
+          this.sorter.on("drag-over", ({ source, target }) => {
+            console.log(source, target);
             this.$emit("drag-over", { source, target });
           });
-          this.dragger.on("click-over", payload => {
+          this.sorter.on("click-over", payload => {
             this.$emit("click-over", payload);
           });
-          this.dragger.on("swap-over", payload => {
+          this.sorter.on("swap-over", payload => {
             this.$emit("click-over", payload);
           });
         }
       }, 20);
+    },
+    refresh() {
+      this.sorter.freshThreshold();
     }
   },
   watch: {
     data: {
-      handler(now) {
+      handler() {
         setTimeout(() => {
-          this.dragger.freshThreshold();
+          this.sorter.freshThreshold();
         }, 320);
       },
       immediate: true
@@ -59,6 +70,7 @@ export default {
 <style lang="less">
 .drag {
   user-select: none;
+  position: relative;
   height: 100%;
 }
 

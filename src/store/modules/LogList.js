@@ -33,21 +33,24 @@ export default {
     list: []
   },
   mutations: {
-    CLEAR_STATE: state => {
-    },
-    SET_LIST: (state, list) => state.list = list,
-    SET_LIST_ITEM: (state, item) => state.list = state.list.map(it => it.key === item.key ? item : it),
-    DEL_LIST_ITEM: (state, item) => state.list = state.list.filter(it => it.key !== item.key)
+    CLEAR_STATE: state => {},
+    SET_LIST: (state, list) => (state.list = list),
+    SET_LIST_ITEM: (state, item) =>
+      (state.list = state.list.map(it => (it.key === item.key ? item : it))),
+    DEL_LIST_ITEM: (state, item) =>
+      (state.list = state.list.filter(it => it.key !== item.key))
   },
   actions: {
     // 请求新的列表,覆盖state的列表
     async coverList({ commit }, query) {
+      console.log("should cover list by ", query);
       await utils.sleep(500);
       commit("SET_LIST", tableData);
     },
 
     // 请求新的列表,追加到state的列表中
     async appendList({ commit, state }, query) {
+      console.log("should new list by ", query);
       await utils.sleep(500);
       const list = [...state.list, ...tableData];
       commit("SET_LIST", list);
@@ -58,7 +61,6 @@ export default {
       await utils.sleep(500);
       commit("DEL_LIST_ITEM", item);
     }
-
   },
   getters: {}
 };

@@ -26,8 +26,8 @@
         </div>
         <div class="right-btn">
           <el-button @click="addItem" size="large" type="primary"
-            >新增</el-button
-          >
+            >新增
+          </el-button>
         </div>
       </footer>
     </van-list>

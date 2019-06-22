@@ -6,12 +6,14 @@ import { isMobile } from "@/utils";
 // region tools
 const callLoading = loading => {
   if (!loading) return;
-  return isMobile ? Toast.loading("加载中...") : Loading.service();
+  return isMobile
+    ? Toast.loading({ message: "加载中...", duration: 0, mask: true })
+    : Loading.service({});
 };
 
 const clearLoading = loading => {
   if (!loading) return;
-  return isMobile ? Toast.clear() : Loading.service().close();
+  return isMobile ? Toast.clear() : Loading.service({}).close();
 };
 
 const callToast = (opt, toast) => {
@@ -50,7 +52,7 @@ export default function request(
   toast = true
 ) {
   callLoading(loading);
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const params = data.params || null;
     delete data.params;
 
@@ -60,15 +62,19 @@ export default function request(
       url,
       data,
       params,
-      headers
+      headers,
+      timeout: 5000
     })
       .then(res => {
         clearLoading(loading);
         if (!res.data.success) {
-          callToast({
-            type: "waring",
-            message: res.data.message || "服务异常"
-          }, toast);
+          callToast(
+            {
+              type: "waring",
+              message: res.data.message || "服务异常"
+            },
+            toast
+          );
         }
 
         resolve(res.data);
@@ -76,10 +82,13 @@ export default function request(
       .catch(err => {
         clearLoading(loading);
         console.log(err, "net error");
-        callToast({
-          type: "error",
-          message: "网络故障"
-        }, toast);
+        callToast(
+          {
+            type: "error",
+            message: "网络故障"
+          },
+          toast
+        );
         resolve({
           success: false,
           message: "网络故障",

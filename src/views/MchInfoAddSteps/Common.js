@@ -1,4 +1,4 @@
-import { mapState, mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   data() {
@@ -18,7 +18,9 @@ export default {
       const keys = Object.keys(this.formData);
 
       if (keys.every(k => !this.formData[k])) {
-        const message = nullable ? "您没有输入任何值,无须保存!" : "请将表单填写完整!";
+        const message = nullable
+          ? "您没有输入任何值,无须保存!"
+          : "请将表单填写完整!";
         this.$message(message);
         return null;
       }
@@ -33,7 +35,10 @@ export default {
       return { ...this.formData };
     },
     goToPage(name) {
-      const checkPaymentId = this.$route.query.checkPaymentId;
+      /*
+       * @param {{checkPaymentId: number}}
+       * */
+      const checkPaymentId = this.$route.query["checkPaymentId"] || 0;
       if (checkPaymentId !== 0) {
         this.$router.push({
           name,
@@ -45,24 +50,10 @@ export default {
     }
   },
   computed: {
-    ...mapState("App", [
-      "isMobile"
-    ]),
-    ...mapGetters('App', [
-      "screenType",
-    ]),
-    ...mapGetters("MchInfo", [
-        "firstFields",
-        "secondFields",
-        "thirdFields"
-      ]
-    ),
-    ...mapState("MchInfo", [
-        "firstForm",
-        "secondForm",
-        "thirdForm"
-      ]
-    ),
+    ...mapState("App", ["isMobile"]),
+    ...mapGetters("App", ["screenType"]),
+    ...mapGetters("MchInfo", ["firstFields", "secondFields", "thirdFields"]),
+    ...mapState("MchInfo", ["firstForm", "secondForm", "thirdForm"]),
     labelPosition() {
       return this.screenType === "xs" ? "top" : "right";
     }
