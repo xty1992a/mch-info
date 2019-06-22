@@ -162,7 +162,49 @@ export const routes = [
   {
     path: "/MEditCard",
     name: "MEditCard",
+    beforeEnter(from, to, next) {
+      if (!isMobile) {
+        next({ ...to, name: "EditCard" });
+      }
+      next();
+    },
     component: () => import("../views/EditCard/Mobile.vue"),
+    meta: {
+      isSide: false,
+      isTag: false,
+      title: "结算信息修改申请",
+      icon: "",
+      free: true
+    }
+  },
+  {
+    path: "/PaymentCard",
+    name: "PaymentCard",
+    beforeEnter(from, to, next) {
+      if (isMobile) {
+        next({ ...to, name: "MPaymentCard" });
+      }
+      next();
+    },
+    component: () => import("../views/PaymentCard/Main.vue"),
+    meta: {
+      isSide: false,
+      isTag: false,
+      title: "结算信息修改申请",
+      icon: "",
+      free: true
+    }
+  },
+  {
+    path: "/MPaymentCard",
+    name: "MPaymentCard",
+    beforeEnter(from, to, next) {
+      if (!isMobile) {
+        next({ ...to, name: "PaymentCard" });
+      }
+      next();
+    },
+    component: () => import("../views/PaymentCard/Mobile.vue"),
     meta: {
       isSide: false,
       isTag: false,
