@@ -29,7 +29,7 @@ export default {
   actions: {
     // 调登陆接口，后端将写入一个cookie
     async LoginByUsername({ commit }, params) {
-      const res = { success: true };
+      const res = { success: true, data: { token: "asdf" } };
       if (res.success) {
         Cookie.set("user", res.data.token, { expires: 0.5 });
       }

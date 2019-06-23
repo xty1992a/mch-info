@@ -18,6 +18,8 @@ lg	    ≥1200px
 xl	    ≥1920px
 */
 
+const aliveRoutes = ["LogList"];
+
 export default {
   namespaced: true,
   state: {
@@ -25,13 +27,13 @@ export default {
     isWechat,
     isAliLife,
     screenWith: 0,
-    screenHeight: 0
+    screenHeight: 0,
+    aliveRoutes
   },
   mutations: {
-    CLEAR_STATE: state => {
-    },
-    SET_SCREEN_WIDTH: (state, width) => state.screenWith = width,
-    SET_SCREEN_HEIGHT: (state, height) => state.screenHeight = height
+    CLEAR_STATE: state => {},
+    SET_SCREEN_WIDTH: (state, width) => (state.screenWith = width),
+    SET_SCREEN_HEIGHT: (state, height) => (state.screenHeight = height)
   },
   actions: {},
   getters: {

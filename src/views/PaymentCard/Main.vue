@@ -1,50 +1,48 @@
 <template>
-  <el-row class="edit-card" type="flex" justify="center">
-    <el-col :md="20" :lg="18" :xl="14">
-      <h3>支付方式配置</h3>
-      <section class="content">
-        <el-row class="title">
-          <el-col class="pay-cell pay-chanel" :span="6">支付通道</el-col>
-          <el-col class="pay-cell pay-type" :span="12">支付类型</el-col>
-          <el-col class="pay-cell pay-set" :span="2">操作</el-col>
-          <el-col class="pay-cell pay-index" :span="4">优先级调整</el-col>
-        </el-row>
+  <Container title="支付方式配置" class="payment-card">
+    <section class="content">
+      <el-row class="title">
+        <el-col class="pay-cell pay-chanel" :span="6">支付通道</el-col>
+        <el-col class="pay-cell pay-type" :span="12">支付类型</el-col>
+        <el-col class="pay-cell pay-set" :span="2">操作</el-col>
+        <el-col class="pay-cell pay-index" :span="4">优先级调整</el-col>
+      </el-row>
 
-        <el-alert style="padding: 16px;" :title="alertMessage" type="warning">
-        </el-alert>
-        <Drag :data="list" @drag-over="dragDone" ref="drag">
-          <div>
-            <ChanelItem
-              @up="itemUp"
-              @down="itemDown"
-              @top="itemTop"
-              @resize="resize"
-              v-for="(item, index) in list"
-              :index="index"
-              :key="item.key"
-              :total="list.length"
-              :data="item"
-            />
-          </div>
-        </Drag>
-      </section>
-      <footer class="footer">
-        <el-button type="primary">确定</el-button>
-      </footer>
-    </el-col>
-  </el-row>
+      <el-alert style="padding: 16px;" :title="alertMessage" type="warning">
+      </el-alert>
+      <Drag :data="list" @drag-over="dragDone" ref="drag">
+        <transition-group tag="div" :name="transitionName">
+          <ChanelItem
+            @up="itemUp"
+            @down="itemDown"
+            @top="itemTop"
+            @resize="resize"
+            v-for="(item, index) in list"
+            :index="index"
+            :key="item.key"
+            :total="list.length"
+            :data="item"
+          />
+        </transition-group>
+      </Drag>
+    </section>
+    <footer class="footer" slot="foot">
+      <el-button type="primary">确定</el-button>
+    </footer>
+  </Container>
 </template>
 
 <script>
+import Container from "@/components/Container";
 import { Alert } from "element-ui";
 import Drag from "../../components/Drag";
 import Common from "./Common";
 import ChanelItem from "./children/ChanelItem";
 
 export default {
-  name: "EditCard",
+  name: "PaymentCard",
   mixins: [Common],
-  components: { Drag, ChanelItem, ElAlert: Alert },
+  components: { Drag, ChanelItem, ElAlert: Alert, Container },
   data() {
     return {
       alertMessage:
@@ -54,7 +52,8 @@ export default {
         { title: "一卡易网络新大陆通道", key: "yky" },
         { title: "微信直连通道", key: "wx" },
         { title: "支付宝直连通道", key: "zfb" }
-      ]
+      ],
+      transitionName: "flip"
     };
   },
   created() {},
@@ -73,6 +72,10 @@ export default {
       let start = list.splice(0, target);
       // 组装成结果数组
       this.list = [...start, ...temp, ...list];
+      this.transitionName = "";
+      this.$nextTick(() => {
+        this.transitionName = "flip";
+      });
     },
     itemTop(value) {
       this.list = [this.list.splice(value, 1)[0], ...this.list];
@@ -92,14 +95,7 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less">
-.edit-card {
-  min-height: 100vh;
-  background-color: #fff;
-
-  h3 {
-    padding: 18px;
-  }
-
+.payment-card {
   .content {
     border: 1px solid #f0f2f5;
     border-radius: 8px;
@@ -137,5 +133,9 @@ export default {
       width: 240px;
     }
   }
+}
+
+.flip-move {
+  transition: 0.3s;
 }
 </style>

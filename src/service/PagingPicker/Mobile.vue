@@ -2,9 +2,9 @@
   <van-popup
     class="m-paging-picker"
     v-model="show"
-    position="right"
+    position="bottom"
     @closed="close"
-    style="height: 100%;width: 100%;"
+    style="height: 70%;width: 100%;"
   >
     <div style="height: 300px;background-color: #fff;">
       <van-navbar
@@ -49,7 +49,7 @@
 
 <script>
 import Common from "./Common";
-import { Popup, NavBar, List } from "vant";
+import { List, NavBar, Popup } from "vant";
 
 export default {
   name: "MPagingPicker",

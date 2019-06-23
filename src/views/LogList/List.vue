@@ -1,18 +1,21 @@
 <template>
-  <div class="log-list" v-loading="onRequest">
+  <div class="log-list">
     <van-list
       v-model="loading"
       :finished="finished"
       finished-text="没有更多了"
       @load="onLoad"
+      ref="list"
     >
       <div class="list-wrap">
-        <MchInfoCard
-          v-for="(item, index) in list"
-          :key="item.key + '_' + index"
-          :data="item"
-          @invoke="invokeMethod"
-        />
+        <LeftGoTransition>
+          <MchInfoCard
+            v-for="(item, index) in list"
+            :key="item.key"
+            :data="item"
+            @invoke="invokeMethod"
+          />
+        </LeftGoTransition>
       </div>
       <BackTop v-if="scrollTop > 300">
         <i class="el-icon-top" style="font-size: 28px;"></i>
@@ -22,7 +25,7 @@
       </FloatBtn>
       <footer class="list-foot">
         <div class="left-btn">
-          <el-button @click="download">下载</el-button>
+          <el-button @click="exportList">下载</el-button>
         </div>
         <div class="right-btn">
           <el-button @click="addItem" size="large" type="primary"
@@ -35,17 +38,27 @@
 </template>
 
 <script>
+import LeftGoTransition from "@/components/LeftGoTransition";
 import FloatBtn from "@/components/FloatBtn";
 import BackTop from "@/components/FloatBtn/BackTop.js";
 import { mapState } from "vuex";
 import { List } from "vant";
+
 import MchInfoCard from "./children/MchInfoCard";
 import Common from "./Common";
+
+const SCREEN_HEIGHT = document.documentElement.clientHeight;
 
 export default {
   name: "LogList",
   mixins: [Common],
-  components: { VanList: List, MchInfoCard, FloatBtn, BackTop },
+  components: {
+    VanList: List,
+    MchInfoCard,
+    FloatBtn,
+    BackTop,
+    LeftGoTransition
+  },
   data() {
     return {
       scrollTop: 0,
@@ -60,20 +73,22 @@ export default {
     window.addEventListener("scroll", this.debouncedScroll);
   },
   methods: {
+    // 加载事件视为修改pageIndex的一种行为
     async onLoad() {
-      this.loading = true;
-      console.log("load");
-      this.searchQuery.pageIndex++;
-      await this.$store.dispatch("LogList/appendList", this.searchQuery);
-      this.loading = false;
-      this.finished = this.searchQuery.pageIndex >= 4;
+      this.searchQuery = {
+        ...this.searchQuery,
+        pageIndex: this.searchQuery.pageIndex + 1
+      };
     },
-    download() {
-      if (this.isWechat) {
-        this.$message("微信不支持下载,请在浏览器中打开!");
-        return;
+    async fetchData() {
+      const result = await this.$store.dispatch("LogList/appendList", {
+        ...this.searchQuery
+      });
+      this.loading = false;
+      if (result.success) {
+        this.listTotalLength = result.data.total;
+        this.finished = this.listTotalLength === this.list.length;
       }
-      console.log("下载去...");
     },
     invokeMethod(method, data) {
       console.log("method ", method);
@@ -86,6 +101,30 @@ export default {
   },
   computed: {
     ...mapState("App", ["isWechat"])
+  },
+  watch: {
+    /*
+     * 用户删除数据时，高度会发生改变，此时van-list不会检查是否需要加载
+     * 因此需要手动检查。当其高度小于屏幕高度时，手动触发其更新
+     * 因为动画缓动原因，需要延时至少300ms
+     * */
+    async listTotalLength() {
+      if (!this.$refs.list) {
+        await this.$utils.sleep(50);
+      }
+      const list = this.$refs.list;
+      await this.$utils.sleep(320);
+      if (list.$el.clientHeight < SCREEN_HEIGHT) {
+        console.log("list length small than SCREEN");
+        list.check();
+      }
+    },
+    searchQuery: {
+      async handler() {
+        if (this.onRequest) return;
+        this.fetchData();
+      }
+    }
   }
 };
 </script>
@@ -129,5 +168,20 @@ export default {
 
 .van-list__finished-text {
   text-align: center;
+}
+
+.left-go-item {
+  transition: 0.3s;
+  position: absolute;
+}
+
+.left-go-enter,
+.left-go-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
+
+.left-go-enter-active,
+.left-go-leave-active {
+  transition: 0.3s;
 }
 </style>

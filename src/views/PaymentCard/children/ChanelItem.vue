@@ -135,6 +135,7 @@ export default {
 @import "../../../styles/variable";
 
 .chanel-item {
+  position: relative;
   &:not(:last-of-type) {
     border-bottom: 2px solid #f2f4f6;
   }

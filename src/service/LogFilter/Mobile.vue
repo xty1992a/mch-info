@@ -4,12 +4,12 @@
     v-model="show"
     position="right"
     @closed="close"
-    style="height: 100%;width: 100%;"
+    style="height: 100%;width: 80%;"
   >
     <div style="height: 300px;background-color: #fff;">
       <van-navbar
         title="筛选"
-        left-text="返回"
+        left-text=""
         right-text="确定"
         @click-left="onCancel"
         @click-right="onConfirm"

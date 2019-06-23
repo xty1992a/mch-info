@@ -27,7 +27,7 @@ export const routes = [
   {
     path: "/Home",
     name: "Home",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "LogList" });
       } else {
@@ -38,14 +38,14 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "首页",
-      icon: "",
+      keepAlive: false,
       roles: [ADMIN, SERVICE, MERCHANT]
     }
   },
   {
     path: "/LogList",
     name: "LogList",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       console.log("enter log list ", to.name);
       if (!isMobile) {
         next({ ...to, name: "LogTable" });
@@ -57,14 +57,15 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "进件列表",
-      icon: "",
+
+      keepAlive: false,
       roles: [ADMIN, SERVICE, MERCHANT]
     }
   },
   {
     path: "/LogTable",
     name: "LogTable",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "LogList" });
       }
@@ -75,7 +76,8 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "进件记录",
-      icon: "",
+
+      keepAlive: false,
       roles: [ADMIN, SERVICE, MERCHANT]
     }
   },
@@ -87,7 +89,8 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "进件",
-      icon: "",
+
+      keepAlive: false,
       roles: [ADMIN, SERVICE, MERCHANT]
     },
     children: [
@@ -99,7 +102,8 @@ export const routes = [
           isSide: false,
           isTag: false,
           title: "进件-步骤一",
-          icon: "",
+
+          keepAlive: false,
           roles: [ADMIN, SERVICE, MERCHANT]
         }
       },
@@ -111,7 +115,8 @@ export const routes = [
           isSide: false,
           isTag: false,
           title: "进件-步骤二",
-          icon: "",
+
+          keepAlive: false,
           roles: [ADMIN, SERVICE, MERCHANT]
         }
       },
@@ -123,7 +128,8 @@ export const routes = [
           isSide: false,
           isTag: false,
           title: "进件-步骤三",
-          icon: "",
+
+          keepAlive: false,
           roles: [ADMIN, SERVICE, MERCHANT]
         }
       },
@@ -135,16 +141,29 @@ export const routes = [
           isSide: false,
           isTag: false,
           title: "进件-步骤四",
-          icon: "",
+
+          keepAlive: false,
           roles: [ADMIN, SERVICE, MERCHANT]
         }
       }
     ]
   },
   {
+    path: "/MchInfoDetail",
+    name: "MchInfoDetail",
+    component: () => import("../views/MchInfoDetail/Main.vue"),
+    meta: {
+      isSide: false,
+      isTag: false,
+      title: "结算信息修改申请",
+      keepAlive: false,
+      free: true
+    }
+  },
+  {
     path: "/EditCard",
     name: "EditCard",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "MEditCard" });
       }
@@ -155,14 +174,15 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "结算信息修改申请",
-      icon: "",
+
+      keepAlive: false,
       free: true
     }
   },
   {
     path: "/MEditCard",
     name: "MEditCard",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (!isMobile) {
         next({ ...to, name: "EditCard" });
       }
@@ -173,14 +193,15 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "结算信息修改申请",
-      icon: "",
+
+      keepAlive: false,
       free: true
     }
   },
   {
     path: "/PaymentCard",
     name: "PaymentCard",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "MPaymentCard" });
       }
@@ -191,14 +212,15 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "支付方式配置",
-      icon: "",
+
+      keepAlive: false,
       free: true
     }
   },
   {
     path: "/MPaymentCard",
     name: "MPaymentCard",
-    beforeEnter(from, to, next) {
+    beforeEnter(to, from, next) {
       if (!isMobile) {
         next({ ...to, name: "PaymentCard" });
       }
@@ -209,7 +231,8 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "支付方式配置",
-      icon: "",
+
+      keepAlive: false,
       free: true
     }
   },
@@ -221,7 +244,8 @@ export const routes = [
       isSide: false,
       isTag: false,
       title: "登录",
-      icon: "",
+
+      keepAlive: false,
       free: true
     }
   },
