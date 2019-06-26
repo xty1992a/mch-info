@@ -56,7 +56,6 @@ export default function request(
     const params = data.params || null;
     delete data.params;
 
-    console.log(data);
     axios({
       method,
       url,
@@ -72,6 +71,8 @@ export default function request(
         // success为true时,不作任何处理,直接返回
         // 不为true时,检查code,进行错误处理
         const response = res.data; //后端返回结果
+
+        // response.success = response.success && response.code === 200;
 
         clearLoading(loading);
         if (!response.success) {

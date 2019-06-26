@@ -55,9 +55,10 @@ router.beforeEach(async (to, from, next) => {
     // 获取用户信息失败，可能是cookie已失效，重新登陆
     console.log(userResult);
     if (!userResult.success || userResult.data.role === ROLES.NONE) {
-      logOut()
+      logOut();
       log("fetch userInfo fail; should login again");
-      next(`/Login?redirect_url=${to.fullPath}`);
+      // next(`/Login?redirect_url=${to.fullPath}`);
+      next({ name: "Home" });
       return;
     }
     // 根据用户角色生成路由表

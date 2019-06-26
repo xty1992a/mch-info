@@ -16,14 +16,7 @@
       </el-form-item>
       <el-form-item label="账户类型" prop="payeeType">
         <el-radio-group v-model="formData.payeeType">
-          <el-radio :label="8">对私账户</el-radio>
-          <!--8:对私，16:对公，32:非法人。无营业执照时只能选8；营业执照为个体时只能选8，32-->
-          <el-radio :label="16"
-                    :disabled="formData.businessLicenseType === 1">对公账户
-          </el-radio>
-          <el-radio :label="32"
-                    :disabled="formData.businessLicenseType === 1">非法人
-          </el-radio>
+          <el-radio v-for="item in payeeOptions" :key="item.value" :disabled="item.disabled" :label="item.value">{{item.label}}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="支付方式" :error="payTypeError">
@@ -49,7 +42,7 @@
         <p class="error" slot="error" style="color:red;">{{payTypeError}}</p>
       </el-form-item>
       <el-form-item label="门店" prop="chainStoreId" v-show="!isMobile">
-        <div class="pick-holder" @click="pickStore">{{pickedStore ? pickedStore.name : "请选择"}}</div>
+        <div class="pick-holder" @click="pickStore">{{pickedStore ? pickedStore.chainStoreName : "请选择"}}</div>
       </el-form-item>
 
       <el-form-item prop="chainStoreId" v-show="isMobile">
@@ -102,6 +95,9 @@
   import Collapse from "@/components/Collapse";
   import * as API from "@/api";
 
+  const value2Array = (value, list) => list.reduce((p, it) => !!(it & value) ? [...p, it] : p, []);
+  const sumList = list => list.reduce((p, i) => p + i, 0);
+
   export default {
     name: "MchInfoAddMain",
     components: { LinkCheck, Collapse },
@@ -111,9 +107,9 @@
         formData: {
           businessLicenseType: 0,
           payeeType: 0,
-          wechatPayType: 0,
-          aliPayType: 0,
-          unionPayType: 0,
+          wechatPayType: 2,
+          aliPayType: 2,
+          unionPayType: 16,
           samePrincipal: "",
           chainStoreId: ""
         },
@@ -132,20 +128,13 @@
           ]
         },
 
-        wechatPayType: [],
-        aliPayType: [],
-        unionPayType: [],
+        // wechatPayType: [],
+        // aliPayType: [],
+        // unionPayType: [],
         licenseOptions: [
-          { label: "无", value: "1" },
-          { label: "个体工商户", value: "2" },
-          { label: "企业", value: "4" }
-        ],
-        wechatPayTypeOptions: [
-          //  1:扫码，2:立牌和线上，4:刷脸，8:押金。
-          { label: "扫码", value: 1 },
-          { label: "立牌和线上", value: 2 },
-          { label: "刷脸", value: 4 },
-          { label: "押金", value: 8 }
+          { label: "无", value: 1 },
+          { label: "个体工商户", value: 2 },
+          { label: "企业", value: 4 }
         ],
         aliPayTypeOptions: [
           //   1:扫码，2:立牌和线上。
@@ -273,18 +262,74 @@
       },
       isMobile() {
         return this.screenType === "xs";
+      },
+
+      //  1:扫码，2:立牌和线上，4:刷脸，8:押金。
+      /* 禁用
+      无营业执照 - 微信押金
+    无营业执照 - 微信刷脸
+    非法人收款 - 微信押金
+    非法人收款 - 微信刷脸
+    * */
+      wechatPayTypeOptions() {
+        const { businessLicenseType: type, payeeType: pay } = this.formData;
+        return [
+          { label: "扫码", value: 1 },
+          { label: "立牌和线上", value: 2 },
+          { label: "刷脸", value: 4, disabled: +type === 1 || +pay === 32 },
+          { label: "押金", value: 8, disabled: +type === 1 || +pay === 32 }
+        ];
+      },
+      // <!--8:对私，16:对公，32:非法人。无营业执照时只能选8；营业执照为个体时只能选8，32-->
+      payeeOptions() {
+        const type = +this.formData.businessLicenseType;
+        return [
+          { label: "对私账户", value: 8 },
+          { label: "对公", value: 16, disabled: type !== 4 }, // 只有企业可用
+          { label: "非法人", value: 32, disabled: type !== 2 && type !== 4 } // 有营业执照即可用
+        ];
+      },
+      wechatPayType: {
+        get() {
+          return value2Array(+this.formData.wechatPayType, this.wechatPayTypeOptions.map(it => it.value));
+        },
+        set(v) {
+          this.formData.wechatPayType = sumList(v);
+        }
+      },
+      aliPayType: {
+        get() {
+          return value2Array(+this.formData.aliPayType, this.aliPayTypeOptions.map(it => it.value));
+        },
+        set(v) {
+          this.formData.aliPayType = sumList(v);
+        }
+      },
+      unionPayType: {
+        get() {
+          return value2Array(+this.formData.unionPayType, this.unionPayTypeOptions.map(it => it.value));
+        },
+        set(v) {
+          this.formData.unionPayType = sumList(v);
+        }
       }
     },
     watch: {
-      wechatPayType(now) {
-        this.formData.wechatPayType = now.reduce((p, i) => p + i, 0);
-      },
-      aliPayType(now) {
-        this.formData.aliPayType = now.reduce((p, i) => p + i, 0);
-      },
-      unionPayType(now) {
-        this.formData.unionPayType = now.reduce((p, i) => p + i, 0);
+      "formData.businessLicenseType"(now) {
+        console.log("businessLicenseType", now);
+        if (+now === 1) {
+          this.formData.payeeType = 0;
+        }
       }
+      // wechatPayType(now) {
+      //   this.formData.wechatPayType = now.reduce((p, i) => p + i, 0);
+      // },
+      // aliPayType(now) {
+      //   this.formData.aliPayType = now.reduce((p, i) => p + i, 0);
+      // },
+      // unionPayType(now) {
+      //   this.formData.unionPayType = now.reduce((p, i) => p + i, 0);
+      // }
     }
   };
 </script>

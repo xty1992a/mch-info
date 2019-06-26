@@ -2,7 +2,7 @@
   <div class="link-check">
     <el-checkbox :indeterminate="value.length>0&&value.length<options.length" v-model="checked">{{label}}</el-checkbox>
     <el-checkbox-group :value="value" @input="v => $emit('input', v)" style="display: inline-block;">
-      <el-checkbox :label="item.value" v-for="item in options" :key="item.value">{{item.label}}</el-checkbox>
+      <el-checkbox :label="item.value" v-for="item in options" :key="item.value" :disabled="item.disabled">{{item.label}}</el-checkbox>
     </el-checkbox-group>
   </div>
 </template>
@@ -18,12 +18,6 @@
       },
       value: Array
     },
-    data() {
-      return {};
-    },
-    created() {
-    },
-    methods: {},
     computed: {
       checked: {
         get() {
@@ -31,12 +25,18 @@
         },
         set(v) {
           if (v) {
-            this.$emit("input", this.options.map(it => it.value));
+            this.$emit("input", this.options.filter(it => !it.disabled).map(it => it.value));
           }
           else {
             this.$emit("input", []);
           }
         }
+      },
+    },
+    watch: {
+      options() {
+        const disabledOptions = this.options.filter(it => it.disabled).map(it => it.value);
+        this.$emit("input", this.value.filter(it => !disabledOptions.includes(it)));
       }
     }
   };

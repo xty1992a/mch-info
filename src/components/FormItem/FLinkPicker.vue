@@ -1,56 +1,94 @@
 <template>
   <div class="f-link-picker f-form-item">
-    <div class="pick-holder" v-if="isMobile" @click="callPicker">
+    <div class="pick-holder" @click="callPicker">
       <el-input :value="displayVal" :placeholder="placeholder"/>
     </div>
-    <el-cascader :props="props" v-model="vValue" v-if="!isMobile" :placeholder="placeholder"/>
+    <!--    <el-cascader :props="props" v-model="vValue" v-if="!isMobile" :placeholder="placeholder"/>-->
     <DescBtn :text="data.description"/>
   </div>
 </template>
 
 <script>
-  // import linkPick from "../../service/LinkPicker";
   import Common from "./Common";
 
   export default {
     name: "FLinkPicker",
     components: {},
     mixins: [Common],
-    props: {},
+    props: {
+      props: {
+        type: Object,
+        default: () => ({
+          value: "value",
+          label: "text"
+        })
+      }
+    },
     data() {
       return {
-        props: {
-          lazy: true,
-          lazyLoad: async (node, resolve) => {
-            let res = [];
-            if (node.root) {
-              res = await this.data.request({ level: "", value: "china" });
-            }
-            else {
-              const { level, value } = node;
-              res = await this.data.request({ level, value });
-            }
-            res.forEach(it => it.leaf = node.level === this.data.selectLevel - 1);
-            resolve(res);
-          }
-        },
+        /*      props: {
+                lazy: true,
+                lazyLoad: async (node, resolve) => {
+                  let res = [];
+                  if (node.root) {
+                    res = await this.data.request({ level: "", value: "china" });
+                  }
+                  else {
+                    const { level, value } = node;
+                    res = await this.data.request({ level, value });
+                  }
+                  res.forEach(it => it.leaf = node.level === this.data.selectLevel - 1);
+                  resolve(res);
+                }
+              },*/
         pickedItems: []
       };
     },
     created() {
       this.isMobile && this.$services.linkPick();
     },
+    mounted() {
+      this.initPickedItems();
+    },
     methods: {
+      // 有值时,恢复值的文字状态
+      async initPickedItems() {
+        if (!this.value) return;
+        // 有本地缓存,使用本地缓存
+        const cachedItems = this.$storage.getItem(this.data.filedName + "_f_link_picked_items");
+        if (cachedItems) {
+          this.pickedItems = cachedItems;
+          return;
+        }
+
+        // 否则,依次请求值的[平级]数据集,并从中找到值的item
+        const levels = `,${this.value}`.split(",").map((value, index) => ({ level: index, value }));
+        const items = [];
+        while (levels.length - 1) {
+          const result = await this.data.request(levels.shift());
+          if (result.success) {
+            items.push(result.data.find(it => it.value === levels[0].value));
+          }
+        }
+        if (this.value && items.length) {
+          this.pickedItems = items.map(it => ({ ...it, label: it[this.props.label] }));
+          this.$storage.setItem(this.data.filedName + "_f_link_picked_items", this.pickedItems);
+        }
+      },
+
       async callPicker() {
         const options = {
           key: this.data.filedName + "_link_pick_",
-          value: this.value,
-          data: this.data
+          value: this.value || "",
+          data: this.data,
+          isMobile: this.isMobile,
+          props: this.props
         };
         const result = await this.$services.linkPick(options);
         if (result.success) {
           this.$emit("input", result.value);
           this.pickedItems = result.data;
+          this.$storage.setItem(this.data.filedName + "_f_link_picked_items", this.pickedItems);
         }
       }
     },

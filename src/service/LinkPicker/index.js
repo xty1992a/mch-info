@@ -12,7 +12,13 @@ function createVm(opt) {
 
 const dftOpt = {
   value: String,
-  data: Object
+  isMobile: true,
+  title: "请选择",
+  data: Object,
+  props: {
+    value: "value",
+    label: "label"
+  }
 };
 
 export default (opt = {}) => new Promise(resolve => {
