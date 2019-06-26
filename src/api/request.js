@@ -66,19 +66,37 @@ export default function request(
       timeout: 5000
     })
       .then(res => {
+        /*
+        * param response : {success: boolean, data: any, message: string, code: int}
+        * */
+        // success为true时,不作任何处理,直接返回
+        // 不为true时,检查code,进行错误处理
+        const response = res.data; //后端返回结果
+
         clearLoading(loading);
-        if (!res.data.success) {
+        if (!response.success) {
+          let message;
+          // 没有权限
+          if (response.code === 401) {
+            message = "您没有权限!";
+          }
+          // 后端错误
+          if (response.code === 500) {
+            message = "服务异常!";
+          }
+
           callToast(
             {
               type: "waring",
-              message: res.data.message || "服务异常"
+              message: response.message || message
             },
             toast
           );
         }
 
-        resolve(res.data);
+        resolve(response);
       })
+      // 网络异常及代码错误
       .catch(err => {
         clearLoading(loading);
         console.log(err, "net error");
@@ -91,7 +109,7 @@ export default function request(
         );
         resolve({
           success: false,
-          message: "网络故障",
+          message: err.message || "网络故障",
           data: err
         });
       });

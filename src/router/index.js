@@ -9,7 +9,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import NotFound from "@/views/Error/NotFound";
 import Login from "@/views/Login";
-import { ADMIN, MERCHANT, SERVICE } from "./roles";
+import { AGENT, MERCHANT, SERVICE } from "./roles";
 import { isMobile } from "../utils";
 
 Vue.use(Router);
@@ -30,7 +30,8 @@ export const routes = [
     beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "LogList" });
-      } else {
+      }
+      else {
         next({ ...to, name: "LogTable" });
       }
     },
@@ -39,7 +40,7 @@ export const routes = [
       isTag: false,
       title: "首页",
       keepAlive: false,
-      roles: [ADMIN, SERVICE, MERCHANT]
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -59,7 +60,7 @@ export const routes = [
       title: "进件列表",
 
       keepAlive: false,
-      roles: [ADMIN, SERVICE, MERCHANT]
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -78,7 +79,7 @@ export const routes = [
       title: "进件记录",
 
       keepAlive: false,
-      roles: [ADMIN, SERVICE, MERCHANT]
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -91,7 +92,7 @@ export const routes = [
       title: "进件",
 
       keepAlive: false,
-      roles: [ADMIN, SERVICE, MERCHANT]
+      roles: [AGENT, SERVICE, MERCHANT]
     },
     children: [
       {
@@ -104,7 +105,7 @@ export const routes = [
           title: "进件-步骤一",
 
           keepAlive: false,
-          roles: [ADMIN, SERVICE, MERCHANT]
+          roles: [AGENT, SERVICE, MERCHANT]
         }
       },
       {
@@ -117,7 +118,7 @@ export const routes = [
           title: "进件-步骤二",
 
           keepAlive: false,
-          roles: [ADMIN, SERVICE, MERCHANT]
+          roles: [AGENT, SERVICE, MERCHANT]
         }
       },
       {
@@ -130,7 +131,7 @@ export const routes = [
           title: "进件-步骤三",
 
           keepAlive: false,
-          roles: [ADMIN, SERVICE, MERCHANT]
+          roles: [AGENT, SERVICE, MERCHANT]
         }
       },
       {
@@ -143,7 +144,7 @@ export const routes = [
           title: "进件-步骤四",
 
           keepAlive: false,
-          roles: [ADMIN, SERVICE, MERCHANT]
+          roles: [AGENT, SERVICE, MERCHANT]
         }
       }
     ]
@@ -151,6 +152,10 @@ export const routes = [
   {
     path: "/MchInfoDetail",
     name: "MchInfoDetail",
+    beforeEnter(to, from, next) {
+      console.log({ ...to.query });
+      next();
+    },
     component: () => import("../views/MchInfoDetail/Main.vue"),
     meta: {
       isSide: false,
@@ -247,6 +252,15 @@ export const routes = [
 
       keepAlive: false,
       free: true
+    }
+  },
+  {
+    path: "/Error/NoAuth",
+    name: "NoAuth",
+    component: () => import("../views/Error/NoAuth/index.vue"),
+    meta: {
+      free: true,
+      title: "无权限"
     }
   },
   {

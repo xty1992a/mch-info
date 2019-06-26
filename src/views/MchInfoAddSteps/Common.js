@@ -1,4 +1,5 @@
 import { mapGetters, mapState } from "vuex";
+import "./common.less";
 
 export default {
   data() {

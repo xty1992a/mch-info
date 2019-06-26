@@ -1,12 +1,7 @@
 import { mapState } from "vuex";
 import downloadFile from "@/utils/downloadFile";
-
-const mockData = [
-  { key: 1, title: "奥迪", cf: "而天通苑", sj: "去玩儿", ddd: "UI哦" },
-  { key: 2, title: "阿斯蒂芬", cf: "的覆盖", sj: "覆盖", ddd: "UI哦" },
-  { key: 3, title: "儿童", cf: "问题", sj: "asdfasdf", ddd: "退" },
-  { key: 4, title: "分低功耗", cf: "的覆盖吧", sj: "阿萨德", ddd: "红狗" }
-];
+import * as API from "@/api";
+import * as ROLES from "@/router/roles";
 
 export default {
   data() {
@@ -39,29 +34,21 @@ export default {
         value: "",
         columns: [
           // 表格展示项
-          { label: "吃饭", prop: "cf" },
-          { label: "睡觉", prop: "sj" },
-          { label: "打豆豆", prop: "ddd" }
+          { label: "名称", prop: "name" },
+          { label: "账号", prop: "account" },
+          { label: "商家标识", prop: "businessId" }
         ],
+        props: {
+          key: "businessId",
+          title: "name"
+        },
         request: async query => {
-          console.log("request by ", query);
-          await this.$utils.sleep(300);
-          return {
-            success: true,
-            data: mockData.map(it => ({ ...it, value: Math.random() }))
-          };
+          return await API.getMchList({ ...query, searchStr: query.keywords });
         }
       });
 
       if (!result.success) return;
       return result.value;
-    },
-
-    // 前往进件页面
-    goToAddMchInfo() {
-      // 重置进件信息
-      this.$store.commit("MchInfo/CLEAR_STATE");
-      this.$router.push({ name: "MchInfoAddMain" });
     },
 
     // region actions 点击按钮后的回调
@@ -86,9 +73,17 @@ export default {
     },
     // endregion
     // 审核进件
-    checkItem(item) {
-      this.$router.push({ name: "MchInfoDetail" });
+    examineItem(item) {
+      this.$router.push({ name: "MchInfoDetail", query: { examine: 1 } });
       console.log(item);
+    },
+    // 查看详情
+    enterDetail() {
+      this.$router.push({ name: "MchInfoDetail", query: { examine: 0 } });
+    },
+    // 进入支付参数配置页面
+    enterPayment() {
+      this.$router.push({ name: "PaymentCard" });
     },
     // 重新进件
     // 重新进入进件流程
@@ -109,7 +104,7 @@ export default {
     },
     // 点击添加按钮，代理商需要先选择商户
     async addItem() {
-      const is_merchant = false; // 非商家需要先选择商家
+      const is_merchant = this.$store.state.User.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
       let businessId;
       if (!is_merchant) {
         businessId = await this.chooseMch();
@@ -120,12 +115,21 @@ export default {
         businessId = this.$store.state.User.businessInfo.businessId;
       }
 
+      console.log("business id is ", businessId);
+
       const complete = await this.$store.dispatch(
         "User/fetchMchInfo",
         businessId
       );
       if (!complete) return;
       this.goToAddMchInfo();
+    },
+
+    // 前往进件页面
+    goToAddMchInfo() {
+      // 重置进件信息
+      this.$store.commit("MchInfo/CLEAR_STATE");
+      this.$router.push({ name: "MchInfoAddMain" });
     },
 
     // 删除元素
@@ -154,6 +158,7 @@ export default {
   },
 
   computed: {
-    ...mapState("LogList", ["list"])
+    ...mapState("LogList", ["list"]),
+    ...mapState("User", ["userInfo"])
   }
 };

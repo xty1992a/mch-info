@@ -43,7 +43,7 @@ const typeMap = [
 const formatFields = fields =>
   fields.map(item => ({
     ...item,
-    options: item.enumJson.map(it => ({ label: it.text, value: it.value })),
+    options: (JSON.parse(item.enumJson)).map(it => ({ label: it.text, value: it.value })),
     validator: getValidator(item),
     filedType: typeMap[item.filedType],
     // TODO 级联选择器的深度
@@ -113,10 +113,8 @@ export default {
       const result = await API.getFormFields(id);
       console.log("get fields ----> ", result.data);
       if (result.success) {
-        result.data.secondFields =
-          result.data.secondFields || result.data.firstFields;
-        result.data.thirdFields =
-          result.data.thirdFields || result.data.firstFields;
+        result.data.secondFields = result.data.secondFields || result.data.firstFields;
+        result.data.thirdFields = result.data.thirdFields || result.data.firstFields;
 
         // 整理后端数据
         const data = Object.keys(result.data).reduce((obj, key) => {

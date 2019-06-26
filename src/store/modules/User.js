@@ -1,10 +1,6 @@
 import Cookie from "js-cookie";
 import * as API from "@/api";
-
-const mockData = {
-  token: "admin",
-  role: "admin"
-};
+import * as ROLES from "@/router/roles";
 
 export default {
   namespaced: true,
@@ -29,33 +25,38 @@ export default {
   actions: {
     // 调登陆接口，后端将写入一个cookie
     async LoginByUsername({ commit }, params) {
-      const res = { success: true, data: { token: "asdf" } };
-      if (res.success) {
-        Cookie.set("user", res.data.token, { expires: 0.5 });
+      const result = await API.login(params);
+      console.log(result);
+      if (result.success) {
+        if (/8080/.test(location.href)) {
+          Cookie.set("custom_session_id", "asdfasdf", { expires: 0.5 });
+        }
       }
-      return res;
+      return result;
     },
     // 获取用户信息
     async getUserInfo({ commit, state }) {
       if (state.userInfo) return { success: true, data: state.userInfo };
-      // let res = await API.getUser();
-      const res = { success: true, data: mockData };
+      let res = await API.getUserInfo();
       if (res.success) {
         commit("SET_USER_INFO", res.data);
+        // 商家角色,直接初始化businessInfo
+        if (res.data.role === ROLES.MERCHANT) {
+          commit("SET_BUSINESS_INFO", { businessId: res.data.uuid });
+        }
       }
       return res;
     },
 
     // 获取商户信息，包括公众号和商家信息
     async fetchMchInfo({ commit }, businessId) {
-      const [pInfo, bInfo] = await Promise.all([
-        API.getPublicInfo(businessId),
-        API.getBusinessInfo(businessId)
+      const [pInfo] = await Promise.all([
+        API.getPublicInfo({ businessId })
       ]);
 
-      if (!pInfo.success || !bInfo.success) return false;
+      if (!pInfo.success) return false;
       commit("SET_PUBLIC_INFO", pInfo.data);
-      commit("SET_BUSINESS_INFO", bInfo.data);
+      commit("SET_BUSINESS_INFO", { businessId });
 
       return true;
     },

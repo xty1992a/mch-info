@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { isMobile } from "../utils";
-import { Toast } from "vant";
+import { Toast, Cell } from "vant";
 
 import {
   Message,
@@ -33,6 +33,7 @@ import {
 } from "element-ui";
 
 const list = [
+  Cell,
   Dropdown, DropdownItem, DropdownMenu,
   Loading,
   Container,

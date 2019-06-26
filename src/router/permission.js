@@ -5,11 +5,11 @@
  * */
 
 import router, { routes } from "./index";
-import { isLogin } from "../utils/auth";
+import { isLogin, logOut } from "../utils/auth";
 import store from "../store";
 import NProgress from "nprogress";
-import Cookie from "js-cookie";
 import "nprogress/nprogress.css";
+import * as ROLES from "./roles";
 
 const LOG_STYLE = "background:#222;padding:0 10px 0 100px;color:#bada55";
 
@@ -53,8 +53,9 @@ router.beforeEach(async (to, from, next) => {
     // 先拉取用户信息,获取角色
     let userResult = await store.dispatch("User/getUserInfo");
     // 获取用户信息失败，可能是cookie已失效，重新登陆
-    if (!userResult.success) {
-      Cookie.remove("user");
+    console.log(userResult);
+    if (!userResult.success || userResult.data.role === ROLES.NONE) {
+      logOut()
       log("fetch userInfo fail; should login again");
       next(`/Login?redirect_url=${to.fullPath}`);
       return;

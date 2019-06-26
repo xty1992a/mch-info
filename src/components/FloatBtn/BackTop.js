@@ -18,22 +18,42 @@ export async function backTop(duration = 300) {
   }
 }
 
+async function fade(start, end, callback) {
+  const manager = new TweenManager({
+    duration: 150,
+    start,
+    end,
+    easing: Tween.Quart.easeIn
+  });
+
+  while (manager.next()) {
+    await TweenManager.frame();
+    callback(manager.currentValue);
+  }
+}
+
+async function onLeave(el, done) {
+  await fade(100, 0, value => {
+    el.style.opacity = (value / 100).toFixed(2);
+  });
+  done();
+}
+
+async function onEnter(el, done) {
+  await fade(0, 100, value => {
+    el.style.opacity = (value / 100).toFixed(2);
+  });
+  done();
+}
+
 export default {
   name: "BackTop",
-  components: { FloatBtn },
   functional: true,
   render(h, data) {
-    return h(
-      "FloatBtn",
-      {
-        ...data,
-        on: {
-          click: () => {
-            backTop(300);
-          }
-        }
-      },
-      data.children
-    );
+    return <transition-group onEnter={onEnter} onLeave={onLeave}>
+      <FloatBtn v-show={data.props.show} key="backTopBtn" {...data} onClick={() => backTop(300)}>
+        {data.children}
+      </FloatBtn>;
+    </transition-group>;
   }
 };

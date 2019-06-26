@@ -80,7 +80,8 @@ export default {
     searchQuery: null
   },
   mutations: {
-    CLEAR_STATE: state => {},
+    CLEAR_STATE: state => {
+    },
     SET_LIST: (state, list) => (state.list = list),
     SET_SEARCH_QUERY: (state, query) => (state.searchQuery = query),
     SET_LIST_ITEM: (state, item) =>
@@ -96,7 +97,7 @@ export default {
       await utils.sleep(500);
       commit("SET_LIST", tableData.map(it => ({ ...it, key: Math.random() })));
 
-      return { success: true, data: { total: 20 } };
+      return { success: true, data: { total: 10 } };
     },
 
     // 请求新的列表,追加到state的列表中
@@ -110,6 +111,9 @@ export default {
       console.log("should new list by ", query);
       await utils.sleep(500);
       commit("SET_SEARCH_QUERY", { ...query });
+
+      // return { success: true, data: { total: 0 } };
+
       let list = tableData.map(it => ({ ...it, key: Math.random() }));
 
       // 只有index变化，追加
@@ -118,7 +122,7 @@ export default {
       }
       commit("SET_LIST", list);
 
-      return { success: true, data: { total: 20 } };
+      return { success: true, data: { total: 10 } };
     },
 
     // 请求后端之后,删除列表项目

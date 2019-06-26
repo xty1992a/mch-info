@@ -1,3 +1,4 @@
-export const ADMIN = "admin";
-export const MERCHANT = "merchant";
-export const SERVICE = "service";
+export const MERCHANT = "ROLE_BUSINESS";
+export const SERVICE = "ROLE_ADMIN";
+export const AGENT = "ROLE_AGENT";
+export const NONE = "ROLE_NONE";
