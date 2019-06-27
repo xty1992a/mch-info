@@ -16,6 +16,9 @@ Vue.prototype.$storage = storage;
 Vue.prototype.$utils = utils;
 Vue.prototype.$services = services;
 
+// 替换图片cdn地址
+Vue.filter("img_cdn", v => /^https?/.test(v) ? v : "https://files.1card1.cn/" + v.replace(/^\//, ""));
+
 window.APPLIACTION = new Vue({
   el: "#app",
   router,

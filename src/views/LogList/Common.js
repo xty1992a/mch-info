@@ -150,7 +150,7 @@ export default {
     },
     // 修改结算卡
     editCart(item) {
-      this.$router.push({ name: "EditCard" });
+      this.$router.push({ name: "EditCard", query: { checkPaymentId: "212862" } });
       console.log(item);
     }
 

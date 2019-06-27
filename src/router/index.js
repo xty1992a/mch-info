@@ -99,6 +99,14 @@ export const routes = [
         path: "Main",
         name: "MchInfoAddMain",
         component: () => import("../views/MchInfoAddSteps/Main.vue"),
+        beforeEnter(to, from, next) {
+          console.log({ ...from.query }, from.name, { ...to });
+          if (from.name === "MchInfoAddBase" && from.query.checkPaymentId && !to.query.checkPaymentId) {
+            // to.query.checkPaymentId = from.query.checkPaymentId;
+            next({ ...to, query: { checkPaymentId: from.query.checkPaymentId } });
+          }
+          next();
+        },
         meta: {
           isSide: false,
           isTag: false,

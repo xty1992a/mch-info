@@ -49,32 +49,19 @@
       };
     },
     async created() {
-      this.initPage();
+      const success = await this.initPage();
+      if (success) {
+        this.formData = this.$utils.copy(this.firstForm);
+        this.initErrorMessage();
+      }
     },
     methods: {
-      async initPage() {
-        const id = this.$route.query["checkPaymentId"];
-        if (!id) {
-          this.$message("缺少必要参数!");
-          await this.$utils.sleep(1500);
-          this.$router.push({ name: "Home" });
-          return;
-        }
-        if (!this.firstForm || !this.firstFields.length) {
-          // 获取表单项
-          await this.$store.dispatch("MchInfo/getFields", id);
-          // 获取可能暂存的表单项的值
-          await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
-        }
-        this.formData = this.$utils.copy(this.firstForm);
-        Object.keys(this.formData).forEach(key => this.formData[key] = "gd,sz,lh");
-        this.initErrorMessage();
-      },
 
       // 将数据提交到后端暂存,不必校验
       async cacheData() {
         const data = this.checkData(true);
         if (!data) return;
+        console.log("");
         await this.$store.dispatch("MchInfo/cacheFormData", {
           key: "firstForm",
           data
@@ -91,7 +78,7 @@
       formItems() {
         return this.firstFields.map(it => {
           if (it.filedType !== "link-picker") return { ...it };
-          return { ...it, request: API.getLeaveOptions(/*it.sourceUrl*/"/api/basic/getArea") };
+          return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
       }
     }

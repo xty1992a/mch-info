@@ -4,84 +4,26 @@
       <el-button ref="btn" class="upload-btn">上传图片</el-button>
       <DescBtn :text="data.description"/>
     </div>
-    <div class="f-image-body" v-if="imageData">
-      <img :src="imageData" alt=""/>
+    <div class="f-image-body" v-if="value">
+      <img :src="value | img_cdn" alt=""/>
       <DelBtn/>
     </div>
   </div>
 </template>
 
 <script>
-  import * as API from "@/api";
   import DelBtn from "@/components/DelAble/DelBtn";
-  import ImageUploader from "@redbuck/image-uploader";
-  import "@redbuck/image-uploader/lib/imageUploader.css";
   import Common from "./Common";
-  import imgs from "@/assets/imgs";
-  import dayjs from "dayjs";
-  import { getUUID } from "@/utils";
+  import ImageUpload from "./ImageUpload";
 
   export default {
     name: "FImage",
     components: { DelBtn },
-    mixins: [Common],
+    mixins: [Common, ImageUpload],
     props: {},
     data() {
       return {
-        imageData: imgs["no_auth"]
       };
-    },
-    async mounted() {
-      const res = await API.getOssSignature();
-      if (res.success) {
-        this._uploadUrl = res.data.url;
-      }
-      console.log(res);
-      this.initUploader();
-    },
-    methods: {
-      initUploader() {
-        console.log(this.$refs.btn);
-        const { getUUID } = this.$utils;
-        this.uploader = new ImageUploader({
-          width: 440,
-          height: 275,
-          toast: this.$message,
-          limit: 50000000,
-          fileName: "file",
-          el: this.$refs.btn.$el,
-          uploadUrl: this._uploadUrl,
-          async getFormDataAsync(callback) {
-            const res = await API.getOssSignature();
-            if (res.success) {
-              callback({
-                OSSAccessKeyId: res.data.accessId,
-                policy: res.data.policy,
-                signature: res.data.signature,
-                key: `/qd11/0/${dayjs().format("YYYYMMDD")}/${getUUID()}.png`,
-                success_action_status: "200"
-              });
-            }
-            else {
-              callback(null);
-            }
-          }
-        });
-
-        const el = this.$el.getElementsByTagName("input")[0];
-        if (el) {
-          console.log(el);
-          el.accept = "image/*";
-        }
-
-        this.uploader.on("crop", e => {
-          this.imageData = e;
-        });
-
-        this.uploader.on("upload", e => {
-          console.log(e);
-        });
-      }
     },
     computed: {}
   };

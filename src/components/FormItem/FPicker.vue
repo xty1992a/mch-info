@@ -4,11 +4,11 @@
       <el-input :value="displayValue" :placeholder="placeholder"/>
     </div>
     <template v-else>
-      <el-select v-model="vValue" :name="data.title" v-bind="$attrs" :placeholder="placeholder">
+      <el-select v-model="vValue" :name="data.title" v-bind="$attrs" :placeholder="placeholder" filterable>
         <el-option :value="item.value" :label="item.label" v-for="item in data.options" :key="item.value"/>
       </el-select>
     </template>
-    <DescBtn :text="data.description" />
+    <DescBtn :text="data.description"/>
   </div>
 </template>
 

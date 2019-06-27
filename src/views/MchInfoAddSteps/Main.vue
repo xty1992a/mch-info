@@ -11,61 +11,51 @@
     >
       <el-form-item label="营业执照类型" prop="businessLicenseType">
         <el-radio-group v-model="formData.businessLicenseType">
-          <el-radio :label="item.value" v-for="item in licenseOptions" :key="item.value">{{item.label}}</el-radio>
+          <el-radio
+                  :label="item.value"
+                  v-for="item in licenseOptions"
+                  :key="item.value"
+          >{{item.label}}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="账户类型" prop="payeeType">
         <el-radio-group v-model="formData.payeeType">
-          <el-radio v-for="item in payeeOptions" :key="item.value" :disabled="item.disabled" :label="item.value">{{item.label}}</el-radio>
+          <el-radio
+                  v-for="item in payeeOptions"
+                  :key="item.value"
+                  :disabled="item.disabled"
+                  :label="item.value"
+          >{{item.label}}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="支付方式" :error="payTypeError">
         <!--微信 1:扫码，2:立牌和线上，4:刷脸，8:押金。-->
-        <LinkCheck
-                v-model="wechatPayType"
-                label="微信"
-                :options="wechatPayTypeOptions"
-        />
+        <LinkCheck v-model="wechatPayType" label="微信" :options="wechatPayTypeOptions"/>
         <!--支付宝 1:扫码，2:立牌和线上。-->
-        <LinkCheck
-                v-model="aliPayType"
-                label="支付宝"
-                :options="aliPayTypeOptions"
-        />
+        <LinkCheck v-model="aliPayType" label="支付宝" :options="aliPayTypeOptions"/>
         <!--银联  1:扫码，16:闪付。-->
-        <LinkCheck
-                v-model="unionPayType"
-                label="银联"
-                :options="unionPayTypeOptions"
-        />
-
+        <LinkCheck v-model="unionPayType" label="银联" :options="unionPayTypeOptions"/>
         <p class="error" slot="error" style="color:red;">{{payTypeError}}</p>
       </el-form-item>
       <el-form-item label="门店" prop="chainStoreId" v-show="!isMobile">
-        <div class="pick-holder" @click="pickStore">{{pickedStore ? pickedStore.chainStoreName : "请选择"}}</div>
+        <div class="pick-holder" @click="pickStore" style="width: 220px;">
+          <el-input :value="pickedStore && pickedStore.chainStoreName" placeholder="请选择门店"/>
+        </div>
       </el-form-item>
-
       <el-form-item prop="chainStoreId" v-show="isMobile">
         <van-cell title="门店" @click="pickStore" style="margin-left: -20px;">
           <span>{{pickedStore ? pickedStore.chainStoreName : "请选择"}}</span>
         </van-cell>
       </el-form-item>
-
       <el-row v-if="publicInfo && publicInfo.version === 1">
         <el-col :span="24">
-          <el-form-item
-                  label="公众号主体跟营业执照名称是否一致"
-                  prop="samePrincipal"
-          >
+          <el-form-item label="公众号主体跟营业执照名称是否一致" prop="samePrincipal">
             <!-- 64:一致，128:不一致-->
-            <el-switch
-                    v-model="formData.samePrincipal"
-                    :active-value="64"
-                    :inactive-value="128"
-            />
+            <el-switch v-model="formData.samePrincipal" :active-value="64" :inactive-value="128"/>
           </el-form-item>
         </el-col>
-
         <el-col :xs="24" :span="12">
           <el-form-item label="公众号AppId" prop="appId">
             <p style="font-weight: bold;">{{ publicInfo.appId }}</p>
@@ -77,14 +67,13 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-form-item label="选择地区">
+        <FLinkPicker :data="regionPicker" v-model="region" :is-mobile="isMobile"/>
+      </el-form-item>
     </el-form>
-
     <footer class="main-foot">
       <el-button class="foot-item" @click="$router.push({name: 'Home'})">返回</el-button>
-
-      <el-button class="foot-item"
-                 @click="saveAndNext">{{ this.checkPaymentId ? "" : "保存并" }}下一步
-      </el-button>
+      <el-button class="foot-item" @click="saveAndNext">{{ this.checkPaymentId ? "" : "保存并" }}下一步</el-button>
     </footer>
   </div>
 </template>
@@ -92,15 +81,18 @@
 <script>
   import { mapGetters, mapState } from "vuex";
   import LinkCheck from "@/components/LinkCheck";
+  // regionPicker
+  import FLinkPicker from "@/components/FormItem/FLinkPicker";
   import Collapse from "@/components/Collapse";
   import * as API from "@/api";
 
-  const value2Array = (value, list) => list.reduce((p, it) => !!(it & value) ? [...p, it] : p, []);
+  const value2Array = (value, list) =>
+    list.reduce((p, it) => (!!(it & value) ? [...p, it] : p), []);
   const sumList = list => list.reduce((p, i) => p + i, 0);
 
   export default {
     name: "MchInfoAddMain",
-    components: { LinkCheck, Collapse },
+    components: { LinkCheck, Collapse, FLinkPicker },
     data() {
       return {
         checkShow: false,
@@ -110,22 +102,32 @@
           wechatPayType: 2,
           aliPayType: 2,
           unionPayType: 16,
-          samePrincipal: "",
-          chainStoreId: ""
+          samePrincipal: 64,
+          chainStoreId: "",
+          provinceId: "",
+          cityId: "",
+          countyId: ""
         },
 
         payTypeError: "",
 
         rules: {
           businessLicenseType: [
-            { required: true, message: "请选择营业执照类型", trigger: "change" }
+            { required: true, message: "请选择营业执照类型", trigger: "blur" }
           ],
           payeeType: [
-            { required: true, message: "请选择账户类型", trigger: "change" }
+            { required: true, message: "请选择账户类型", trigger: "blur" }
           ],
           chainStoreId: [
-            { required: true, message: "请选择门店", trigger: "change" }
+            { required: true, message: "请选择门店", trigger: "blur" }
           ]
+        },
+
+        regionPicker: {
+          name: "地址",
+          selectLevel: 3,
+          filedName: "mainInfo_region",
+          request: API.getLeaveOptions("/api/basic/getArea")
         },
 
         // wechatPayType: [],
@@ -150,22 +152,38 @@
         pickedStore: null
       };
     },
-    created() {
+    async created() {
+      if (this.$route.query.checkPaymentId) {
+        this.$store.commit(
+          "MchInfo/SET_CHECK_PAYMENT_ID",
+          this.$route.query.checkPaymentId
+        );
+      }
       // 有checkPaymentId，说明是回退回来的，禁止修改，并恢复缓存数据
-      // todo 支付方式不能正常恢复勾选状态
       if (this.checkPaymentId) {
+        if (!this.mainInfo) {
+          await this.$store.dispatch(
+            "MchInfo/getDefaultFormValue",
+            this.checkPaymentId
+          );
+          // 没有mainInfo,说明是编辑进入,然后从基础信息回退回来,需要将数据从mchInfo同步过来
+          this.$store.commit("MchInfo/SYNC_MAIN_INFO", { ...this.formData });
+        }
         this.formData = this.$utils.copy(this.mainInfo);
       }
-      if (!this.publicInfo || !this.businessInfo) {
-        this.$router.push({ name: "Home" });
+      else {
+        if (!this.publicInfo || !this.businessInfo) {
+          this.$router.push({ name: "Home" });
+        }
       }
     },
     methods: {
       async pickStore() {
+        if (this.checkPaymentId) return;
         const result = await this.$services.pickItemAsync({
           value: this.formData.chainStoreId,
           key: "cached__chain_store__list",
-          // shouldCache: false,
+          shouldCache: false,
           columns: [
             // 表格展示项
             { label: "名称", prop: "chainStoreName" },
@@ -177,7 +195,11 @@
           },
           request: async query => {
             console.log();
-            return await API.getStoreList({ ...query, chainStoreName: query.keywords, businessId: this.$store.state.User.businessInfo.businessId });
+            return await API.getStoreList({
+              ...query,
+              chainStoreName: query.keywords,
+              businessId: this.$store.state.User.businessInfo.businessId
+            });
           }
         });
 
@@ -212,8 +234,7 @@
               valid
                 ? {
                   ...this.formData,
-                  businessId: this.businessInfo.businessId,
-                  ...this.publicInfo
+                  businessId: this.businessInfo.businessId
                 }
                 : null
             );
@@ -266,11 +287,11 @@
 
       //  1:扫码，2:立牌和线上，4:刷脸，8:押金。
       /* 禁用
-      无营业执照 - 微信押金
-    无营业执照 - 微信刷脸
-    非法人收款 - 微信押金
-    非法人收款 - 微信刷脸
-    * */
+         无营业执照 - 微信押金
+         无营业执照 - 微信刷脸
+         非法人收款 - 微信押金
+         非法人收款 - 微信刷脸
+         * */
       wechatPayTypeOptions() {
         const { businessLicenseType: type, payeeType: pay } = this.formData;
         return [
@@ -280,7 +301,7 @@
           { label: "押金", value: 8, disabled: +type === 1 || +pay === 32 }
         ];
       },
-      // <!--8:对私，16:对公，32:非法人。无营业执照时只能选8；营业执照为个体时只能选8，32-->
+      // --8:对私，16:对公，32:非法人。无营业执照时只能选8；营业执照为个体时只能选8，32
       payeeOptions() {
         const type = +this.formData.businessLicenseType;
         return [
@@ -289,9 +310,23 @@
           { label: "非法人", value: 32, disabled: type !== 2 && type !== 4 } // 有营业执照即可用
         ];
       },
+      region: {
+        set(v) {
+          const [provinceId, cityId, countyId] = v.split(",");
+          this.formData = { ...this.formData, provinceId, cityId, countyId };
+        },
+        get() {
+          const { provinceId, cityId, countyId } = this.formData;
+          if (!provinceId || !cityId || !countyId) return "";
+          return provinceId + "," + cityId + "," + countyId;
+        }
+      },
       wechatPayType: {
         get() {
-          return value2Array(+this.formData.wechatPayType, this.wechatPayTypeOptions.map(it => it.value));
+          return value2Array(
+            +this.formData.wechatPayType,
+            this.wechatPayTypeOptions.map(it => it.value)
+          );
         },
         set(v) {
           this.formData.wechatPayType = sumList(v);
@@ -299,7 +334,10 @@
       },
       aliPayType: {
         get() {
-          return value2Array(+this.formData.aliPayType, this.aliPayTypeOptions.map(it => it.value));
+          return value2Array(
+            +this.formData.aliPayType,
+            this.aliPayTypeOptions.map(it => it.value)
+          );
         },
         set(v) {
           this.formData.aliPayType = sumList(v);
@@ -307,7 +345,10 @@
       },
       unionPayType: {
         get() {
-          return value2Array(+this.formData.unionPayType, this.unionPayTypeOptions.map(it => it.value));
+          return value2Array(
+            +this.formData.unionPayType,
+            this.unionPayTypeOptions.map(it => it.value)
+          );
         },
         set(v) {
           this.formData.unionPayType = sumList(v);

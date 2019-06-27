@@ -25,8 +25,8 @@ export default {
   methods: {
     // 校验本组件,参数为true表示可以为空
     validate(nullable) {
-      const { value, data: { filedName, validator } } = this;
-      if (!nullable && !value) return "请填写" + filedName;
+      const { value, data: { name, validator } } = this;
+      if (!nullable && !value) return "请填写" + name;
       return validator(value);
     }
   },

@@ -10,11 +10,15 @@
               :key="item.value"
               @click="setLevelOptions(item)">{{item.label}}</span>
       </p>
+      <div class="search">
+        <el-input v-model="keywords" placeholder="请输入关键字搜索"></el-input>
+      </div>
       <div class="picker">
         <div class="loading" v-if="loading" style="padding: 0 10px;line-height: 40px;">加载中...</div>
         <ul class="list" v-else>
           <li class="item"
               :class="isPicked(item)?'picked':''"
+              v-show="matchList.includes(item.label)"
               v-for="item in currentOptions"
               :key="item.value"
               @click="pickItem(item)"
@@ -37,6 +41,7 @@
         loading: false,
         onInit: false,
         show: false,
+        keywords: "",
         pickedItems: [],
         currentKey: "",
         currentLevel: 0,
@@ -147,6 +152,7 @@
       },
 
       pickItem(item) {
+        this.keywords = "";
         if (!this.pickedItems[item.level - 1]) {
           this.pickedItems.push(item);
         }
@@ -180,6 +186,10 @@
       },
       position() {
         return this.isMobile ? "bottom" : "center";
+      },
+      matchList() {
+        const labels = this.currentOptions.map(it => it.label);
+        return this.keywords ? labels.filter(it => it.includes(this.keywords)) : labels;
       }
     },
     beforeDestroy() {
@@ -214,10 +224,17 @@
       }
     }
 
+    .search {
+      padding: 10px;
+      background-color: #f7f7f7;
+    }
+
     .picked-item {
       height: 44px;
       line-height: 44px;
       padding: 0 10px;
+      white-space: nowrap;
+      overflow: auto;
       .border;
 
       .menu {

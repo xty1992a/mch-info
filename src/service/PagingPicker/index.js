@@ -25,6 +25,7 @@ const dftOpt = {
   shouldCache: true,
   placeholder: "请输入商家账号/门店名称",
   columns: [],
+  total: 0,
   props: {
     key: 'key',
     title: 'title'

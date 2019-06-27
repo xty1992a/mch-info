@@ -12,43 +12,16 @@
 </template>
 
 <script>
-  import ImageUploader from "@redbuck/image-uploader";
-  import "@redbuck/image-uploader/lib/imageUploader.css";
+  import ImageUpload from "./ImageUpload";
   import Common from "./Common";
 
   export default {
     name: "FImage",
     components: {},
-    mixins: [Common],
+    mixins: [Common, ImageUpload],
     props: {},
     data() {
-      return {
-        imageData: ""
-      };
-    },
-    mounted() {
-      this.initUploader();
-    },
-    methods: {
-      initUploader() {
-        this.uploader = new ImageUploader({
-          width: 440,
-          height: 275,
-          toast: this.$message,
-          limit: 50000000,
-          el: this.$refs.btn
-        });
-
-        const el = this.$el.getElementsByTagName("input")[0];
-        if (el) {
-          console.log(el);
-          el.accept = "image/*";
-        }
-
-        this.uploader.on("crop", e => {
-          this.imageData = e;
-        });
-      }
+      return {};
     },
     computed: {}
   };

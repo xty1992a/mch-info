@@ -16,6 +16,7 @@ export default {
     currentPage: "",
     routeNames,
     checkPaymentId: 0,
+    mchInfo: null,
     mainInfo: null, // 缓存的支付能力表单
     formFields: {
       firstFields: [],
@@ -43,27 +44,33 @@ export default {
     // 当前路由
     SET_CURRENT_PAGE: (state, name) => (state.currentPage = name),
     SET_MAIN_INFO: (state, info) => (state.mainInfo = info),
+    SYNC_MAIN_INFO: (state, model) => {
+      const mchInfo = state.mchInfo || {};
+      Object.keys(model).forEach(key => {
+        model[key] = mchInfo[key] || "";
+      });
+      state.mainInfo = model;
+    },
     SET_FIRST_FORM: (state, info) => (state.firstForm = info),
     SET_SECOND_FORM: (state, info) => (state.secondForm = info),
     SET_THIRD_FORM: (state, info) => (state.thirdForm = info),
-    SET_CHECK_PAYMENT_ID: (state, id) => (state.checkPaymentId = id),
-    SET_FORM_FIELDS: (state, fields) => (state.formFields = fields)
+    SET_CHECK_PAYMENT_ID: (state, id) => (state.checkPaymentId = +id),
+    SET_FORM_FIELDS: (state, fields) => (state.formFields = fields),
+    SET_MCH_INFO: (state, data) => (state.mchInfo = data),
   },
   actions: {
     // 提交能力表单,获取checkPaymentId
     async submitAbility({ commit }, data) {
-      console.log(data);
       const res = await API.submitAbility(data);
       if (res.success) {
         commit("SET_MAIN_INFO", data);
-        console.log(res);
-        commit("SET_CHECK_PAYMENT_ID", 1);
+        commit("SET_CHECK_PAYMENT_ID", res.data.checkPaymentId);
       }
       return res.success ? res.data.checkPaymentId : 0;
-      // return 1;
     },
     // 根据ID获取表单项,并初始化各页面的formData
-    async getFields({ commit }, id) {
+    async getFields({ commit, state }, id) {
+      if (state.formFields.firstFields.length) return true;
       const result = await API.getFormFields(id);
       console.log("get fields ----> ", result.data);
       if (result.success) {
@@ -81,10 +88,11 @@ export default {
       return result.success;
     },
 
-    async cacheFormData({ commit }, { key, data }) {
-      console.log("请求中....");
-      await sleep(400);
-      console.log("请求结束");
+    async cacheFormData({ commit, state }, { key, data }) {
+      console.log("cache ", key, data);
+      const result = await API.cacheMchInfo({ ...data, checkPaymentId: state.checkPaymentId });
+      console.log(result);
+      if (!result.success) return;
       switch (key) {
         case "firstForm":
           commit("SET_FIRST_FORM", data);
@@ -98,14 +106,28 @@ export default {
       }
     },
 
+    async getMchInfo({ commit, state }, id) {
+      console.log("get mch info ", id);
+      if (state.mchInfo) return;
+      const result = await API.getMchInfo(id);
+      if (result.success) {
+        Object.keys(result.data).forEach(key => {
+          result.data[key] = (result.data[key] + "").replace(/null/g, "");
+        });
+        commit("SET_MCH_INFO", result.data);
+      }
+    },
+
     // 初始化表单,如果不存在,则全部初始化为空字符
-    async getDefaultFormValue({ commit, state }, id) {
+    async getDefaultFormValue({ commit, state, dispatch }, id) {
       console.log("should request form data by ", id);
+      await dispatch("getMchInfo", id);
+      const mchInfo = state.mchInfo || {};
       const fields = state.formFields;
       Object.keys(fields).forEach(key => {
         const formData = fields[key].reduce((p, item) => {
-          console.log(item);
-          p[item.filedName] = "";
+          // console.log(item.name, { ...item }, mchInfo[item.filedName]);
+          p[item.filedName] = mchInfo[item.filedName] || "";
           return p;
         }, {});
 

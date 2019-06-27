@@ -27,11 +27,17 @@ export const getStoreList = data => request({ url: "/api/basic/getChainStore", d
 export const getMchList = data => request({ url: "/api/basic/getBusiness", data }, false);
 // 获取商家的公众号信息
 export const getPublicInfo = data => request({ url: "/api/basic/getWechatInfo", data }, false);
+// 获取进件信息
+export const getMchInfo = checkPaymentId => request({ url: "/api/mch/getMchInfo", data: { checkPaymentId } }, false);
 // 暂存进件信息
-export const cacheMchInfo = data => request({ url: "/api/mch/storage", data:{...data, status: 3} }, false);
-export const submitMchInfo = data => request({ url: "/api/mch/storage", data:{...data, status: 0} }, false);
+export const cacheMchInfo = data => request({ url: "/api/mch/storage", data: { ...data, status: 3 } }, false);
+// 提交进件信息
+export const submitMchInfo = data => request({ url: "/api/mch/storage", data: { ...data, status: 0 } }, false);
+// 获取结算卡信息
+export const getClearingInfo = data => request({ url: "/api/mch/getClearingInfo", data: { ...data, status: 0 } }, false);
+
 // 获取阿里云上传凭证
 export const getOssSignature = data => request({ url: "/api/third/getOssSignature", data }, false);
 
 // 接受一个URL,返回一个级联api接口
-export const getLeaveOptions = url => data => request({url, data}, false)
+export const getLeaveOptions = url => data => request({ url, data }, false);

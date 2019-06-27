@@ -10,9 +10,12 @@ function getValidator(field) {
     case 0:
       return () => "";
     case 1:
-      const validate =
-        field.checkExpression instanceof RegExp ? field.checkExpression : /.*/;
-      return v => (validate.test(v) ? "" : message);
+      try {
+        const validate = new RegExp(field.checkExpression);
+        return v => (validate.test(v) ? "" : message);
+      } catch (e) {
+        return () => "";
+      }
     case 2:
       const valid = checkMap[field.checkExpression] || checkMap["default"];
       return v => valid(v) || "";
@@ -20,7 +23,7 @@ function getValidator(field) {
 }
 
 const typeMap = [
-  // 1:单行文本，2:多行文本，3:单选，4:多选，5:开关，6:级连选择，7:时间选择，8:时间区间选择，9:图片上传，10:文件上传，11:标签
+  // 1:单行文本，2:多行文本，3:单选，4:多选，5:开关，6:级连选择，7:时间选择，8:时间区间选择，9:图片上传，10:文件上传，11:标签, 12,下拉
   "span",
   "text",
   "textarea",
@@ -32,8 +35,8 @@ const typeMap = [
   "date-range",
   "image",
   "file",
-  "text",
-  "display"
+  "display",
+  "picker"
 ];
 export const formatFields = fields =>
   fields.map(item => {
@@ -43,7 +46,6 @@ export const formatFields = fields =>
       options: enumJson.map(it => ({ label: it.text, value: it.value })),
       validator: getValidator(item),
       filedType: typeMap[item.filedType],
-      // TODO 级联选择器的深度
-      selectLevel: 3
+      selectLevel: /8080/.test(location.href) ? 3 : item.selectLevel
     };
   });

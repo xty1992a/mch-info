@@ -64,15 +64,27 @@
         // 否则,依次请求值的[平级]数据集,并从中找到值的item
         const levels = `,${this.value}`.split(",").map((value, index) => ({ level: index, value }));
         const items = [];
+        const options = {};
+        console.log(levels);
         while (levels.length - 1) {
-          const result = await this.data.request(levels.shift());
+          const item = levels.shift();
+          const result = await this.data.request(item);
           if (result.success) {
-            items.push(result.data.find(it => it.value === levels[0].value));
+            options[item.value || "topLevel"] = result.data.map(it => ({
+              ...it,
+              value: it[this.props.value],
+              label: it[this.props.label],
+              level: levels[0].level
+            }));
+            const remoteItem = result.data.find(it => it.value === levels[0].value);
+            remoteItem && items.push(remoteItem);
           }
         }
         if (this.value && items.length) {
           this.pickedItems = items.map(it => ({ ...it, label: it[this.props.label] }));
           this.$storage.setItem(this.data.filedName + "_f_link_picked_items", this.pickedItems);
+          // 顺便把弹窗的数据也请求了
+          this.$storage.setItem(this.data.filedName + "_link_pick_optionMap", options);
         }
       },
 
@@ -104,6 +116,15 @@
       },
       displayVal() {
         return this.pickedItems.map(it => it.label).join("/");
+      }
+    },
+    watch: {
+      value(now, old) {
+        if (this.hadInitItems) return;
+        if (!old) {
+          this.hadInitItems = true;
+          this.initPickedItems();
+        }
       }
     }
   };

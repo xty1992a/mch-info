@@ -43,31 +43,36 @@
     mixins: [Common],
     data() {
       return {
-        formData: null
+        formData: null,
+        branchBankList: []
       };
     },
     async created() {
-      this.initPage();
-    },
-    methods: {
-      async initPage() {
-        const id = this.$route.query["checkPaymentId"];
-        if (!id) {
-          this.$message("缺少必要参数!");
-          await this.$utils.sleep(1500);
-          this.$router.push({ name: "Home" });
-          return;
-        }
-        /*      "secondFields", "thirdFields",*/
-        if (!this.secondForm || !this.secondFields.length) {
-          // 获取表单项
-          await this.$store.dispatch("MchInfo/getFields", id);
-          // 获取可能暂存的表单项的值
-          await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
-        }
+      const success = await this.initPage();
+      if (success) {
         this.formData = this.$utils.copy(this.secondForm);
         this.initErrorMessage();
-      },
+      }
+    },
+    methods: {
+      // async initPage() {
+      //   const id = this.$route.query["checkPaymentId"];
+      //   if (!id) {
+      //     this.$message("缺少必要参数!");
+      //     await this.$utils.sleep(1500);
+      //     this.$router.push({ name: "Home" });
+      //     return;
+      //   }
+      //   /*      "secondFields", "thirdFields",*/
+      //   if (!this.secondForm || !this.secondFields.length) {
+      //     // 获取表单项
+      //     await this.$store.dispatch("MchInfo/getFields", id);
+      //     // 获取可能暂存的表单项的值
+      //     await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
+      //   }
+      //   this.formData = this.$utils.copy(this.secondForm);
+      //   this.initErrorMessage();
+      // },
 
       // 将数据提交到后端暂存,不必校验
       async cacheData() {
@@ -83,14 +88,34 @@
         if (!data) return;
         this.$store.commit("MchInfo/SET_SECOND_FORM", data);
         this.goToPage("MchInfoAddRest");
+      },
+
+      async fetchBranchBank() {
+        if (!this.formData.payeeArea) return;
+        if (!this.formData.payeeBankCode) return;
+        const [p, cityId] = this.formData.payeeArea.split(",");
+        const bankCode = this.formData.payeeBankCode;
+        const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
+        if (result.success) {
+          this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
+        }
       }
     },
     computed: {
       formItems() {
         return this.secondFields.map(it => {
-          if (it.filedType !== "link-picker") return { ...it };
-          return { ...it, request: API.getLeaveOptions(/*it.sourceUrl*/"/api/basic/getArea") };
+          const options = it.filedName === "payeeBankBranchCode" ? this.branchBankList : it.options;
+          if (it.filedType !== "link-picker") return { ...it, options };
+          return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
+      }
+    },
+    watch: {
+      async "formData.payeeArea"() {
+        this.fetchBranchBank();
+      },
+      async "formData.payeeBankCode"() {
+        this.fetchBranchBank();
       }
     }
   };
