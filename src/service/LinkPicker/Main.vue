@@ -1,31 +1,37 @@
 <template>
   <van-popup class="link-picker" v-model="show" :position="position" @closed="close">
     <div class="link-picker-body" :class="isMobile?'mobile':'desktop'" v-loading="onInit">
-      <h3>{{title}}</h3>
-      <p class="picked-item">
-        <span v-if="!pickedItems.length">请选择</span>
-        <span class="menu"
-              :class="index===currentLevel?'picked':''"
-              v-for="(item,index) in pickedItems"
-              :key="item.value"
-              @click="setLevelOptions(item)">{{item.label}}</span>
-      </p>
-      <div class="search">
-        <el-input v-model="keywords" placeholder="请输入关键字搜索"></el-input>
-      </div>
-      <div class="picker">
-        <div class="loading" v-if="loading" style="padding: 0 10px;line-height: 40px;">加载中...</div>
-        <ul class="list" v-else>
-          <li class="item"
-              :class="isPicked(item)?'picked':''"
-              v-show="matchList.includes(item.label)"
-              v-for="item in currentOptions"
-              :key="item.value"
-              @click="pickItem(item)"
-          >{{item.label}}
-          </li>
-        </ul>
-      </div>
+      <header>{{title}} <i class="el-icon-error" @click="show=false"></i></header>
+      <section>
+        <div class="search">
+          <el-input size="small" v-model="keywords" placeholder="请输入关键字搜索"></el-input>
+        </div>
+        <p class="picked-item">
+          <span v-if="!pickedItems.length">请选择</span>
+          <span class="menu"
+                :class="index===currentLevel?'picked':''"
+                v-for="(item,index) in pickedItems"
+                :key="item.value"
+                @click="setLevelOptions(item)">
+            <b>{{item.label}} </b>
+            <i class="el-icon-caret-bottom"></i></span>
+        </p>
+        <div class="picker">
+          <div class="loading" v-if="loading" style="padding: 0 10px;line-height: 40px;">加载中...</div>
+          <ul class="list" v-else>
+            <li class="item"
+                :class="isPicked(item)?'picked':''"
+                v-show="matchList.includes(item.label)"
+                v-for="item in currentOptions"
+                :key="item.value"
+                @click="pickItem(item)"
+            >
+              <span>{{item.label}}</span>
+              <i style="float: right;" class="el-icon-check"></i>
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
   </van-popup>
 </template>
@@ -209,24 +215,39 @@
       overflow: hidden;
       border-radius: 8px;
 
-      h3 {
-        padding: 15px;
-        text-align: center;
-        background-color: #f7f7f7;
-      }
-
       &.mobile {
       }
 
       &.desktop {
-        width: 500px;
-        height: 400px;
+        width: 560px;
+        height: 480px;
+
+        section {
+          padding: 0 20px;
+        }
       }
+
+      header {
+        padding: 15px;
+        text-align: center;
+        background-color: #f7f7f7;
+
+        i {
+          position: absolute;
+          right: 10px;
+          top: 15px;
+          font-size: 18px;
+          cursor: pointer;
+        }
+      }
+
+      section {
+      }
+
     }
 
     .search {
       padding: 10px;
-      background-color: #f7f7f7;
     }
 
     .picked-item {
@@ -235,13 +256,23 @@
       padding: 0 10px;
       white-space: nowrap;
       overflow: auto;
-      .border;
+      overflow-y: hidden;
+      overflow-x: auto;
+      border-bottom: 1px solid #f5f7fa;
 
       .menu {
         cursor: pointer;
 
+        i {
+          transition: .3s;
+        }
+
         &.picked {
           color: @activeC;
+
+          i {
+            transform: rotate(180deg);
+          }
         }
 
         &:not(:last-child) {
@@ -263,8 +294,17 @@
           padding: 0 10px;
           .border;
 
+          i {
+            opacity: 0;
+            line-height: 40px;
+          }
+
           &.picked {
             color: @activeC;
+
+            i {
+              opacity: 1;
+            }
           }
         }
       }

@@ -9,12 +9,14 @@ import storage from "./utils/setStorage";
 import "./router/permission.js";
 import services from "./service/index";
 import * as utils from "./utils";
+import Directives from "./utils/directives";
 
 Vue.config.productionTip = false;
 
 Vue.prototype.$storage = storage;
 Vue.prototype.$utils = utils;
 Vue.prototype.$services = services;
+Vue.use(Directives);
 
 // 替换图片cdn地址
 Vue.filter("img_cdn", v => /^https?/.test(v) ? v : "https://files.1card1.cn/" + v.replace(/^\//, ""));

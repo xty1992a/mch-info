@@ -15,7 +15,7 @@
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <span class="set-btn" @click="examineItem(scope['row'])">审核</span>
-            <span class="set-btn" @click="reAddMch(scope['row'])"
+            <span class="set-btn" @click="recheckItem(scope['row'])"
             >重新进件</span
             >
             <el-dropdown

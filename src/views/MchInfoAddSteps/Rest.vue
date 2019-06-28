@@ -33,6 +33,7 @@
 </template>
 
 <script>
+  import { mapState, mapGetters } from "vuex";
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
@@ -49,50 +50,33 @@
     async created() {
       const success = await this.initPage();
       if (success) {
-        this.formData = this.$utils.copy(this.thirdForm);
+        this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
       }
     },
     methods: {
-      // async initPage() {
-      //   const id = this.$route.query["checkPaymentId"];
-      //   if (!id) {
-      //     this.$message("缺少必要参数!");
-      //     await this.$utils.sleep(1500);
-      //     this.$router.push({ name: "Home" });
-      //     return;
-      //   }
-      //   /*      "secondFields", "thirdFields",*/
-      //   if (!this.thirdForm || !this.thirdFields.length) {
-      //     // 获取表单项
-      //     await this.$store.dispatch("MchInfo/getFields", id);
-      //     // 获取可能暂存的表单项的值
-      //     await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
-      //   }
-      //   this.formData = this.$utils.copy(this.thirdForm);
-      //   this.initErrorMessage();
-      // },
-
-      // 将数据提交到后端暂存,不必校验
-      async cacheData() {
-        const data = this.checkData(true);
-        if (!data) return;
-        await this.$store.dispatch("MchInfo/cacheFormData", {
-          key: "thirdForm",
-          data
-        });
-      },
-      saveAndConfirm() {
+      async saveAndConfirm() {
         const data = this.checkData(false);
         if (!data) return;
-        console.log(data);
+        this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
+        console.log({ ...this.mchInfo });
+        const result = await API.submitMchInfo({ ...this.mchInfo });
+        if (result.success) {
+          this.$message("保存成功!");
+          await this.$utils.sleep(1500);
+          this.$router.push({ name: "Home" });
+        }
       }
     },
     computed: {
+      ...mapGetters("MchInfo", [
+        "thirdFieldKeys",
+        "thirdFields"
+      ]),
       formItems() {
         return this.thirdFields.map(it => {
           if (it.filedType !== "link-picker") return { ...it };
-          return { ...it, request: API.getRegion };
+          return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
       }
     }

@@ -20,12 +20,9 @@ export default {
       // 获取表单项
       await this.$store.dispatch("MchInfo/getFields", id);
       // 获取可能暂存的表单项的值
-      await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
+      await this.$store.dispatch("MchInfo/getMchInfo", id);
       if (this.businessId && !this.publicInfo) {
-        this.$store.dispatch(
-          "User/fetchMchInfo",
-          this.businessId
-        );
+        this.$store.dispatch("User/fetchMchInfo", this.businessId);
       }
       return true;
     },
@@ -36,8 +33,10 @@ export default {
         return p;
       }, {});
     },
+
+    // 校验数据
     checkData(nullable) {
-      console.log("checkData");
+      console.log("校验数据");
       const keys = Object.keys(this.formData);
 
       if (keys.every(k => !this.formData[k])) {
@@ -49,9 +48,7 @@ export default {
       }
 
       const messages = keys.reduce((prev, key) => {
-
         const child = this.$refs[key][0];
-        console.log(this.$refs, key, child);
         const msg = child.validate(nullable);
         this.errorMessages[key] = msg;
         return msg ? [...prev, msg] : prev;
@@ -59,6 +56,14 @@ export default {
       if (messages.length) return null;
       return { ...this.formData };
     },
+
+    // 将页面数据同步到vuex
+    async cacheData() {
+      const data = this.checkData(true);
+      if (!data) return;
+      await this.$store.dispatch("MchInfo/cacheMchInfo", data);
+    },
+
     goToPage(name) {
       const checkPaymentId = this.$route.query["checkPaymentId"] || 0;
       if (checkPaymentId !== 0) {
@@ -74,9 +79,8 @@ export default {
   computed: {
     ...mapState("App", ["isMobile"]),
     ...mapState("User", ["publicInfo"]),
-    ...mapState("MchInfo", ["firstForm", "secondForm", "thirdForm", "mchInfo"]),
+    ...mapState("MchInfo", ["mchInfo"]),
     ...mapGetters("App", ["screenType"]),
-    ...mapGetters("MchInfo", ["firstFields", "secondFields", "thirdFields"]),
     businessId() {
       if (!this.mchInfo) return "";
       return this.mchInfo.businessId;

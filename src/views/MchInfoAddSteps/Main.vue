@@ -162,15 +162,16 @@
       // 有checkPaymentId，说明是回退回来的，禁止修改，并恢复缓存数据
       if (this.checkPaymentId) {
         if (!this.mainInfo) {
-          await this.$store.dispatch(
-            "MchInfo/getDefaultFormValue",
-            this.checkPaymentId
-          );
+          await this.$store.dispatch("MchInfo/getMchInfo", this.checkPaymentId);
           // 没有mainInfo,说明是编辑进入,然后从基础信息回退回来,需要将数据从mchInfo同步过来
           this.$store.commit("MchInfo/SYNC_MAIN_INFO", { ...this.formData });
         }
+        if (this.businessId && !this.publicInfo) {
+          this.$store.dispatch("User/fetchMchInfo", this.businessId);
+        }
         this.formData = this.$utils.copy(this.mainInfo);
       }
+      // 没有,说明是新建,检查数据
       else {
         if (!this.publicInfo || !this.businessInfo) {
           this.$router.push({ name: "Home" });
@@ -277,7 +278,11 @@
     computed: {
       ...mapGetters("App", ["screenType"]),
       ...mapState("User", ["publicInfo", "businessInfo"]),
-      ...mapState("MchInfo", ["checkPaymentId", "mainInfo"]),
+      ...mapState("MchInfo", ["checkPaymentId", "mainInfo", "mchInfo"]),
+      businessId() {
+        if (!this.mchInfo) return "";
+        return this.mchInfo.businessId;
+      },
       labelPosition() {
         return this.isMobile ? "top" : "right";
       },
@@ -286,12 +291,6 @@
       },
 
       //  1:扫码，2:立牌和线上，4:刷脸，8:押金。
-      /* 禁用
-         无营业执照 - 微信押金
-         无营业执照 - 微信刷脸
-         非法人收款 - 微信押金
-         非法人收款 - 微信刷脸
-         * */
       wechatPayTypeOptions() {
         const { businessLicenseType: type, payeeType: pay } = this.formData;
         return [
@@ -362,15 +361,6 @@
           this.formData.payeeType = 0;
         }
       }
-      // wechatPayType(now) {
-      //   this.formData.wechatPayType = now.reduce((p, i) => p + i, 0);
-      // },
-      // aliPayType(now) {
-      //   this.formData.aliPayType = now.reduce((p, i) => p + i, 0);
-      // },
-      // unionPayType(now) {
-      //   this.formData.unionPayType = now.reduce((p, i) => p + i, 0);
-      // }
     }
   };
 </script>

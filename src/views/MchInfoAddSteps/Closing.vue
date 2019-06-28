@@ -33,6 +33,7 @@
 </template>
 
 <script>
+  import { mapState, mapGetters } from "vuex";
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
@@ -50,43 +51,16 @@
     async created() {
       const success = await this.initPage();
       if (success) {
-        this.formData = this.$utils.copy(this.secondForm);
+        this.formData = this.secondFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
       }
     },
     methods: {
-      // async initPage() {
-      //   const id = this.$route.query["checkPaymentId"];
-      //   if (!id) {
-      //     this.$message("缺少必要参数!");
-      //     await this.$utils.sleep(1500);
-      //     this.$router.push({ name: "Home" });
-      //     return;
-      //   }
-      //   /*      "secondFields", "thirdFields",*/
-      //   if (!this.secondForm || !this.secondFields.length) {
-      //     // 获取表单项
-      //     await this.$store.dispatch("MchInfo/getFields", id);
-      //     // 获取可能暂存的表单项的值
-      //     await this.$store.dispatch("MchInfo/getDefaultFormValue", id);
-      //   }
-      //   this.formData = this.$utils.copy(this.secondForm);
-      //   this.initErrorMessage();
-      // },
 
-      // 将数据提交到后端暂存,不必校验
-      async cacheData() {
-        const data = this.checkData(true);
-        if (!data) return;
-        await this.$store.dispatch("MchInfo/cacheFormData", {
-          key: "secondForm",
-          data
-        });
-      },
       saveAndNext() {
         const data = this.checkData(false);
         if (!data) return;
-        this.$store.commit("MchInfo/SET_SECOND_FORM", data);
+        this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
         this.goToPage("MchInfoAddRest");
       },
 
@@ -100,8 +74,13 @@
           this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
         }
       }
+
     },
     computed: {
+      ...mapGetters("MchInfo", [
+        "secondFieldKeys",
+        "secondFields",
+      ]),
       formItems() {
         return this.secondFields.map(it => {
           const options = it.filedName === "payeeBankBranchCode" ? this.branchBankList : it.options;

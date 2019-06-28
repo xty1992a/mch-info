@@ -9,7 +9,8 @@ function createVm(opt) {
   let Com;
   if (isMobile) {
     Com = Vue.extend(Mobile);
-  } else {
+  }
+  else {
     Com = Vue.extend(Main);
   }
 
@@ -21,14 +22,15 @@ function createVm(opt) {
 const dftOpt = {
   value: "",
   title: "请选择",
-  key: 'pagingPicker__data',
+  key: "pagingPicker__data",
   shouldCache: true,
   placeholder: "请输入商家账号/门店名称",
   columns: [],
   total: 0,
+  searchable: true,
   props: {
-    key: 'key',
-    title: 'title'
+    key: "key",
+    title: "title"
   },
   request: async query => {
     await sleep(100);

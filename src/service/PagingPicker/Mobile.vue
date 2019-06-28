@@ -15,7 +15,7 @@
               @click-right="onConfirm"
       >
       </van-navbar>
-      <header>
+      <header v-if="searchable">
         <el-input
                 prefix-icon="el-icon-date"
                 slot="title"

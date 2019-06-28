@@ -26,7 +26,7 @@
         </el-dropdown-menu>
       </el-dropdown>
       <el-button size="small" @click="commandHandler('editCart')">修改结算卡</el-button>
-      <el-button size="small">重新进件</el-button>
+      <el-button size="small" @click="commandHandler('recheckItem')">重新进件</el-button>
       <el-button size="small" @click="commandHandler('examineItem')">审核</el-button>
     </div>
   </div>

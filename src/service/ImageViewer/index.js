@@ -11,8 +11,9 @@ function createVm(opt) {
 }
 
 const dftOpt = {
-  value: "",
-  options: []
+  isMobile: false,
+  current: 0,
+  images: []
 };
 
 export default (opt = {}) => new Promise(resolve => {

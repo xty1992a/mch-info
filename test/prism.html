@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <script type="text/javascript" src="https://unpkg.com/prismjs@1.16.0/prism.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/prismjs@1.16.0/themes/prism.css">
+  <title>Title</title>
+</head>
+<body>
+<pre>
+  <code class="language-javascript" id="code">
+  </code>
+</pre>
+<pre>
+  <code class="language-javascript">
+import Common from "./Common";
+export default {
+  name: "FSwitch",
+  mixins: [Common],
+  computed: {
+    activeValue() {
+      if (!this.data.enumJson.length) return "1";
+      const item = this.data.enumJson[0];
+      if (!item) return "1";
+      return item.value;
+    },
+    inActiveValue() {
+      if (!this.data.enumJson.length) return "0";
+      const item = this.data.enumJson[1];
+      if (!item) return "0";
+      return item.value;
+    }
+  }
+};
+  </code>
+</pre>
+
+<script type="text/javascript">
+  document.getElementById("code").innerText = `
+    import Common from "./Common";
+export default {
+  name: "FSwitch",
+  mixins: [Common],
+  computed: {
+    activeValue() {
+      if (!this.data.enumJson.length) return "1";
+      const item = this.data.enumJson[0];
+      if (!item) return "1";
+      return item.value;
+    },
+    inActiveValue() {
+      if (!this.data.enumJson.length) return "0";
+      const item = this.data.enumJson[1];
+      if (!item) return "0";
+      return item.value;
+    }
+  }
+};
+    `;
+</script>
+</body>
+</html>

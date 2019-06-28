@@ -1,3 +1,7 @@
+/*
+*
+* */
+
 import { routes } from "../../router/index";
 import * as API from "../../api";
 import { sleep } from "@/utils";
@@ -13,8 +17,8 @@ const routeNames = stepsRoutes.map(it => it.name);
 export default {
   namespaced: true,
   state: {
-    currentPage: "",
     routeNames,
+    currentPage: "",
     checkPaymentId: 0,
     mchInfo: null,
     mainInfo: null, // 缓存的支付能力表单
@@ -32,6 +36,7 @@ export default {
       state.currentPage = "";
       state.checkPaymentId = 0;
       state.mainInfo = null;
+      state.mchInfo = null;
       state.firstForm = null;
       state.secondForm = null;
       state.thirdForm = null;
@@ -57,9 +62,16 @@ export default {
     SET_CHECK_PAYMENT_ID: (state, id) => (state.checkPaymentId = +id),
     SET_FORM_FIELDS: (state, fields) => (state.formFields = fields),
     SET_MCH_INFO: (state, data) => (state.mchInfo = data),
+    SYNC_MCH_INFO: (state, model) => { // 缓存数据
+      const mchInfo = { ...state.mchInfo };
+      Object.keys(model).forEach(key => {
+        mchInfo[key] = model[key] || mchInfo[key];
+      });
+      state.mchInfo = mchInfo;
+    }
   },
   actions: {
-    // 提交能力表单,获取checkPaymentId
+    // 提交支付能力信息,获取checkPaymentId
     async submitAbility({ commit }, data) {
       const res = await API.submitAbility(data);
       if (res.success) {
@@ -68,44 +80,30 @@ export default {
       }
       return res.success ? res.data.checkPaymentId : 0;
     },
-    // 根据ID获取表单项,并初始化各页面的formData
+    // 根据ID获取表单项,并将其整理为前端可用的数据格式
     async getFields({ commit, state }, id) {
       if (state.formFields.firstFields.length) return true;
       const result = await API.getFormFields(id);
-      console.log("get fields ----> ", result.data);
       if (result.success) {
-        result.data.secondFields = result.data.secondFields || result.data.firstFields;
-        result.data.thirdFields = result.data.thirdFields || result.data.firstFields;
-
-        // 整理后端数据
-        const data = Object.keys(result.data).reduce((obj, key) => {
-          obj[key] = formatFields(result.data[key]);
-          return obj;
-        }, {});
-        console.log("formated --->", data);
+        const data = Object.keys(result.data).reduce((obj, key) => ({ ...obj, [key]: formatFields(result.data[key]) }), {});
+        console.log("formatted  --->", data);
         commit("SET_FORM_FIELDS", data);
       }
       return result.success;
     },
 
-    async cacheFormData({ commit, state }, { key, data }) {
-      console.log("cache ", key, data);
-      const result = await API.cacheMchInfo({ ...data, checkPaymentId: state.checkPaymentId });
-      console.log(result);
+    // 将页面数据同步到后端
+    async cacheMchInfo({ commit, state }, model) {
+      const mchInfo = { ...state.mchInfo };
+      Object.keys(model).forEach(key => {
+        mchInfo[key] = model[key] || mchInfo[key];
+      });
+      const result = await API.cacheMchInfo({ ...mchInfo, checkPaymentId: state.checkPaymentId });
       if (!result.success) return;
-      switch (key) {
-        case "firstForm":
-          commit("SET_FIRST_FORM", data);
-          break;
-        case "secondForm":
-          commit("SET_SECOND_FORM", data);
-          break;
-        case "thirdForm":
-          commit("SET_THIRD_FORM", data);
-          break;
-      }
+      commit("SET_MCH_INFO", mchInfo);
+      return true;
     },
-
+    // 获取表单数据
     async getMchInfo({ commit, state }, id) {
       console.log("get mch info ", id);
       if (state.mchInfo) return;
@@ -117,47 +115,21 @@ export default {
         commit("SET_MCH_INFO", result.data);
       }
     },
-
-    // 初始化表单,如果不存在,则全部初始化为空字符
-    async getDefaultFormValue({ commit, state, dispatch }, id) {
-      console.log("should request form data by ", id);
-      await dispatch("getMchInfo", id);
-      const mchInfo = state.mchInfo || {};
-      const fields = state.formFields;
-      Object.keys(fields).forEach(key => {
-        const formData = fields[key].reduce((p, item) => {
-          // console.log(item.name, { ...item }, mchInfo[item.filedName]);
-          p[item.filedName] = mchInfo[item.filedName] || "";
-          return p;
-        }, {});
-
-        console.log(key, state.formFields[key], formData);
-        switch (key) {
-          case "firstFields":
-            commit("SET_FIRST_FORM", formData);
-            break;
-          case "secondFields":
-            commit("SET_SECOND_FORM", formData);
-            break;
-          case "thirdFields":
-            commit("SET_THIRD_FORM", formData);
-            break;
-        }
-      });
-    }
   },
   getters: {
     // 当前步骤
-    currentStep: state =>
-      routeNames.findIndex(
-        it => it.toLowerCase() === state.currentPage.toLowerCase()
-      ),
+    currentStep: state => routeNames.findIndex(it => it.toLowerCase() === state.currentPage.toLowerCase()),
     prevStep: (state, getters) => getters.currentStep - 1,
     prevPage: (state, getters) => routeNames[getters.prevStep] || "",
     nextStep: (state, getters) => getters.currentStep + 1,
     nextPage: (state, getters) => routeNames[getters.nextStep] || "",
+
     firstFields: state => state.formFields.firstFields || [],
     secondFields: state => state.formFields.secondFields || [],
-    thirdFields: state => state.formFields.thirdFields || []
+    thirdFields: state => state.formFields.thirdFields || [],
+
+    firstFieldKeys: state => state.formFields.firstFields.reduce((p, it) => [...p, it.filedName], []),
+    secondFieldKeys: state => state.formFields.secondFields.reduce((p, it) => [...p, it.filedName], []),
+    thirdFieldKeys: state => state.formFields.thirdFields.reduce((p, it) => [...p, it.filedName], []),
   }
 };

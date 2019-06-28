@@ -35,6 +35,7 @@
 </template>
 
 <script>
+  import { mapState, mapGetters } from "vuex";
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
@@ -51,36 +52,29 @@
     async created() {
       const success = await this.initPage();
       if (success) {
-        this.formData = this.$utils.copy(this.firstForm);
+        this.formData = this.firstFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
       }
     },
     methods: {
-
-      // 将数据提交到后端暂存,不必校验
-      async cacheData() {
-        const data = this.checkData(true);
-        if (!data) return;
-        console.log("");
-        await this.$store.dispatch("MchInfo/cacheFormData", {
-          key: "firstForm",
-          data
-        });
-      },
       saveAndNext() {
         const data = this.checkData(false);
         if (!data) return;
-        this.$store.commit("MchInfo/SET_FIRST_FORM", data);
+        this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
         this.goToPage("MchInfoAddClosing");
       }
     },
     computed: {
+      ...mapGetters("MchInfo", [
+        "firstFieldKeys",
+        "firstFields"
+      ]),
       formItems() {
         return this.firstFields.map(it => {
           if (it.filedType !== "link-picker") return { ...it };
           return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
-      }
+      },
     }
   };
 </script>

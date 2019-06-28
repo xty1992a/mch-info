@@ -28,15 +28,16 @@ export default {
     await this.$services.filterQuery();
   },
   methods: {
+    // region 调起弹窗选择器
     // 选择商户
     async chooseMch() {
       const result = await this.$services.pickItemAsync({
         value: "",
+        key: "business_list",
         columns: [
           // 表格展示项
           { label: "名称", prop: "name" },
           { label: "账号", prop: "account" },
-          { label: "商家标识", prop: "businessId" }
         ],
         props: {
           key: "businessId",
@@ -50,6 +51,31 @@ export default {
       if (!result.success) return;
       return result.value;
     },
+    // 选择进件通道
+    async getChannelList() {
+      console.log("getChannelList");
+      const result = await this.$services.pickItemAsync({
+        value: "",
+        key: "channel_list",
+        searchable: false,
+        columns: [
+          // 表格展示项
+          { label: "名称", prop: "channelName" },
+          { label: "唯一标识", prop: "id" },
+        ],
+        props: {
+          key: "id",
+          title: "channelName"
+        },
+        request: async query => {
+          return await API.getChannelList();
+        }
+      });
+
+      if (!result.success) return;
+      return result.value;
+    },
+    // endregion
 
     // region actions 点击按钮后的回调
     // region 顶部按钮
@@ -87,11 +113,15 @@ export default {
     },
     // 重新进件
     // 重新进入进件流程
-    reAddMch(item) {
+    async recheckItem(item) {
+      const channelId = await this.getChannelList();
+      if (!channelId) return;
       console.log(item);
     },
     // 编辑进件
     editItem(item) {
+      // todo
+      this.$router.push({ name: "MchInfoAddBase", query: { checkPaymentId: 212862 } });
       console.log(item);
     },
     // 修改费率

@@ -71,4 +71,15 @@ export default {
       return { success: false };
     }
   },
+  viewImage: async (option) => {
+    try {
+      const module = await import("./ImageViewer/index.js");
+      if (!option) return module.default;
+      return module.default(option);
+    } catch (e) {
+      console.log(e);
+      Toast.fail("加载模块失败!");
+      return { success: false };
+    }
+  },
 };

@@ -10,7 +10,7 @@
       <PagingTable v-model="query" :total="totalLength" :head="false">
         <el-table
                 :data="list"
-                height="240"
+                height="288"
                 highlight-current-row
                 @row-click="pickItem"
         >
@@ -65,6 +65,7 @@
     watch: {
       query: {
         async handler() {
+          if (this.onRequest) return;
           this.onRequest = true;
           const result = await this.request(this.query);
           if (result.success) {
@@ -73,7 +74,6 @@
           }
           this.onRequest = false;
         },
-        immediate: true
       }
     }
   };
@@ -85,7 +85,16 @@
   .paging-picker {
     font-size: 15px;
 
+    .el-dialog__body {
+      padding: 10px 20px;
+    }
+
+    .el-dialog__footer {
+      padding: 10px 0 15px;
+    }
+
     .paging-picker-body {
+
       .active {
         color: @activeC;
       }
