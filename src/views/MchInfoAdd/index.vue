@@ -83,7 +83,7 @@
     .mch-info-add-steps {
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
       position: fixed;
-      z-index: 1;
+      z-index: 2;
       right: 0;
       left: 0;
       top: 0;

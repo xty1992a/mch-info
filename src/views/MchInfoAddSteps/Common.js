@@ -53,15 +53,34 @@ export default {
         this.errorMessages[key] = msg;
         return msg ? [...prev, msg] : prev;
       }, []);
-      if (messages.length) return null;
+      if (messages.length) {
+        this.toastMessages(messages);
+        return null;
+      }
       return { ...this.formData };
+    },
+
+    async toastMessages(messages) {
+      while (messages.length) {
+        this.$message({
+          type: "waring",
+          message: messages.shift()
+        });
+        await this.$utils.sleep(300);
+      }
     },
 
     // 将页面数据同步到vuex
     async cacheData() {
       const data = this.checkData(true);
       if (!data) return;
-      await this.$store.dispatch("MchInfo/cacheMchInfo", data);
+      const success = await this.$store.dispatch("MchInfo/cacheMchInfo", data);
+      if (success) {
+        this.$message({
+          type: "success",
+          message: "暂存成功!"
+        });
+      }
     },
 
     goToPage(name) {

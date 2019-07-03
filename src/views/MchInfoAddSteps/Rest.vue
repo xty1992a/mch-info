@@ -48,11 +48,15 @@
       };
     },
     async created() {
+      this.beforeRequest = true;
       const success = await this.initPage();
       if (success) {
         this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
       }
+      this.$nextTick(() => {
+        this.beforeRequest = false;
+      });
     },
     methods: {
       async saveAndConfirm() {
@@ -79,6 +83,25 @@
           return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
       }
+    },
+    watch: {
+      // 人像面,获取人名,身份证号
+      async "formData.agentPayeeIdImg1Path"(now) {
+        if (this.beforeRequest) return;
+        const result = await API.idBackOcr(this.$utils.img_cdn(now));
+        if (!result.success) return;
+        const { idCardNumber, idCardName } = result.data;
+        this.formData.agentPayeeName = idCardName;
+        this.formData.agentPayeeId = idCardNumber;
+      },
+      // 国徽面,获取有效期
+      async "formData.agentPayeeIdImg2Path"(now) {
+        if (this.beforeRequest) return;
+        const result = await API.idFrontOcr(this.$utils.img_cdn(now));
+        if (!result.success) return;
+        const { startTime, endTime } = result.data;
+        this.formData.agentPayeeIdExpiryDate = [startTime, endTime].join(",");
+      },
     }
   };
 </script>

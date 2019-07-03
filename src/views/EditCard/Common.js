@@ -160,9 +160,7 @@ export default {
       this.fetchBranchBank();
     },
     async "formData.payeeIdImgPath"(now) {
-      console.log(this.$utils.img_cdn(now), this.beforeRequest);
-      if (this.beforeRequest) return;
-
+      if (this.beforeRequest || !now) return;
       const result = await API.bankCardOcr(this.$utils.img_cdn(now));
       console.log(result);
       if (!result.success) return;

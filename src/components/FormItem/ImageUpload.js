@@ -51,7 +51,6 @@ export default {
 
       const el = this.$el.getElementsByTagName("input")[0];
       if (el) {
-        console.log(el);
         el.accept = "image/*";
       }
 

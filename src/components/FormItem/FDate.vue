@@ -4,7 +4,7 @@
       <el-input :value="value" :placeholder="placeholder"/>
     </div>
     <el-date-picker v-else type="date" format="yyyy-MM-dd" v-bind="$attrs" :name="data.title" v-model="vValue" :placeholder="placeholder"/>
-    <DescBtn :text="data.description" />
+    <DescBtn :text="data.description"/>
   </div>
 </template>
 
@@ -16,6 +16,16 @@
     name: "FDate",
     components: {},
     mixins: [Common],
+    props: {
+      min: {
+        type: Date,
+        default: () => dayjs().subtract(10, "year").toDate()
+      },
+      max: {
+        type: Date,
+        default: () => dayjs().add(10, "year").toDate()
+      }
+    },
     created() {
       // 预先加载
       this.isMobile && this.$services.datePick();
@@ -25,6 +35,8 @@
         const result = await this.$services.datePick({
           value: dayjs(this.value).toDate(),
           data: this.data,
+          minDate: this.min,
+          maxDate: this.max,
           format: this.format
         });
         if (result.success) {

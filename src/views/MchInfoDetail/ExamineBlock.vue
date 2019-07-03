@@ -37,7 +37,7 @@
     <footer class="page-foot">
       <el-button @click="$router.push({name:'Home'})">返回</el-button>
       <el-button v-if="isExamine" @click="reject">拒绝</el-button>
-      <el-button type="primary" @click="confirm">进件</el-button>
+      <el-button v-if="isExamine" type="primary" @click="confirm">进件</el-button>
     </footer>
   </div>
 </template>

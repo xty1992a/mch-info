@@ -65,7 +65,7 @@
       },
       min: {
         type: Date,
-        default: () => dayjs().toDate()
+        default: () => dayjs().subtract(10, "year").toDate()
       },
       max: {
         type: Date,

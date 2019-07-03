@@ -50,7 +50,7 @@
       ...mapState("App", [
         "isMobile",
       ]),
-      ...mapGetters('App', [
+      ...mapGetters("App", [
         "screenType"
       ]),
       ...mapState("MchInfo", [
