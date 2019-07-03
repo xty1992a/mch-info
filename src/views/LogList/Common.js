@@ -58,6 +58,7 @@ export default {
     date: v => dayjs(v).isValid() ? dayjs(v).format("YYYY-MM-DD") : ""
   },
   methods: {
+    
     // region 调起弹窗选择器
     // 修改过滤器，页面此时应该重新请求
     async changeQuery() {
