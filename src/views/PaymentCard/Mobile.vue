@@ -80,7 +80,7 @@
 
 <style lang="less" rel="stylesheet/less">
   .m-edit-card {
-    background-color: #fff;
+    background-color: #f7f7f7;
     padding: 10px;
 
     .card-item-wrap {

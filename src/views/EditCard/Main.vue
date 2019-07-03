@@ -1,47 +1,57 @@
 <template>
   <Container title="结算信息修改申请" class="edit-card">
     <section class="content">
-      <Panel label="商户号" value="543534543543543"></Panel>
-      <Panel label="结算户名" value="张三"></Panel>
-      <Panel label="结算人身份证" value="320926195511175276"></Panel>
+      <Panel label="商户号" :value="formData.merchantId"></Panel>
+      <Panel label="结算户名" :value="formData.payeeName"></Panel>
+      <Panel label="结算人身份证" :value="formData.payeeId"></Panel>
       <Panel label="账户类型" value="对私"></Panel>
       <Panel>
         <div class="slot-label" style="padding-top: 5px;" slot="label">
           银行卡正面照片
         </div>
         <FImage
+                v-if="!examine"
                 :data="{ description: 'asdfasdf' }"
                 v-model="formData.payeeIdImgPath"
                 @click.native="viewImage"
         />
+        <AspectRatio :height="75" style="background-color: #f7f7f7;width: 300px;" v-else>
+          <img :src="formData.payeeIdImgPath | img_cdn" style="width: 100%;"/>
+        </AspectRatio>
       </Panel>
       <Panel>
         <div class="slot-label" slot="label">结算账号</div>
-        <el-input placeholder="试试上传照片自动识别！"/>
+        <template v-if="!examine">
+          <el-input placeholder="试试上传照片自动识别！" v-model="formData.payeeBankAccount"/>
+        </template>
+        <span v-else>{{formData.payeeBankAccount}}</span>
       </Panel>
       <Panel>
         <div class="slot-label" slot="label">开户银行</div>
 
-        <div @mouseleave="showBank = false" style="width: 100%;">
+        <div style="width: 100%;" v-if="!examine">
           <FLinkPicker
                   :is-mobile="false"
                   :data="bankPicker"
                   v-model="formData.payeeBankCode"
           />
         </div>
+        <span v-else>{{pageData&&pageData.payeeBankCodeName}}</span>
       </Panel>
       <Panel>
         <div class="slot-label" slot="label">开户地区</div>
         <FLinkPicker
+                v-if="!examine"
                 :is-mobile="false"
                 :data="addressPicker"
-                v-model="formData.payeeArea"
+                v-model="formData.payeeBankProvinceCityId"
         />
+        <span v-else>{{pageData&&pageData.payeeBankProvinceCityIdName}}</span>
       </Panel>
 
       <Panel>
         <div class="slot-label" slot="label">开户支行</div>
-        <el-select v-model="formData.payeeBankBranchCode" placeholder="选择支行">
+        <el-select v-model="formData.payeeBankBranchCode" placeholder="选择支行" v-if="!examine">
           <el-option
                   v-for="item in branchBankList"
                   :value="item.value"
@@ -49,30 +59,34 @@
                   :label="item.text"
           />
         </el-select>
+        <span v-else>{{pageData&&pageData.payeeBankBranchCodeName}}</span>
       </Panel>
-
-      <Panel>
-        <div class="slot-label" slot="label">结算绑定手机号</div>
-        <el-input placeholder="输入手机号码！"/>
+      <Panel v-if="examine">
+        <div class="slot-label" slot="label">审核备注</div>
+        <el-input type="textarea" placeholder="输入审核备注！" v-model="editResult" style="max-width: 400px"/>
       </Panel>
     </section>
     <footer class="footer" slot="foot">
-      <el-button type="primary">确定</el-button>
+      <el-button type="primary" @click="submit" v-if="!examine">确定</el-button>
+      <el-button type="primary" @click="confirm" v-if="examine">确定</el-button>
+      <el-button @click="reject" v-if="examine">拒绝</el-button>
     </footer>
   </Container>
 </template>
 
 <script>
+  import AspectRatio from "@/components/AspectRatio";
   import Container from "@/components/Container";
   import { FImage, FLinkPicker } from "../../components/FormItem";
   import Panel from "./children/panel";
   import BankPicker from "./children/BankPicker";
   import Common from "./Common";
+  import { Image } from "element-ui";
 
   export default {
     name: "EditCard",
     mixins: [Common],
-    components: { Panel, FImage, FLinkPicker, BankPicker, Container },
+    components: { Panel, FImage, FLinkPicker, BankPicker, Container, AspectRatio, ElImage: Image },
     data() {
       return {
         showBank: true
@@ -80,9 +94,7 @@
     },
     created() {
     },
-    methods: {
-
-    },
+    methods: {},
     computed: {
       screenType() {
         return this.$store.getters["App/screenType"];
@@ -131,6 +143,8 @@
 
       .el-button {
         height: 42px;
+        line-height: 42px;
+        padding: 0;
         width: 240px;
       }
     }

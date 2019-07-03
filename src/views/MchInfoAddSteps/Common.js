@@ -16,7 +16,7 @@ export default {
         this.$router.push({ name: "Home" });
         return false;
       }
-      this.$store.commit("MchInfo/SET_CHECK_PAYMENT_ID", this.$route.query.checkPaymentId);
+      this.$store.commit("MchInfo/SET_CHECK_PAYMENT_ID", id);
       // 获取表单项
       await this.$store.dispatch("MchInfo/getFields", id);
       // 获取可能暂存的表单项的值

@@ -2,9 +2,10 @@
   <div class="image-block" :class="isMobile?'mobile':''">
     <p class="label-top" v-if="isMobile &&label">{{label}}</p>
     <AspectRatio :height="75">
-      <el-image fit="contain" :src="src" style="width: 100%;height: 100%;">
+      <el-image fit="contain" :src="src | img_cdn" style="width: 100%;height: 100%;">
         <div slot="error" class="image-slot">
           <i class="el-icon-picture-outline"></i>
+          <p>加载失败!</p>
         </div>
       </el-image>
     </AspectRatio>
@@ -66,6 +67,16 @@
     .image-slot {
       width: 100%;
       height: 100%;
+      font-size: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      p {
+        font-size: 14px;
+        background-color: transparent;
+      }
     }
   }
 </style>

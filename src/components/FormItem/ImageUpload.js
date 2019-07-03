@@ -1,6 +1,7 @@
 import * as API from "@/api";
 import ImageUploader from "@redbuck/image-uploader";
 import "@redbuck/image-uploader/lib/imageUploader.css";
+import { Toast } from "vant";
 
 export default {
   async mounted() {
@@ -13,10 +14,14 @@ export default {
     this.initUploader();
   },
   methods: {
+    clear() {
+      this.$emit("input", "");
+    },
     initUploader() {
+      let l;
       this.uploader = new ImageUploader({
-        width: 880,
-        height: 550,
+        width: 1760,
+        height: 1100,
         toast: this.$message,
         limit: 50000000,
         fileName: "file",
@@ -25,6 +30,11 @@ export default {
         async getFormDataAsync(callback) {
           const res = await API.getOssSignature();
           if (res.success) {
+            l = Toast.loading({
+              mask: true,
+              message: "上传中...",
+              duration: 0
+            });
             callback({
               OSSAccessKeyId: res.data.accessId,
               policy: res.data.policy,
@@ -45,9 +55,14 @@ export default {
         el.accept = "image/*";
       }
 
+      this.uploader.on("upload-error", e => {
+        l && l.clear();
+      });
+
       this.uploader.on("upload", e => {
         console.log("upload", e.formData.key);
-        this.$emit("input", e.formData.key);
+        this.$emit("input", "/" + e.formData.key);
+        l && l.clear();
       });
     }
   },

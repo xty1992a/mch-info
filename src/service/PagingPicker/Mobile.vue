@@ -6,7 +6,7 @@
           @closed="close"
           style="height: 70%;width: 100%;"
   >
-    <div style="height: 300px;background-color: #fff;">
+    <div style="height: 300px;background-color: #fff;" :class="searchable?'width-search':''">
       <van-navbar
               :title="title"
               left-text="返回"
@@ -64,6 +64,11 @@
     },
     methods: {
       async loadData() {
+        if (!this.paging) {
+          this.loading = false;
+          this.finished = true;
+          return;
+        }
         this.loading = true;
         const result = await this.request(this.query);
         if (result.success) {
@@ -95,6 +100,12 @@
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     }
 
+    .width-search {
+      section {
+        top: 97px;
+      }
+    }
+
     header {
       height: 50px;
       display: flex;
@@ -116,9 +127,9 @@
       position: absolute;
       bottom: 0;
       right: 0;
-      top: 97px;
+      top: 50px;
       left: 0;
-      overflow: auto;
+      overflow: hidden;
 
       .van-list {
         .list-wrap {

@@ -1,119 +1,86 @@
 <template>
   <van-popup class="m-fee-editor" v-model="show" position="right" @closed="close" style="height: 100%;width: 100%;">
     <div style="height: 300px;background-color: #fff;">
-      <van-navbar title="修改费率" left-text="返回" right-text="确定" @click-left="onCancel" @click-right="onConfirm"/>
-      <ul class="list">
-        <li class="item">
-          <div class="item-head">
-            <p>
-              <svg-icon icon="up"/>
-              <span>扫码</span>
-            </p>
-          </div>
-          <div class="item-body">
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">微信</el-col>
-              <el-col :span="12">
-                <el-select v-model="wechatFee">
-                  <el-option value="1" label="0.6%"/>
-                  <el-option value="2" label="0.8%"/>
-                  <el-option value="3" label="1.0%"/>
-                  <el-option value="4" label="1.2%"/>
-                </el-select>
-              </el-col>
-            </el-row>
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">支付宝</el-col>
-              <el-col :span="12">
-                <el-select v-model="aliFee">
-                  <el-option value="1" label="0.6%"/>
-                  <el-option value="2" label="0.8%"/>
-                  <el-option value="3" label="1.0%"/>
-                  <el-option value="4" label="1.2%"/>
-                </el-select>
-              </el-col>
-            </el-row>
-          </div>
-        </li>
-        <li class="item">
-          <div class="item-head">
-            <p>
-              <svg-icon icon="up"/>
-              <span>银联二维码</span>
-            </p>
-            <p class="sub-text">不支持修改</p>
-          </div>
-          <div class="item-body">
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">1000元以内</el-col>
-              <el-col :span="12">0.6%</el-col>
-            </el-row>
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">1000元以上</el-col>
-              <el-col :span="12">参考闪付</el-col>
-            </el-row>
-          </div>
-        </li>
-        <li class="item">
-          <div class="item-head">
-            <p>
-              <svg-icon icon="up"/>
-              <span>闪付</span>
-            </p>
-            <p class="sub-text">不支持修改</p>
-          </div>
-          <div class="item-body">
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">借记卡</el-col>
-              <el-col :span="12">
-                <p>0.6%</p>
-                <p>20元封顶</p>
-              </el-col>
-            </el-row>
-            <el-row type="flex" align="middle">
-              <el-col :span="12" class="label">贷记卡</el-col>
-              <el-col :span="12">参考闪付</el-col>
-            </el-row>
-          </div>
-        </li>
-      </ul>
+      <van-navbar title="修改费率" left-text="返回" right-text="确定" @click-left="onCancel" @click-right="confirm"/>
+      <section>
+        <h3 class="title">
+          <span>商户号</span>
+          <span>{{pageData && pageData.merchantId}}</span>
+        </h3>
+        <ul class="list">
+          <li class="item">
+            <div class="item-head">
+              <p>
+                <svg-icon icon="up"/>
+                <span>扫码</span>
+              </p>
+            </div>
+            <div class="item-body">
+              <van-cell title="微信" :value="currentItem?currentItem.text:''"/>
+              <van-cell title="支付宝" :value="currentItem?currentItem.text:''"/>
+              <van-cell title="修改费率" is-link :value="currentItem?currentItem.text:''" @click="pickItem"/>
+            </div>
+          </li>
+          <li class="item" :class="pageData && pageData.payRate.within?'':'disabled'">
+            <div class="item-head">
+              <p>
+                <svg-icon icon="up"/>
+                <span>银联二维码</span>
+              </p>
+            </div>
+            <div class="empty">当前通道不支持</div>
+            <div class="item-body">
+              <van-cell title="1000元以内" :value="pageData?pageData.payRate.within:''"/>
+              <van-cell title="1000元以上" value="参考闪付"/>
+              <van-cell title="修改费率" value="不支持修改"/>
+            </div>
+          </li>
+          <li class="item" :class="pageData && pageData.payRate.debitCard?'':'disabled'">
+            <div class="item-head">
+              <p>
+                <svg-icon icon="up"/>
+                <span>闪付</span>
+              </p>
+            </div>
+            <div class="empty">当前通道不支持</div>
+            <div class="item-body">
+              <van-cell title="借记卡">
+                <p>{{pageData?pageData.payRate.debitCard:""}}</p>
+                <p style="color:#999;font-size: 12px;">20元封顶</p>
+              </van-cell>
+              <van-cell title="贷记卡" :value="pageData?pageData.payRate.creditCard:''"/>
+              <van-cell title="修改费率" value="不支持修改"/>
+            </div>
+          </li>
+        </ul>
+      </section>
     </div>
   </van-popup>
 </template>
 
 <script>
-  import { Popup, NavBar } from "vant";
+  import { Popup, NavBar, Cell } from "vant";
+  import Common from "./Common";
 
   export default {
     name: "MFeeEditor",
-    components: { VanPopup: Popup, VanNavbar: NavBar },
+    components: { VanPopup: Popup, VanNavbar: NavBar, VanCell: Cell },
+    mixins: [Common],
     data() {
       return {
         show: false,
-        wechatFee: "1",
-        aliFee: "1"
       };
     },
-    created() {
-
-    },
     methods: {
-      onCancel() {
-        this.resolve({ success: false, value: this.value });
-        this.show = false;
+      async pickItem() {
+        const result = await this.$services.pickItem({
+          value: this.rate,
+          options: this.options.map(it => ({ ...it, label: it.text }))
+        });
+        if (!result.success) return;
+        this.rate = result.value;
       },
-      onConfirm() {
-        this.resolve({ success: true, value: "" });
-        this.show = false;
-      },
-      close() {
-        this.$destroy(true);
-      }
     },
-    computed: {},
-    beforeDestroy() {
-      this.$el && this.$el.remove();
-    }
   };
 </script>
 
@@ -127,40 +94,76 @@
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     }
 
+    section {
+      overflow: auto;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      top: 50px;
+      left: 0;
+    }
+
+    .title {
+      padding: 20px 10px 10px;
+    }
+
     .list {
       padding: 10px;
 
       .item {
         color: #333;
         border: 1px solid #e5e5e5;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+
+        &.disabled {
+          position: relative;
+
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            top: 0;
+            left: 0;
+            background-color: rgba(230, 230, 230, .5);
+          }
+
+          .item-body {
+            display: none;
+          }
+
+          .empty {
+            height: 150px;
+            padding-top: 50px;
+            font-size: 18px;
+            display: block;
+          }
+        }
 
         .item-head {
           background-color: #f7f7f7;
           padding: 10px;
           border-bottom: 1px solid #e5e5e5;
-
-          .sub-text {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #999;
-          }
         }
 
         .item-body {
-          padding: 10px;
-        }
 
-        .el-row {
-          padding: 10px;
+          .cell {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            text-align: right;
+            height: 36px;
+            margin-bottom: 10px;
 
-          .el-select {
-            height: 32px;
-
-            input {
-              height: 32px;
+            .label {
+              text-align: left;
             }
           }
+        }
+
+        .empty {
+          display: none;
         }
       }
     }

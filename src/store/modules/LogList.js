@@ -1,4 +1,5 @@
 import * as utils from "../../utils";
+import * as API from "@/api";
 
 function findChangeProp(now, old) {
   const keys = [];
@@ -77,6 +78,7 @@ export default {
   namespaced: true,
   state: {
     list: [],
+    channelList: [],
     searchQuery: null
   },
   mutations: {
@@ -84,20 +86,21 @@ export default {
     },
     SET_LIST: (state, list) => (state.list = list),
     SET_SEARCH_QUERY: (state, query) => (state.searchQuery = query),
+    SET_CHANNEL_LIST: (state, list) => (state.channelList = list),
     SET_LIST_ITEM: (state, item) =>
       (state.list = state.list.map(it => (it.key === item.key ? item : it))),
-    DEL_LIST_ITEM: (state, item) =>
-      (state.list = state.list.filter(it => it.key !== item.key))
+    DEL_LIST_ITEM: (state, item) => (state.list = state.list.filter(it => it.key !== item.key))
   },
   actions: {
     // 请求新的列表,覆盖state的列表
     async coverList({ commit }, query) {
-      console.log("should cover list by ", query);
       commit("SET_SEARCH_QUERY", { ...query });
-      await utils.sleep(500);
-      commit("SET_LIST", tableData.map(it => ({ ...it, key: Math.random() })));
-
-      return { success: true, data: { total: 10 } };
+      const result = await API.getPaymentList({ ...query });
+      if (result.success) {
+        commit("SET_LIST", result.data.list);
+      }
+      return result;
+      // return { success: true, data: { total: 10 } };
     },
 
     // 请求新的列表,追加到state的列表中
@@ -109,12 +112,12 @@ export default {
       if (!change.change) return {};
 
       console.log("should new list by ", query);
-      await utils.sleep(500);
+      const result = await API.getPaymentList(query);
       commit("SET_SEARCH_QUERY", { ...query });
 
-      // return { success: true, data: { total: 0 } };
+      if (!result.success) return result;
 
-      let list = tableData.map(it => ({ ...it, key: Math.random() }));
+      let list = result.data.list;
 
       // 只有index变化，追加
       if (indexOnly) {
@@ -122,14 +125,22 @@ export default {
       }
       commit("SET_LIST", list);
 
-      return { success: true, data: { total: 10 } };
+      return result;
     },
 
     // 请求后端之后,删除列表项目
-    async deleteListItem({ commit }, item) {
-      await utils.sleep(500);
-      commit("DEL_LIST_ITEM", item);
+    async deleteListItem({ commit }, id) {
+      const result = await API.discardPayment({ checkPaymentId: id });
       return true;
+    },
+
+    async getChannelList({ commit, state }) {
+      if (state.channelList.length) return state.channelList;
+      const res = await API.getChannelList();
+      if (res.success) {
+        commit("SET_CHANNEL_LIST", res.data.map(it => ({ ...it, label: it.channelName, value: it.id })));
+      }
+      return state.channelList;
     }
   },
   getters: {}

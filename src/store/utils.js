@@ -45,6 +45,7 @@ export const formatFields = fields =>
       ...item,
       options: enumJson.map(it => ({ label: it.text, value: it.value })),
       validator: getValidator(item),
+      dateFormat: item.dateFormatStr,
       filedType: typeMap[item.filedType],
       selectLevel: /8080/.test(location.href) ? 3 : item.selectLevel
     };

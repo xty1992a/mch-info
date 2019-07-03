@@ -10,6 +10,7 @@ import "./router/permission.js";
 import services from "./service/index";
 import * as utils from "./utils";
 import Directives from "./utils/directives";
+import * as ROLES from "@/router/roles";
 
 Vue.config.productionTip = false;
 
@@ -17,6 +18,18 @@ Vue.prototype.$storage = storage;
 Vue.prototype.$utils = utils;
 Vue.prototype.$services = services;
 Vue.use(Directives);
+Vue.prototype.$roles = ROLES;
+
+// Vue.prototype.$role = role => {
+//   const userRole = store.state.User.userInfo.role
+//   let list = role
+//   if (typeof role === 'string') {
+//     list = [role]
+//   }
+//   if (!list.includes( store.state.User.userInfo.role)) {
+//     el.style.display = "none";
+//   }
+// }
 
 // 替换图片cdn地址
 Vue.filter("img_cdn", v => /^https?/.test(v) ? v : "https://files.1card1.cn/" + v.replace(/^\//, ""));

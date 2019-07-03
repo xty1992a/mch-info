@@ -1,9 +1,9 @@
 <template>
   <div class="m-edit-card">
     <van-cell></van-cell>
-    <van-cell title="商户号" value="543534543543543"></van-cell>
-    <van-cell title="结算户名" value="张三"></van-cell>
-    <van-cell title="结算人身份证" value="320926195511175276"></van-cell>
+    <van-cell title="商户号" :value="formData.merchantId"></van-cell>
+    <van-cell title="结算户名" :value="formData.payeeName"></van-cell>
+    <van-cell title="结算人身份证" :value="formData.payeeId"></van-cell>
     <van-cell title="账户类型" value="对私"></van-cell>
 
     <van-cell title="银行卡正面照片" :border="false"/>
@@ -12,39 +12,46 @@
               :is-mobile="true"
               :data="{ description: 'asdfasdf' }"
               @click.native="viewImage"
+              v-if="!examine"
               v-model="formData.payeeIdImgPath"
       />
+      <img class="payee-img" :src="formData.payeeIdImgPath | img_cdn" alt="">
     </div>
     <van-cell title="结算账户">
-      <input type="text" placeholder="请输入结算账号"/>
+      <input type="text" placeholder="请输入结算账号" v-model="formData.payeeBankAccount" v-if="!examine"/>
+      <span v-else>{{formData.payeeBankAccount}}</span>
     </van-cell>
-    <van-cell
-            title="开户银行"
-    >
+    <van-cell title="开户银行">
       <FLinkPicker
+              v-if="!examine"
               :is-mobile="true"
               :data="bankPicker"
               v-model="formData.payeeBankCode"
       />
+      <span>{{pageData&&pageData.payeeBankCodeName}}</span>
     </van-cell>
     <van-cell title="开户地址">
       <FLinkPicker
               :is-mobile="true"
+              v-if="!examine"
               :data="addressPicker"
-              v-model="formData.payeeArea"
+              v-model="formData.payeeBankProvinceCityId"
       />
+      <span v-else>{{pageData&&pageData.payeeBankProvinceCityIdName}}</span>
     </van-cell>
     <van-cell
             title="开户支行"
             @click="callBranchPicker"
-            :value="branchName"
+            :value="!examine ? branchName : (pageData&&pageData.payeeBankBranchCodeName)"
     />
-    <van-cell title="结算账号绑定手机号">
-      <input type="text"/>
+    <van-cell title="审核备注" v-if="examine">
+      <textarea type="text" v-model="editResult"/>
     </van-cell>
 
     <footer class="fixed-foot">
-      <el-button type="primary">确定</el-button>
+      <el-button type="primary" @click="submit">确定</el-button>
+      <el-button type="primary" @click="confirm" v-if="examine">确定</el-button>
+      <el-button @click="reject" v-if="examine">拒绝</el-button>
     </footer>
   </div>
 </template>
@@ -102,6 +109,11 @@
       text-align: right;
     }
 
+    .payee-img {
+      width: 300px;
+      height: 225px;
+    }
+
     .pick-holder {
       width: 100%;
 
@@ -132,6 +144,7 @@
       .el-button {
         width: 100%;
         height: 44px;
+        padding: 0;
         line-height: 44px;
       }
     }

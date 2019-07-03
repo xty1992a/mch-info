@@ -41,7 +41,7 @@
       </el-form-item>
       <el-form-item label="门店" prop="chainStoreId" v-show="!isMobile">
         <div class="pick-holder" @click="pickStore" style="width: 220px;">
-          <el-input :value="pickedStore && pickedStore.chainStoreName" placeholder="请选择门店"/>
+          <el-input :value="storeName" placeholder="请选择门店"/>
         </div>
       </el-form-item>
       <el-form-item prop="chainStoreId" v-show="isMobile">
@@ -99,10 +99,10 @@
         formData: {
           businessLicenseType: 0,
           payeeType: 0,
-          wechatPayType: 2,
-          aliPayType: 2,
-          unionPayType: 16,
-          samePrincipal: 64,
+          wechatPayType: 3,
+          aliPayType: 48,
+          unionPayType: 0,
+          samePrincipal: 0,
           chainStoreId: "",
           provinceId: "",
           cityId: "",
@@ -130,23 +130,20 @@
           request: API.getLeaveOptions("/api/basic/getArea")
         },
 
-        // wechatPayType: [],
-        // aliPayType: [],
-        // unionPayType: [],
         licenseOptions: [
           { label: "无", value: 1 },
           { label: "个体工商户", value: 2 },
           { label: "企业", value: 4 }
         ],
         aliPayTypeOptions: [
-          //   1:扫码，2:立牌和线上。
-          { label: "扫码", value: 1 },
-          { label: "立牌和线上", value: 2 }
+          //   16:扫码，32:立牌和线上。
+          { label: "扫码", value: 16 },
+          { label: "立牌和线上", value: 32 }
         ],
         unionPayTypeOptions: [
           //  1:扫码，16:闪付。
-          { label: "扫码", value: 1 },
-          { label: "闪付", value: 16 }
+          { label: "扫码", value: 64 },
+          { label: "闪付", value: 128 }
         ],
 
         pickedStore: null
@@ -279,6 +276,11 @@
       ...mapGetters("App", ["screenType"]),
       ...mapState("User", ["publicInfo", "businessInfo"]),
       ...mapState("MchInfo", ["checkPaymentId", "mainInfo", "mchInfo"]),
+      storeName() {
+        if (this.pickedStore) return this.pickedStore.chainStoreName;
+        if (this.mchInfo) return this.mchInfo.chainStoreName;
+        return "请选择门店";
+      },
       businessId() {
         if (!this.mchInfo) return "";
         return this.mchInfo.businessId;
@@ -290,7 +292,7 @@
         return this.screenType === "xs";
       },
 
-      //  1:扫码，2:立牌和线上，4:刷脸，8:押金。
+      //   1:扫码，2:立牌和线上，4:刷脸，8:押金。
       wechatPayTypeOptions() {
         const { businessLicenseType: type, payeeType: pay } = this.formData;
         return [
@@ -357,8 +359,9 @@
     watch: {
       "formData.businessLicenseType"(now) {
         console.log("businessLicenseType", now);
+        if (this.mchInfo) return;
         if (+now === 1) {
-          this.formData.payeeType = 0;
+          this.formData.payeeType = 8;
         }
       }
     }

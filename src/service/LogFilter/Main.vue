@@ -13,32 +13,43 @@
         <el-form-item label="商家名称">
           <el-input v-model="formData.businessName" placeholder="请输入商家名称"/>
         </el-form-item>
+        <el-form-item label="商户号">
+          <el-input v-model="formData.subMerchantId" placeholder="请输入商户号"/>
+        </el-form-item>
         <el-form-item label="代理商名称">
-          <el-input v-model="formData.dlsName" placeholder="请输入代理商名称"/>
+          <el-input v-model="formData.agentAccount" placeholder="请输入代理商名称"/>
         </el-form-item>
         <el-form-item label="门店名称">
-          <el-input v-model="formData.chainStoreName" placeholder="请输入门店名称"/>
+          <el-input v-model="formData.storeName" placeholder="请输入门店名称"/>
         </el-form-item>
         <el-form-item label="进件结果">
-          <el-select v-model="formData.checkStatus">
+          <el-select v-model="formData.existMerchantId">
             <el-option v-for="item in checkOptions" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核结果">
-          <el-select v-model="formData.mchStatus">
-            <el-option v-for="item in mchOptions" :key="item.value" :value="item.value" :label="item.label"/>
+        <el-form-item label="进件渠道">
+          <el-select v-model="formData.channel">
+            <el-option v-for="item in channelList" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核时间" style="display: block; width: 100%;">
-          <FDateRange :is-mobile="false" :data="{}" v-model="formData.requestTime"/>
+        <el-form-item label="审核结果" style="display: block;width: 100%;">
+          <!--<el-select v-model="formData.auditStatus">-->
+          <!--<el-option v-for="item in mchOptions" :key="item.value" :value="item.value" :label="item.label"/>-->
+          <!--</el-select>-->
+          <el-checkbox-group v-model="formData.auditStatus">
+            <el-checkbox v-for="item in mchOptions" :key="item.value" :label="item.value">
+              {{item.label}}
+            </el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="审核时间" style="display: block; width: 100%;">
-          <FDateRange :is-mobile="false" :data="{}" v-model="formData.mchTime"/>
+        <el-form-item label="申请时间" style="display: block; width: 100%;">
+          <FDateRange :is-mobile="false" :data="{}" v-model="formData.startEndDate"/>
         </el-form-item>
-        <el-form-item label="结算周期">
-          <el-select v-model="formData.payTimes">
-            <el-option v-for="item in payOptions" :key="item.value" :value="item.value" :label="item.label"/>
-          </el-select>
+        <!--<el-form-item label="审核时间" style="display: block; width: 100%;">-->
+        <!--<FDateRange :is-mobile="false" :data="{}" v-model="formData.updateTime"/>-->
+        <!--</el-form-item>-->
+        <el-form-item label="审核时间" style="display: block; width: 100%;">
+          <FDateRange :is-mobile="false" :data="{}" v-model="formData.auditStartEndDate"/>
         </el-form-item>
       </el-form>
     </section>
@@ -64,7 +75,16 @@
     created() {
     },
     methods: {},
-    computed: {}
+    computed: {
+      auditStatus: {
+        get() {
+          return this.formData.auditStatus ? this.formData.auditStatus.split(",") : [];
+        },
+        set(v) {
+          this.formData.auditStatus = v.join(",");
+        }
+      }
+    }
   };
 </script>
 
@@ -89,8 +109,8 @@
     }
 
     .log-filter-foot {
+      margin-top: -30px;
       text-align: center;
-      padding-bottom: 20px;
     }
   }
 

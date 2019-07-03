@@ -54,6 +54,7 @@ export default {
       Object.keys(model).forEach(key => {
         model[key] = mchInfo[key] || "";
       });
+
       state.mainInfo = model;
     },
     SET_FIRST_FORM: (state, info) => (state.firstForm = info),
@@ -82,7 +83,12 @@ export default {
     },
     // 根据ID获取表单项,并将其整理为前端可用的数据格式
     async getFields({ commit, state }, id) {
-      if (state.formFields.firstFields.length) return true;
+      console.log("getFields", id, state.checkPaymentId);
+      if (state.formFields.firstFields.length) {
+        if (state.checkPaymentId === id) {
+          return true;
+        }
+      }
       const result = await API.getFormFields(id);
       if (result.success) {
         const data = Object.keys(result.data).reduce((obj, key) => ({ ...obj, [key]: formatFields(result.data[key]) }), {});
@@ -105,12 +111,18 @@ export default {
     },
     // 获取表单数据
     async getMchInfo({ commit, state }, id) {
-      console.log("get mch info ", id);
-      if (state.mchInfo) return;
+      console.log("get mch info ", id, state.checkPaymentId);
+      if (state.mchInfo) {
+        if (state.checkPaymentId === id) {
+          return true;
+        }
+      }
       const result = await API.getMchInfo(id);
       if (result.success) {
         Object.keys(result.data).forEach(key => {
-          result.data[key] = (result.data[key] + "").replace(/null/g, "");
+          let value = result.data[key];
+          value = typeof value === "number" ? value : (value + "").replace(/null/g, "");
+          result.data[key] = value;
         });
         commit("SET_MCH_INFO", result.data);
       }

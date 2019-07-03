@@ -14,6 +14,7 @@ export default {
     };
   },
   created() {
+    console.log(this.list, this.key);
     if (this.shouldCache) {
       const cacheData = this.$storage.getItem(this.key);
       if (!cacheData) return;

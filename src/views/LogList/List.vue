@@ -12,7 +12,7 @@
         <LeftGoTransition>
           <MchInfoCard
                   v-for="(item, index) in list"
-                  :key="item.key"
+                  :key="item.mpsCheckPaymentId"
                   :data="item"
                   @invoke="invokeMethod"
           />
@@ -21,9 +21,6 @@
       <BackTop :show="scrollTop > 300">
         <i class="el-icon-top"></i>
       </BackTop>
-      <FloatBtn bottom="130px" @click="changeQuery">
-        <i class="el-icon-cold-drink"></i>
-      </FloatBtn>
     </van-list>
 
     <div class="empty" v-else>
@@ -32,7 +29,9 @@
       </div>
       <p>什么都没有哦</p>
     </div>
-
+    <FloatBtn bottom="130px" @click="changeQuery">
+      <i class="el-icon-cold-drink"></i>
+    </FloatBtn>
     <footer class="list-foot">
       <div class="left-btn">
         <el-button @click="exportList" :disabled="!listTotalLength">下载</el-button>
@@ -74,10 +73,10 @@
       };
     },
     created() {
-      this.debouncedScroll &&
-      window.removeEventListener("scroll", this.debouncedScroll);
+      this.debouncedScroll && window.removeEventListener("scroll", this.debouncedScroll);
       this.debouncedScroll = this.$utils.debounce(this.checkScrollTop, 100);
       window.addEventListener("scroll", this.debouncedScroll);
+      this.fetchData();
     },
     methods: {
       // 加载事件视为修改pageIndex的一种行为
@@ -92,9 +91,15 @@
           ...this.searchQuery
         });
         this.loading = false;
+
+        console.log(result);
+
         if (result.success) {
           this.listTotalLength = result.data.total;
           this.finished = this.listTotalLength === this.list.length;
+        }
+        else {
+          this.finished = true;
         }
       },
       invokeMethod(method, data) {
@@ -126,12 +131,12 @@
           list.check();
         }
       },
-      searchQuery: {
-        async handler() {
-          if (this.onRequest) return;
-          this.fetchData();
-        }
-      }
+      // searchQuery: {
+      //   async handler() {
+      //     if (this.onRequest) return;
+      //     this.fetchData();
+      //   }
+      // }
     }
   };
 </script>

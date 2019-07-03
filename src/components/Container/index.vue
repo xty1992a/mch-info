@@ -1,6 +1,6 @@
 <template>
   <el-row type="flex" justify="center" class="container">
-    <el-col :xs="24" :md="20" :lg="18" :xl="14">
+    <el-col :xs="24" :md="20" :lg="20" :xl="18">
       <el-container style="height: 100%;">
         <el-header class="container-head" style="height: auto;">
           <h3 class="title">{{ title }}</h3>
@@ -18,61 +18,62 @@
 </template>
 
 <script>
-export default {
-  name: "Container",
-  components: {},
-  props: {
-    head: Boolean,
-    foot: Boolean,
-    title: String
-  },
-  data() {
-    return {};
-  },
-  created() {},
-  methods: {},
-  computed: {
-    showFoot() {
-      return this.$slots.hasOwnProperty("foot");
+  export default {
+    name: "Container",
+    components: {},
+    props: {
+      head: Boolean,
+      foot: Boolean,
+      title: String
     },
-    showHead() {
-      return this.title || this.$slots.hasOwnProperty("head");
+    data() {
+      return {};
+    },
+    created() {
+    },
+    methods: {},
+    computed: {
+      showFoot() {
+        return this.$slots.hasOwnProperty("foot");
+      },
+      showHead() {
+        return this.title || this.$slots.hasOwnProperty("head");
+      }
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" rel="stylesheet/less">
-.container {
-  .container-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
+  .container {
+    .container-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
 
-    .title {
-      font-size: 18px;
+      .title {
+        font-size: 18px;
+      }
+
+      .el-button {
+        height: 36px;
+        line-height: 36px;
+        padding: 0 20px;
+      }
     }
 
-    .el-button {
-      height: 36px;
-      line-height: 36px;
+    .container-main {
       padding: 0 20px;
     }
   }
 
-  .container-main {
-    padding: 0 20px;
-  }
-}
+  .mobile-app {
+    .container-head {
+      display: none;
+    }
 
-.mobile-app {
-  .container-head {
-    display: none;
+    .container-main {
+      padding: 15px;
+    }
   }
-
-  .container-main {
-    padding: 15px;
-  }
-}
 </style>

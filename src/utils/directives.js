@@ -1,4 +1,5 @@
 import Vue from "vue";
+import store from "@/store";
 import services from "../service";
 
 const { viewImage } = services;
@@ -6,6 +7,17 @@ const { viewImage } = services;
 const images = [];
 
 const directives = {
+  role: {
+    bind: function(el, binding) {
+      let list = binding.value;
+      if (typeof binding.value === "string") {
+        list = [binding.value];
+      }
+      if (!list.includes(store.state.User.userInfo.role)) {
+        el.style.display = "none";
+      }
+    }
+  },
   // preview: {
   //   bind: function(el, binding) {
   //     console.log(binding, this);

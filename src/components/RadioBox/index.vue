@@ -1,8 +1,8 @@
 <template>
   <div class="radio-box">
     <div class="radio-item"
-         @click="$emit('input',item.value)"
-         :class="item.value===value?'active':''"
+         @click="pickItem(item)"
+         :class="isPicked(item)"
          v-for="item in options"
          :key="item.value">{{item.label}}
     </div>
@@ -15,14 +15,40 @@
     components: {},
     props: {
       options: Array,
-      value: String
+      value: [String, Number, Array],
+      radio: Boolean
     },
     data() {
       return {};
     },
     created() {
     },
-    methods: {},
+    methods: {
+      pickItem(item) {
+        if (this.radio) {
+          if (this.value === item.value) {
+            this.$emit("input", "");
+            return;
+          }
+          this.$emit("input", item.value);
+        }
+        else {
+          const list = [...this.value];
+          if (list.includes(item.value)) {
+            this.$emit("input", list.filter(it => it !== item.value));
+            return;
+          }
+          this.$emit("input", [...list, item.value]);
+        }
+      },
+
+      isPicked(item) {
+        if (this.radio) {
+          return this.value === item.value ? "active" : "";
+        }
+        return (this.value.includes(item.value)) ? "active" : "";
+      }
+    },
     computed: {}
   };
 </script>

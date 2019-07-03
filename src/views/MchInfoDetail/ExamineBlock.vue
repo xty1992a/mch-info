@@ -3,25 +3,28 @@
     <Block title="审核操作" :is-mobile="isMobile" v-if="isExamine">
       <el-form label-width="120px">
         <template v-if="isMobile">
-          <van-cell is-link title="当前状态"></van-cell>
-          <van-cell is-link title="进件详情"></van-cell>
+          <van-cell is-link title="当前状态" :value="currentStatus"/>
+          <van-cell is-link title="进件通道" @click="showChannel=!showChannel" :value="displayChannel"/>
+          <RadioBox v-model="formData.channelIds" :options="channelOptions" v-show="showChannel"/>
           <van-cell title="备注说明"></van-cell>
           <div class="textarea-panel">
-            <el-input type="textarea" v-model="formData.description"/>
+            <el-input type="textarea" v-model="formData.auditResult"/>
           </div>
           <van-cell is-link title="进件结果"></van-cell>
         </template>
         <template v-else>
           <el-form-item label="当前状态">
+            <span>{{currentStatus}}</span>
           </el-form-item>
-          <el-form-item label="修改状态">
-            <el-radio-group v-model="formData.status">
-              <el-radio :label="item.value" v-for="item in statusList" :key="item.value">{{item.label}}</el-radio>
-            </el-radio-group>
+
+          <el-form-item label="进件通道">
+            <el-checkbox-group v-model="formData.channelIds">
+              <el-checkbox :label="item.value" v-for="item in channelOptions" :key="item.value">{{item.label}}</el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
           <el-form-item label="备注说明">
             <div class="textarea-panel">
-              <el-input type="textarea" v-model="formData.description"/>
+              <el-input type="textarea" v-model="formData.auditResult"/>
             </div>
           </el-form-item>
           <el-form-item label="进件结果">
@@ -33,41 +36,108 @@
 
     <footer class="page-foot">
       <el-button @click="$router.push({name:'Home'})">返回</el-button>
-      <el-button>保存</el-button>
-      <el-button type="primary">进件</el-button>
+      <el-button v-if="isExamine" @click="reject">拒绝</el-button>
+      <el-button type="primary" @click="confirm">进件</el-button>
     </footer>
   </div>
 </template>
 
 <script>
+  import * as API from "@/api";
   import { Cell } from "vant";
   import Common from "./Common";
+  import RadioBox from "@/components/RadioBox";
 
   export default {
     name: "ExamineBlock",
     mixins: [Common],
-    components: { VanCell: Cell },
+    components: { VanCell: Cell, RadioBox },
     props: {
-      isExamine: Boolean
+      isExamine: Boolean,
+      data: Object,
     },
     data() {
       return {
+        showChannel: false,
         formData: {
-          status: "0",
-          description: ""
+          auditResult: "",
+          channelIds: []
         },
-        statusList: [
-          { label: "未通过", value: "0" },
-          { label: "未通过", value: "1" },
-          { label: "未通过", value: "2" },
-          { label: "未通过", value: "3" }
-        ]
       };
     },
     created() {
+      this.$store.dispatch("LogList/getChannelList");
+      console.log(this.data);
+      this.formData.channelIds = [...this.data.selectChannelIds];
     },
-    methods: {},
-    computed: {}
+    methods: {
+      async callPicker() {
+        const result = await this.$services.pickItem({
+          value: this.formData.auditStatus,
+          options: this.channelOptions
+        });
+        console.log(result);
+        this.formData.auditStatus = result.value;
+      },
+
+      checkForm() {
+        const { mpsCheckPaymentId } = this.data;
+        return {
+          ...this.formData,
+          checkPaymentId: mpsCheckPaymentId
+        };
+      },
+
+      confirm() {
+        const data = this.checkForm();
+        if (!data) return;
+        this.submitFrom({ ...data, auditStatus: 1 });
+      },
+
+      reject() {
+        const data = this.checkForm();
+        if (!data) return;
+        this.submitFrom({ ...data, auditStatus: 3 });
+      },
+
+      async submitFrom(data) {
+        if (!data) return;
+        console.log(data);
+        const result = await API.auditPayment(data);
+        if (result.success) {
+          this.$message(data.auditStatus === 3 ? "拒绝成功!" : "进件成功!");
+          await this.$utils.sleep(1500);
+          this.$router.push({ name: "Home" });
+        }
+      }
+    },
+    computed: {
+      displayChannel() {
+        return "请选择";
+      },
+      currentStatus() {
+        if (!this.data) return "";
+        const { audit } = this.data;
+        return audit[0].value;
+      },
+      channelList() {
+        return this.$store.state.LogList.channelList;
+      },
+      channelOptions() {
+        if (!this.data) return [];
+        // selectedChannel决定已选能否再修改
+        const { selectedChannel, selectChannelIds } = this.data;
+        if (!this.data.selectedChannel) {
+          return this.channelList;
+        }
+        else {
+          return this.channelList.map(it => ({
+            ...it,
+            disabled: selectChannelIds.includes(it.value)
+          }));
+        }
+      }
+    }
   };
 </script>
 

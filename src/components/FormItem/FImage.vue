@@ -6,7 +6,7 @@
     </div>
     <div class="f-image-body" v-if="value">
       <img :src="value | img_cdn" alt=""/>
-      <DelBtn/>
+      <DelBtn @click="clear"/>
     </div>
   </div>
 </template>

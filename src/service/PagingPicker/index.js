@@ -23,11 +23,12 @@ const dftOpt = {
   value: "",
   title: "请选择",
   key: "pagingPicker__data",
-  shouldCache: true,
+  shouldCache: false,
   placeholder: "请输入商家账号/门店名称",
   columns: [],
   total: 0,
   searchable: true,
+  paging: true,
   props: {
     key: "key",
     title: "title"
@@ -40,6 +41,7 @@ const dftOpt = {
 
 export default (opt = {}) =>
   new Promise(resolve => {
+    console.log(opt);
     opt = { ...dftOpt, ...opt, resolve, value: copy(opt.value) };
     let vm = createVm(opt);
     vm.show = true;

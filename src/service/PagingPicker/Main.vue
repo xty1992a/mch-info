@@ -7,7 +7,8 @@
           @closed="close"
   >
     <section class="paging-picker-body" v-loading="onRequest">
-      <PagingTable v-model="query" :total="totalLength" :head="false">
+      <!--<el-input v-model="query."></el-input>-->
+      <PagingTable v-model="query" :total="totalLength" :head="false" v-if="paging">
         <el-table
                 :data="list"
                 height="288"
@@ -32,6 +33,32 @@
           </el-table-column>
         </el-table>
       </PagingTable>
+
+      <div style="margin-bottom: 15px;" v-else>
+        <el-table
+                :data="list"
+                height="288"
+                highlight-current-row
+                @row-click="pickItem"
+        >
+          <el-table-column
+                  v-for="item in columns"
+                  :key="item.prop"
+                  :label="item.label"
+                  :prop="item.prop"
+          ></el-table-column>
+          <el-table-column label="选择" width="70">
+            <template slot-scope="scope">
+              <p style="padding-left: 10px;">
+                <i
+                        class="el-icon-success"
+                        :class="scope.row[props.key] === value ? 'active' : ''"
+                ></i>
+              </p>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </section>
     <div slot="footer" class="paging-picker-foot">
       <el-button @click="onCancel">取 消</el-button>
@@ -65,6 +92,8 @@
     watch: {
       query: {
         async handler() {
+          console.log(this.list);
+          if (!this.paging) return;
           if (this.onRequest) return;
           this.onRequest = true;
           const result = await this.request(this.query);

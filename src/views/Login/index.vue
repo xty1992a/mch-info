@@ -2,14 +2,14 @@
   <div class="login">
     <div @keypress.enter="enterPress" class="container">
       <div class="content">
-        <!--<el-row class="account-type" style="margin: auto;">
+        <el-row class="account-type" style="margin: auto;">
           <el-col
                   :span="12"
                   class="type-item"
-                  :class="params.accountType === 2 ? 'active' : ''"
-                  @click.native="params.accountType = 2"
+                  :class="params.accountType === 0 ? 'active' : ''"
+                  @click.native="params.accountType = 0"
           >
-            <span>商户</span>
+            <span>管理员</span>
           </el-col>
           <el-col
                   :span="12"
@@ -19,7 +19,7 @@
           >
             <span>代理商</span>
           </el-col>
-        </el-row>-->
+        </el-row>
         <h3 style="padding: 10px;">请登录</h3>
         <el-form>
           <div class="form-item">
@@ -56,7 +56,7 @@
         this.login();
       },
       async login() {
-        if (Object.keys(this.params).some(key => !this.params[key])) {
+        if (Object.keys(this.params).some(key => this.params[key] === "")) {
           this.$message({
             type: "error",
             message: "请填写完整!"
@@ -87,6 +87,7 @@
 
   .login {
     height: 100vh;
+    background-color: #f7f7f7;
 
     .content {
       background-color: #fff;

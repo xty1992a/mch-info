@@ -1,13 +1,14 @@
 <template>
   <Container title="进件详情" class="mch-info-detail">
     <section class="content">
-      <DisplayBlock/>
-      <ExamineBlock :is-examine="isExamine"/>
+      <DisplayBlock :data="blockList"/>
+      <ExamineBlock :data="pageData" :is-examine="isExamine" v-if="pageData"/>
     </section>
   </Container>
 </template>
 
 <script>
+  import * as API from "@/api";
   import Container from "@/components/Container";
   import DisplayBlock from "./DisplayBlock";
   import ExamineBlock from "./ExamineBlock";
@@ -16,14 +17,39 @@
     name: "MchInfoDetail",
     components: { Container, DisplayBlock, ExamineBlock },
     data() {
-      return {};
+      return {
+        pageData: null
+      };
     },
-    created() {
+    async created() {
+      const id = this.$route.query.checkPaymentId;
+      if (!id) {
+        this.$message("缺少必要参数!");
+        await this.$utils.sleep(1500);
+        this.$router.push({ name: "Home" });
+        return;
+      }
+      this.getPageData(id);
     },
-    methods: {},
+    methods: {
+      async getPageData(id) {
+        const res = await API.getPaymentDetail({ mpsCheckPaymentId: id });
+        if (res.success) {
+          this.pageData = res.data;
+        }
+        console.log(res);
+      }
+    },
     computed: {
       isExamine() {
-        return this.$route.query.examine === 1;
+        return +this.$route.query.examine === 1;
+      },
+      blockList() {
+        if (!this.pageData) return [];
+        return this.pageData.pageDatas.map(item => ({
+          title: item.tilte,
+          list: item.list.map(it => ({ ...it, title: it.name, type: it.type === 3 ? "img" : "text" }))
+        }));
       }
     }
   };

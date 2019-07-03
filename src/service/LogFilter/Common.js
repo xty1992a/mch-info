@@ -1,19 +1,20 @@
 import FDateRange from "../../components/FormItem/FDateRange";
 
 export default {
-  components: {FDateRange},
+  components: { FDateRange },
   data() {
     return {
       checkOptions: [
         { label: "成功", value: "1" },
         { label: "失败", value: "0" }
       ],
+      //  0未审核 1审核中 2审核通过 3拒绝 4弃用
       mchOptions: [
-        { label: "审核通过", value: "1" },
-        { label: "未审核", value: "2" },
-        { label: "审核中", value: "3" },
-        { label: "审核拒绝", value: "4" },
-        { label: "弃用", value: "5" }
+        { label: "未审核", value: 0 },
+        { label: "审核中", value: 1 },
+        { label: "审核通过", value: 2 },
+        { label: "审核拒绝", value: 3 },
+        { label: "弃用", value: 4 }
       ],
       payOptions: [
         { label: "T+1", value: "1" },
@@ -23,18 +24,19 @@ export default {
       formData: {
         businessAccount: "",
         businessName: "",
-        dlsName: "",
-        chainStoreName: "",
-        mchStatus: "",
-        checkStatus: "",
-        requestTime: "",
-        mchTime: "",
-        payTimes: ""
+        agentAccount: "",
+        storeName: "",
+        auditStatus: [],
+        startEndDate: "",
+        updateStartEndDate: "",
+        auditStartEndDate: "",
+        payTimes: "",
+        channel: ""
       }
-    }
+    };
   },
   created() {
-    this.syncForm()
+    this.syncForm();
   },
   methods: {
     syncForm() {
@@ -58,4 +60,4 @@ export default {
   beforeDestroy() {
     this.$el && this.$el.remove();
   }
-}
+};
