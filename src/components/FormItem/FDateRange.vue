@@ -33,30 +33,24 @@
 
   const fmt = d => (d ? dayjs(d).format("YYYY-MM-DD") : "");
 
-  function getStartLimit(start, end) {
+  function getStartLimit(min, end, max) {
     return {
-      minDate: dayjs().toDate(),
-      maxDate: end
-        ? dayjs(end).toDate()
-        : dayjs()
-          .add(10, "year")
-          .toDate()
+      minDate: min,
+      maxDate: end ? dayjs(end).toDate() : max
     };
   }
 
-  function getEndLimit(start) {
+  function getEndLimit(start, max) {
     return {
       minDate: start ? dayjs(start).toDate() : dayjs().toDate(),
-      maxDate: dayjs()
-        .add(10, "year")
-        .toDate()
+      maxDate: max
     };
   }
 
-  function getLimitDate(type, start, end) {
+  function getLimitDate(type, start, end, min, max) {
     return {
-      start: getStartLimit(start, end),
-      end: getEndLimit(start, end)
+      start: getStartLimit(min, end, max),
+      end: getEndLimit(start, max)
     }[type];
   }
 
@@ -68,6 +62,14 @@
       value: {
         type: String,
         default: ","
+      },
+      min: {
+        type: Date,
+        default: () => dayjs().toDate()
+      },
+      max: {
+        type: Date,
+        default: () => dayjs().add(10, "year").toDate()
       }
     },
     filters: {
@@ -82,7 +84,9 @@
         const { minDate, maxDate } = getLimitDate(
           type,
           this.startTime,
-          this.endTime
+          this.endTime,
+          this.min,
+          this.max
         );
         const result = await this.$services.datePick({
           value: this[propName],
@@ -127,7 +131,7 @@
           disabledDate: date => {
             return (
               dayjs(date).isAfter(dayjs(this.endTime)) ||
-              dayjs(date).isBefore(dayjs().subtract(1, "day"))
+              dayjs(date).isBefore(this.min)
             );
           }
         };
@@ -137,7 +141,8 @@
           disabledDate: date => {
             return (
               dayjs(date).isBefore(dayjs(this.startTime)) ||
-              dayjs(date).isBefore(dayjs().subtract(1, "day"))
+              dayjs(date).isBefore(this.min) ||
+              dayjs(date).isAfter(this.max)
             );
           }
         };

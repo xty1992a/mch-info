@@ -38,6 +38,8 @@ export const copy = o => JSON.parse(JSON.stringify(o));
 
 export const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
+export const img_cdn = path =>  /^https?/.test(path) ? path : "https://files.1card1.cn/" + path.replace(/^\//, "");
+
 export const debounce = (fn, time = 100) => {
   let timer = null;
   return function() {

@@ -1,4 +1,5 @@
 import FDateRange from "../../components/FormItem/FDateRange";
+import dayjs from "dayjs";
 
 export default {
   components: { FDateRange },
@@ -21,6 +22,9 @@ export default {
         { label: "T+2", value: "2" }
       ],
 
+      minDate: dayjs().subtract(1, "year").toDate(),
+      maxDate: dayjs().toDate(),
+
       formData: {
         businessAccount: "",
         businessName: "",
@@ -39,10 +43,16 @@ export default {
     this.syncForm();
   },
   methods: {
-    syncForm() {
+    resetFrom() {
       Object.keys(this.formData).forEach(key => {
-        this.formData[key] = this.value[key] || "";
+        this.formData[key] = Array.isArray(this.formData[key]) ? [] : "";
       });
+    },
+
+    syncForm() {
+        Object.keys(this.formData).forEach(key => {
+          this.formData[key] = this.value[key]
+        });
     },
     onCancel() {
       this.resolve({ success: false, value: this.value });

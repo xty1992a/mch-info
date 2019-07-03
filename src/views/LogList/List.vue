@@ -29,12 +29,12 @@
       </div>
       <p>什么都没有哦</p>
     </div>
-    <FloatBtn bottom="130px" @click="changeQuery">
-      <i class="el-icon-cold-drink"></i>
+    <FloatBtn bottom="130px" @click="changeQuery" style="color:#999;">
+      <svg-icon icon="filter"/>
     </FloatBtn>
     <footer class="list-foot">
       <div class="left-btn">
-        <el-button @click="exportList" :disabled="!listTotalLength">下载</el-button>
+        <el-button @click="exportList">下载</el-button>
       </div>
       <div class="right-btn">
         <el-button @click="addItem" size="large" type="primary">新增</el-button>
@@ -85,6 +85,7 @@
           ...this.searchQuery,
           pageIndex: this.searchQuery.pageIndex + 1
         };
+        this.fetchData();
       },
       async fetchData() {
         const result = await this.$store.dispatch("LogList/appendList", {

@@ -15,7 +15,7 @@
               @click-right="onConfirm"
       />
       <section>
-        <el-form v-model="formData" label-position="top">
+        <el-form v-model="formData" label-position="top" ref="form">
           <el-form-item label="商家账号">
             <el-input
                     v-model="formData.businessAccount"
@@ -55,7 +55,7 @@
           <el-form-item label="审核时间">
             <FDateRange
                     :is-mobile="true"
-                    :data="{}"
+                    :data="{}" :min="minDate" :max="maxDate"
                     v-model="formData.startEndDate"
             />
           </el-form-item>
@@ -69,13 +69,13 @@
           <el-form-item label="审核时间">
             <FDateRange
                     :is-mobile="true"
-                    :data="{}"
+                    :data="{}" :min="minDate" :max="maxDate"
                     v-model="formData.auditStartEndDate"
             />
           </el-form-item>
 
           <footer>
-            <el-button @click="syncForm">重置</el-button>
+            <el-button @click="resetFrom">重置</el-button>
             <el-button @click="onConfirm" type="primary">确定</el-button>
           </footer>
         </el-form>

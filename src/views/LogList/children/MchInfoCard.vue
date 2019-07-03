@@ -3,10 +3,10 @@
     <div class="van-hairline--bottom">
       <van-cell :border="false">
         <h3 slot="title" style="white-space: nowrap;">{{data.storeName}}</h3>
-        <el-tag type="info" size="mini" v-if="data.auditStatus===0">未审核</el-tag>
-        <el-tag type="info" size="mini" v-if="data.auditStatus===1">审核中</el-tag>
-        <el-tag type="info" size="mini" v-if="data.auditStatus===2">审核通过</el-tag>
-        <el-tag type="info" size="mini" v-if="data.auditStatus===3">审核拒绝</el-tag>
+        <el-tag type="primary" size="mini" v-if="data.auditStatus===0">未审核</el-tag>
+        <el-tag type="warning" size="mini" v-if="data.auditStatus===1">审核中</el-tag>
+        <el-tag type="success" size="mini" v-if="data.auditStatus===2">审核通过</el-tag>
+        <el-tag type="danger" size="mini" v-if="data.auditStatus===3">审核拒绝</el-tag>
         <el-tag type="info" size="mini" v-if="data.auditStatus===4">弃用</el-tag>
       </van-cell>
       <van-cell :border="false" title="商家账户" :value="data.businessAccount"/>

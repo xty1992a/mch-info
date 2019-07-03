@@ -15,7 +15,7 @@
               v-if="!examine"
               v-model="formData.payeeIdImgPath"
       />
-      <img class="payee-img" :src="formData.payeeIdImgPath | img_cdn" alt="">
+      <img class="payee-img" v-else :src="formData.payeeIdImgPath | img_cdn" alt="">
     </div>
     <van-cell title="结算账户">
       <input type="text" placeholder="请输入结算账号" v-model="formData.payeeBankAccount" v-if="!examine"/>
@@ -107,6 +107,7 @@
 
     input {
       text-align: right;
+      border: 0;
     }
 
     .payee-img {

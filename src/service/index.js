@@ -29,6 +29,16 @@ export default {
       return { success: false };
     }
   },
+  pickDateRange: async (option) => {
+    try {
+      const module = await import("./DownloadPicker/index.js");
+      if (!option) return module.default;
+      return module.default(option);
+    } catch (e) {
+      Toast.fail("加载模块失败!");
+      return { success: false };
+    }
+  },
   pickItem: async (option) => {
     try {
       const module = await import("./Picker/index.js");

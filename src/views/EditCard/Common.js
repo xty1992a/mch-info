@@ -46,6 +46,7 @@ export default {
   },
   methods: {
     async getClearingInfo(id) {
+      this.beforeRequest = true;
       const result = await API.getClearingInfo(id);
       if (result.success) {
         result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId.replace(/null/g, "").replace(/^,$/, "");
@@ -55,6 +56,9 @@ export default {
         });
         this.formData.checkPaymentId = this.$route.query.checkPaymentId;
         this.pageData = result.data;
+        this.$nextTick(() => {
+          this.beforeRequest = false;
+        });
         return;
       }
       console.log(result);
@@ -154,6 +158,16 @@ export default {
     },
     async "formData.payeeBankCode"() {
       this.fetchBranchBank();
+    },
+    async "formData.payeeIdImgPath"(now) {
+      console.log(this.$utils.img_cdn(now), this.beforeRequest);
+      if (this.beforeRequest) return;
+
+      const result = await API.bankCardOcr(this.$utils.img_cdn(now));
+      console.log(result);
+      if (!result.success) return;
+      const { bankCardNumber, bankName } = result.data;
+      this.formData.payeeBankAccount = bankCardNumber;
     }
   }
 };

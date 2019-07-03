@@ -6,33 +6,33 @@
           class="log-filter"
           @closed="close">
     <section class="log-filter-body">
-      <el-form v-model="formData" label-position="left" label-width="90px" inline>
-        <el-form-item label="商家账号">
+      <el-form v-model="formData" ref="form" label-position="left" label-width="90px" inline>
+        <el-form-item label="商家账号" prop="businessAccount">
           <el-input v-model="formData.businessAccount" placeholder="请输入商家账号"/>
         </el-form-item>
-        <el-form-item label="商家名称">
+        <el-form-item label="商家名称" prop="businessName">
           <el-input v-model="formData.businessName" placeholder="请输入商家名称"/>
         </el-form-item>
-        <el-form-item label="商户号">
+        <el-form-item label="商户号" prop="subMerchantId">
           <el-input v-model="formData.subMerchantId" placeholder="请输入商户号"/>
         </el-form-item>
-        <el-form-item label="代理商名称">
+        <el-form-item label="代理商名称" prop="agentAccount">
           <el-input v-model="formData.agentAccount" placeholder="请输入代理商名称"/>
         </el-form-item>
-        <el-form-item label="门店名称">
+        <el-form-item label="门店名称" prop="storeName">
           <el-input v-model="formData.storeName" placeholder="请输入门店名称"/>
         </el-form-item>
-        <el-form-item label="进件结果">
+        <el-form-item label="进件结果" prop="existMerchantId">
           <el-select v-model="formData.existMerchantId">
             <el-option v-for="item in checkOptions" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="进件渠道">
+        <el-form-item label="进件渠道" prop="channel">
           <el-select v-model="formData.channel">
             <el-option v-for="item in channelList" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核结果" style="display: block;width: 100%;">
+        <el-form-item label="审核结果" prop="auditStatus" style="display: block;width: 100%;">
           <!--<el-select v-model="formData.auditStatus">-->
           <!--<el-option v-for="item in mchOptions" :key="item.value" :value="item.value" :label="item.label"/>-->
           <!--</el-select>-->
@@ -42,19 +42,21 @@
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="申请时间" style="display: block; width: 100%;">
-          <FDateRange :is-mobile="false" :data="{}" v-model="formData.startEndDate"/>
+        <el-form-item label="申请时间" prop="startEndDate" style="display: block; width: 100%;">
+          <FDateRange :is-mobile="false" :min="minDate" :max="maxDate"
+                      :data="{}" v-model="formData.startEndDate"/>
         </el-form-item>
         <!--<el-form-item label="审核时间" style="display: block; width: 100%;">-->
         <!--<FDateRange :is-mobile="false" :data="{}" v-model="formData.updateTime"/>-->
         <!--</el-form-item>-->
-        <el-form-item label="审核时间" style="display: block; width: 100%;">
-          <FDateRange :is-mobile="false" :data="{}" v-model="formData.auditStartEndDate"/>
+        <el-form-item label="审核时间" prop="auditStartEndDate" style="display: block; width: 100%;">
+          <FDateRange :is-mobile="false" :data="{}" :min="minDate" :max="maxDate"
+                      v-model="formData.auditStartEndDate"/>
         </el-form-item>
       </el-form>
     </section>
     <div slot="footer" class="log-filter-foot">
-      <el-button @click="syncForm">重置</el-button>
+      <el-button @click="resetFrom">重置</el-button>
       <el-button type="primary" @click="onConfirm">确 定</el-button>
     </div>
   </el-dialog>

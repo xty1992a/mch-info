@@ -158,9 +158,21 @@ export default {
     // region actions 点击按钮后的回调
     // region 顶部按钮
     // 导出,即下载
-    exportList() {
+    async exportList() {
       console.log("导出数据");
-      downloadFile("/static/1.txt", "1.txt");
+      const list = await this.$store.dispatch("LogList/getChannelList");
+      if (!list.length) return;
+      const result = await this.$services.pickDateRange({
+        list,
+        startTime: "",
+        endTime: "",
+        channelId: "",
+        isMobile: this.isMobile
+      });
+      console.log(result);
+      if (!result.success) return;
+      const { startTime, endTime, channelId } = result.data;
+      downloadFile(`/api/mch/exportList?channelId=${channelId}&startTime=${startTime}&endTime=${endTime}`, Date.now() + ".xls");
     },
     // endregion
     // 审核进件
@@ -284,6 +296,7 @@ export default {
 
   computed: {
     ...mapState("LogList", ["list"]),
+    ...mapState("App", ["isMobile"]),
     ...mapState("User", ["userInfo"]),
   },
   watch: {

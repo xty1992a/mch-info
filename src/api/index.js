@@ -65,5 +65,13 @@ export const sortIndex = data => request({ url: "/api/payParam/adjustPriority", 
 // 获取阿里云上传凭证
 export const getOssSignature = data => request({ url: "/api/third/getOssSignature", data }, false);
 
+// ocr
+// 获取银行卡
+export const bankCardOcr = imgUrl => request({ url: "/api/third/bankCardOcr", data: { imgUrl } }, false);
+// 银行卡头像面
+export const idBackOcr = imgUrl => request({ url: "/api/third/idCardOcr", data: { imgUrl } }, false);
+// 银行卡国徽面
+export const idFrontOcr = imgUrl => request({ url: "/api/third/idCardFanOcr", data: { imgUrl } }, false);
+
 // 接受一个URL,返回一个级联api接口
 export const getLeaveOptions = url => data => request({ url, data }, false);

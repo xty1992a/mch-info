@@ -16,7 +16,7 @@ export default {
       console.log(result);
       if (!result.success) return;
       this.pageData = result.data;
-      this.rate = "0.003";
+      this.rate = result.data.payRate.alipay;
     },
     async confirm() {
       const result = await API.editRate({

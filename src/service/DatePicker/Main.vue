@@ -16,7 +16,7 @@
   import dayjs from "dayjs";
 
   export default {
-    name: "LinkPicker",
+    name: "DatePicker",
     components: { VanPopup: Popup, VanDatetimePicker: DatetimePicker },
     data() {
       return {

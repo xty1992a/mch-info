@@ -230,12 +230,17 @@
       border: 1px solid #ebeef5;
       border-bottom-width: 0;
 
+      .el-table__header-wrapper {
+        background-color: #f7f7f7;
+      }
+
       th {
         font-weight: bold;
         background-color: #f7f7f7;
       }
 
       .el-button {
+        background-color: transparent;
       }
     }
   }
