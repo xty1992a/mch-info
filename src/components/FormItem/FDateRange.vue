@@ -1,12 +1,15 @@
 <template>
   <div class="f-date-range f-form-item">
-    <div class="pick-holder" v-if="isMobile">
+    <div class="pick-holder" :class="{forever}" v-if="isMobile">
       <span class="start-time time-display" @click="callTimePicker('start')">
         <span v-if="startTime">{{ startTime | fmt }}</span>
         <span class="placeholder" v-else>开始日期</span>
       </span>
       <span style="padding: 0 4px;">至</span>
-      <span class="end-time time-display" @click="callTimePicker('end')">
+      <el-switch v-model="isForever"
+                 active-text="永久有效"
+                 inactive-text=""/>
+      <span class="end-time time-display" :class="isForever?'disabled':''" @click="callTimePicker('end')">
         <span v-if="endTime">{{ endTime | fmt }}</span>
         <span class="placeholder" v-else>结束日期</span>
       </span>
@@ -19,10 +22,14 @@
       />
       <span style="padding: 0 4px;">至</span>
       <el-date-picker
+              :disabled="isForever"
               v-model="endTime"
               :picker-options="endOptions"
               placeholder="结束日期"
       />
+      <el-switch v-model="isForever"
+                 active-text="永久有效"
+                 inactive-text=""/>
     </template>
     <DescBtn :text="data.description"/>
   </div>
@@ -70,10 +77,18 @@
       max: {
         type: Date,
         default: () => dayjs().add(10, "year").toDate()
+      },
+      forever: {
+        type: Boolean,
       }
     },
     filters: {
       fmt
+    },
+    data() {
+      return {
+        isForever: false
+      };
     },
     created() {
       this.isMobile && this.$services.datePick();
@@ -101,6 +116,18 @@
       }
     },
     computed: {
+      // isForever: {
+      //   get() {
+      //     return dayjs("9999-12-31").isSame(this.endTime, "date");
+      //   },
+      //   set(v) {
+      //     if (v) {
+      //       this.endDisabled = true;
+      //       this.endTime = "9999-12-31";
+      //     } else {
+      //     }
+      //   }
+      // },
       startTime: {
         get() {
           if (!this.value) return "";
@@ -147,6 +174,23 @@
           }
         };
       }
+    },
+    watch: {
+      endTime: {
+        handler(now) {
+          if (dayjs("9999-12-31").isSame(now, "date")) {
+            this.isForever = true;
+          }
+        }, immediate: true
+      },
+      isForever(now) {
+        if (now) {
+          this.endTime = "9999-12-31";
+        }
+        else {
+          this.endTime = this.max;
+        }
+      }
     }
   };
 </script>
@@ -160,9 +204,18 @@
       width: 140px;
     }
 
+
     .pick-holder {
       display: inline-flex;
       width: calc(100% - 30px);
+
+      &.forever {
+        display: block;
+
+        .time-display {
+          display: block;
+        }
+      }
 
       &:after {
         z-index: -1;
@@ -179,6 +232,11 @@
         flex-shrink: 1;
         touch-action: none;
         white-space: nowrap;
+
+        &.disabled {
+          background-color: #efefef;
+          color: #999;
+        }
       }
 
       .placeholder {

@@ -3,9 +3,9 @@
     <div slot="head">
       <el-button @click="changeQuery">查询</el-button>
       <el-button type="primary" @click="addItem">+新增</el-button>
-      <el-button @click="exportList">导出变更关注列表</el-button>
+      <el-button @click="exportList" v-role="[$roles.SERVICE]">导出变更关注列表</el-button>
     </div>
-    <PagingTable ref="table" v-model="searchQuery" :total="listTotalLength">
+    <PagingTable ref="table" v-model="searchQuery" :total="listTotalLength" class="log-paging-table">
       <!--
       mpsCheckPaymentId	integer	 进件记录主键id
       businessId	string	 商家guid
@@ -39,9 +39,9 @@
       zfblhUrl	string	 名蓝海地址（相对地址）
 -->
       <el-table :height="tableHeight" :data="list" style="width: 100%" @row-dblclick="enterDetail">
-        <el-table-column prop="businessAccount" label="商家账号"/>
-        <el-table-column prop="businessName" label="商家名称"/>
-        <el-table-column prop="agentAccount" label="代理商"/>
+        <el-table-column prop="businessAccount" label="商家账号" v-role="[$roles.SERVICE, $roles.AGENT]"/>
+        <el-table-column prop="businessName" label="商家名称" v-role="[$roles.SERVICE, $roles.AGENT]"/>
+        <el-table-column prop="agentAccount" label="代理商" v-role="[$roles.SERVICE]"/>
         <el-table-column prop="storeName" label="门店"/>
         <el-table-column prop="merchantId" label="商户号"/>
         <el-table-column prop="appId" label="AppId"/>
@@ -53,17 +53,17 @@
         </el-table-column>
         <el-table-column prop="createTime" label="申请时间">
           <template slot-scope="scope">
-            <span>{{scope.row.createTime | date}}</span>
+            <span :title="$dayjs(scope.row.createTime).format('YYYY-MM-DD')">{{scope.row.createTime | date}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="updateTime" label="更新时间">
           <template slot-scope="scope">
-            <span>{{scope.row.updateTime | date}}</span>
+            <span :title="$dayjs(scope.row.updateTime).format('YYYY-MM-DD')">{{scope.row.updateTime | date}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="auditTime" label="审核时间">
           <template slot-scope="scope">
-            <span>{{scope.row.auditTime | date}}</span>
+            <span :title="$dayjs(scope.row.auditTime).format('YYYY-MM-DD')">{{scope.row.auditTime | date}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="160">
@@ -198,6 +198,8 @@
           const table = this.$refs.table.$el;
           const main = table.getElementsByClassName("el-main")[0];
           if (!main) return;
+          console.log(table.clientHeight);
+          console.log(main.clientHeight, "<------------");
           this.tableHeight = main.clientHeight;
         },
         immediate: true
@@ -224,6 +226,14 @@
     .set-btn {
       cursor: pointer;
       color: @activeC;
+    }
+
+    .log-paging-table {
+      height: calc(100vh - 80px);
+
+      .el-main {
+        overflow: hidden;
+      }
     }
 
     .el-table {

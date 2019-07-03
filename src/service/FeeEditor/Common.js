@@ -19,16 +19,19 @@ export default {
       this.rate = result.data.payRate.alipay;
     },
     async confirm() {
-      const result = await API.editRate({
-        checkPaymentId: this.checkPaymentId,
-        type: "nounionpay",
-        rate: this.rate
-      });
-      if (!result.success) return;
-      this.$message({
-        type: "success",
-        message: "修改成功!"
-      });
+      // 修改了费率,才会请求后端,否则直接退出
+      if (this.rate !== this.pageData.payRate.alipay) {
+        const result = await API.editRate({
+          checkPaymentId: this.checkPaymentId,
+          type: "nounionpay",
+          rate: this.rate
+        });
+        if (!result.success) return;
+        this.$message({
+          type: "success",
+          message: "修改成功!"
+        });
+      }
       this.onConfirm();
     },
     onCancel() {

@@ -3,9 +3,9 @@
     <Block title="审核操作" :is-mobile="isMobile" v-if="isExamine">
       <el-form label-width="120px">
         <template v-if="isMobile">
-          <van-cell is-link title="当前状态" :value="currentStatus"/>
-          <van-cell is-link title="进件通道" @click="showChannel=!showChannel" :value="displayChannel"/>
-          <RadioBox v-model="formData.channelIds" :options="channelOptions" v-show="showChannel"/>
+          <van-cell title="当前状态" :value="currentStatus"/>
+          <van-cell is-link title="进件通道" @click="showChannel=!showChannel" :value="displayChannel" :arrow-direction="showChannel?'down':''"/>
+          <RadioBox v-model="formData.channelIds" :options="channelOptions" v-show="showChannel" style="padding: 10px;"/>
           <van-cell title="备注说明"></van-cell>
           <div class="textarea-panel">
             <el-input type="textarea" v-model="formData.auditResult"/>
@@ -58,7 +58,7 @@
     },
     data() {
       return {
-        showChannel: false,
+        showChannel: true,
         formData: {
           auditResult: "",
           channelIds: []
@@ -107,6 +107,7 @@
         if (result.success) {
           this.$message(data.auditStatus === 3 ? "拒绝成功!" : "进件成功!");
           await this.$utils.sleep(1500);
+          this.$store.commit("LogList/SET_SHOULD_REFRESH", true);
           this.$router.push({ name: "Home" });
         }
       }

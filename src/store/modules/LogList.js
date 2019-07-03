@@ -11,74 +11,12 @@ function findChangeProp(now, old) {
   return { change: keys.length !== 0, keys };
 }
 
-const tableData = [
-  {
-    date: "2016-05-02",
-    name: "王小虎",
-    key: "1",
-    address: "上海市普陀区金沙江路 1518 弄"
-  },
-  {
-    date: "2016-05-04",
-    name: "王小虎",
-    key: "2",
-    address: "上海市普陀区金沙江路 1517 弄"
-  },
-  {
-    date: "2016-05-01",
-    name: "王小虎",
-    key: "3",
-    address: "上海市普陀区金沙江路 1519 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  },
-  {
-    date: "2016-05-03",
-    name: "王小虎",
-    key: "4",
-    address: "上海市普陀区金沙江路 1516 弄"
-  }
-];
-
 export default {
   namespaced: true,
   state: {
     list: [],
     channelList: [],
+    shouldRefresh: true,
     searchQuery: null
   },
   mutations: {
@@ -87,6 +25,7 @@ export default {
     SET_LIST: (state, list) => (state.list = list),
     SET_SEARCH_QUERY: (state, query) => (state.searchQuery = query),
     SET_CHANNEL_LIST: (state, list) => (state.channelList = list),
+    SET_SHOULD_REFRESH: (state, flag) => (state.shouldRefresh = flag),
     SET_LIST_ITEM: (state, item) =>
       (state.list = state.list.map(it => (it.key === item.key ? item : it))),
     DEL_LIST_ITEM: (state, item) => (state.list = state.list.filter(it => it.key !== item.key))
@@ -104,12 +43,11 @@ export default {
     },
 
     // 请求新的列表,追加到state的列表中
-    async appendList({ commit, state }, query) {
+    async appendList({ commit, state }, { query, shouldCover }) {
       // 检查查询参数是否变化
       const change = findChangeProp(query, state.searchQuery || {});
-      const indexOnly =
-        change.keys.length === 1 && change.keys[0] === "pageIndex";
-      if (!change.change) return {};
+      const indexOnly = change.keys.length === 1 && change.keys[0] === "pageIndex";
+      if (!change.change && !shouldCover) return {};
 
       console.log("should new list by ", query);
       const result = await API.getPaymentList(query);
@@ -119,8 +57,9 @@ export default {
 
       let list = result.data.list;
 
-      // 只有index变化，追加
-      if (indexOnly) {
+      // TODO, 是否可以简单的判断pageIndex为1即可覆盖数组?
+      // 只有index变化，且pageIndex不为1,追加
+      if (indexOnly && query.pageIndex !== 1) {
         list = [...state.list, ...list];
       }
       commit("SET_LIST", list);

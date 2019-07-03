@@ -28,7 +28,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.free) {
     log("free");
     // 已登录前往登录的,重定向首页
-    if (to.path.toLowerCase() === "/login" && loged) {
+    if ((to.path.toLowerCase() === "/login" || to.path.toLowerCase() === "/adminlogin") && loged) {
       log("go to login");
       next({ name: "Root" });
       return;
@@ -42,7 +42,8 @@ router.beforeEach(async (to, from, next) => {
   // region 未登录重定向登录页
   if (!loged) {
     log(`you should login before visit this page!`);
-    next(`/Login?redirect_url=${to.fullPath}`);
+    const path = getLoginPath();
+    next(`${path}?redirect_url=${to.fullPath}`);
     return;
   }
   // endregion
@@ -61,6 +62,7 @@ router.beforeEach(async (to, from, next) => {
       next({ name: "Home" });
       return;
     }
+    setLoginPath(userResult.data.role);
     // 根据用户角色生成路由表
     const authList = genAuthList(
       routes,
@@ -113,6 +115,26 @@ function genAuthList(list, check) {
     }
     return check(it) ? [...p, it, ...children] : p;
   }, []);
+}
+
+// 用户不同,登录页面不同
+// 商家不能登录,代理商 /login 管理员是/AdminLogin
+function setLoginPath(role) {
+  switch (role) {
+    case ROLES.MERCHANT:
+      localStorage.setItem("USER_LOGIN_PATH", "/Error/NoAuth");
+      break;
+    case ROLES.SERVICE:
+      localStorage.setItem("USER_LOGIN_PATH", "/AdminLogin");
+      break;
+    default:
+      localStorage.setItem("USER_LOGIN_PATH", "/Login");
+  }
+}
+
+function getLoginPath() {
+  const path = localStorage.getItem("USER_LOGIN_PATH");
+  return path || "/Login";
 }
 
 // endregion

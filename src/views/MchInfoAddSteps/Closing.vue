@@ -13,6 +13,7 @@
               v-for="item in formItems"
       >
         <component
+                forever
                 :ref="item.filedName"
                 :is="'f-' + item.filedType"
                 :data="item"
@@ -105,8 +106,9 @@
         if (this.beforeRequest || !now) return;
         const result = await API.bankCardOcr(this.$utils.img_cdn(now));
         if (!result.success) return;
-        const { bankCardNumber, bankName } = result.data;
+        const { bankCardNumber, bankCode } = result.data;
         this.formData.payeeBankAccount = bankCardNumber;
+        this.formData.payeeBankCode = bankCode;
       },
       // 人像面,获取人名,身份证号
       async "formData.payeeIdImg1Path"(now) {

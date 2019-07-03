@@ -13,6 +13,7 @@
               v-for="item in formItems"
       >
         <component
+                forever
                 :ref="item.filedName"
                 :is="'f-' + item.filedType"
                 :data="item"
@@ -83,7 +84,7 @@
     watch: {
       // 人像面,获取人名,身份证号
       async "formData.corporationIdImg1Path"(now) {
-        if (this.beforeRequest||!now) return;
+        if (this.beforeRequest || !now) return;
         const result = await API.idBackOcr(this.$utils.img_cdn(now));
         if (!result.success) return;
         const { idCardNumber, idCardName } = result.data;
@@ -92,7 +93,7 @@
       },
       // 国徽面,获取有效期
       async "formData.corporationIdImg2Path"(now) {
-        if (this.beforeRequest||!now) return;
+        if (this.beforeRequest || !now) return;
         const result = await API.idFrontOcr(this.$utils.img_cdn(now));
         if (!result.success) return;
         const { startTime, endTime } = result.data;

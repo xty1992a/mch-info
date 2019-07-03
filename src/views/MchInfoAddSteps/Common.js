@@ -51,6 +51,11 @@ export default {
         const child = this.$refs[key][0];
         const msg = child.validate(nullable);
         this.errorMessages[key] = msg;
+        let unwatch = this.$watch(`formData.${key}`, () => {
+          console.log("should reset error message");
+          this.errorMessages[key] = "";
+          unwatch();
+        });
         return msg ? [...prev, msg] : prev;
       }, []);
       if (messages.length) {

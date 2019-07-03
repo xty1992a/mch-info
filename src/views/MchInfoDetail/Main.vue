@@ -83,7 +83,7 @@
 
       .content {
         padding: 10px;
-        margin-bottom: 50px;
+        margin-bottom: 70px;
       }
     }
   }

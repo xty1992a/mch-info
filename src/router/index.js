@@ -36,8 +36,6 @@ export const routes = [
       }
     },
     meta: {
-      isSide: false,
-      isTag: false,
       title: "首页",
       keepAlive: false,
       roles: [AGENT, SERVICE, MERCHANT]
@@ -55,8 +53,6 @@ export const routes = [
     },
     component: () => import("../views/LogList/List.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "进件列表",
 
       keepAlive: false,
@@ -74,8 +70,6 @@ export const routes = [
     },
     component: () => import("../views/LogList/Table.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "进件记录",
 
       keepAlive: false,
@@ -87,8 +81,6 @@ export const routes = [
     name: "MchInfoAdd",
     component: () => import("../views/MchInfoAdd/index.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "进件",
 
       keepAlive: false,
@@ -108,8 +100,6 @@ export const routes = [
           next();
         },
         meta: {
-          isSide: false,
-          isTag: false,
           title: "进件-步骤一",
 
           keepAlive: false,
@@ -121,8 +111,6 @@ export const routes = [
         name: "MchInfoAddBase",
         component: () => import("../views/MchInfoAddSteps/Base.vue"),
         meta: {
-          isSide: false,
-          isTag: false,
           title: "进件-步骤二",
 
           keepAlive: false,
@@ -134,8 +122,6 @@ export const routes = [
         name: "MchInfoAddClosing",
         component: () => import("../views/MchInfoAddSteps/Closing.vue"),
         meta: {
-          isSide: false,
-          isTag: false,
           title: "进件-步骤三",
 
           keepAlive: false,
@@ -147,8 +133,6 @@ export const routes = [
         name: "MchInfoAddRest",
         component: () => import("../views/MchInfoAddSteps/Rest.vue"),
         meta: {
-          isSide: false,
-          isTag: false,
           title: "进件-步骤四",
 
           keepAlive: false,
@@ -166,8 +150,6 @@ export const routes = [
     },
     component: () => import("../views/MchInfoDetail/Main.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "结算信息修改申请",
       keepAlive: false,
       free: true
@@ -184,8 +166,6 @@ export const routes = [
     },
     component: () => import("../views/EditCard/Main.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "结算信息修改申请",
 
       keepAlive: false,
@@ -203,8 +183,6 @@ export const routes = [
     },
     component: () => import("../views/EditCard/Mobile.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "结算信息修改申请",
 
       keepAlive: false,
@@ -222,8 +200,6 @@ export const routes = [
     },
     component: () => import("../views/PaymentCard/Main.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "支付方式配置",
 
       keepAlive: false,
@@ -241,8 +217,6 @@ export const routes = [
     },
     component: () => import("../views/PaymentCard/Mobile.vue"),
     meta: {
-      isSide: false,
-      isTag: false,
       title: "支付方式配置",
 
       keepAlive: false,
@@ -254,8 +228,17 @@ export const routes = [
     name: "Login",
     component: Login,
     meta: {
-      isSide: false,
-      isTag: false,
+      title: "登录",
+
+      keepAlive: false,
+      free: true
+    }
+  },
+  {
+    path: "/AdminLogin",
+    name: "AdminLogin",
+    component: Login,
+    meta: {
       title: "登录",
 
       keepAlive: false,
@@ -280,7 +263,15 @@ export const routes = [
 ];
 
 const router = new Router({
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    else {
+      return { x: 0, y: 0 };
+    }
+  }
 });
 
 export default router;

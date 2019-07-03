@@ -5,7 +5,7 @@
             :model="formData"
             :label-position="labelPosition"
             :rules="rules"
-            ref="formData"
+            ref="form"
             label-width="130px"
             class="formData"
     >
@@ -46,10 +46,10 @@
       </el-form-item>
       <el-form-item prop="chainStoreId" v-show="isMobile">
         <van-cell title="门店" @click="pickStore" style="margin-left: -20px;">
-          <span>{{pickedStore ? pickedStore.chainStoreName : "请选择"}}</span>
+          <span>{{storeName}}</span>
         </van-cell>
       </el-form-item>
-      <el-row v-if="publicInfo && publicInfo.version === 1">
+      <el-row v-if="publicInfo && publicInfo.version !== 1">
         <el-col :span="24">
           <el-form-item label="公众号主体跟营业执照名称是否一致" prop="samePrincipal">
             <!-- 64:一致，128:不一致-->
@@ -67,7 +67,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="选择地区">
+      <el-form-item label="选择地区" prop="provinceId">
         <FLinkPicker :data="regionPicker" v-model="region" :is-mobile="isMobile"/>
       </el-form-item>
     </el-form>
@@ -97,8 +97,8 @@
       return {
         checkShow: false,
         formData: {
-          businessLicenseType: 0,
-          payeeType: 0,
+          businessLicenseType: "",
+          payeeType: "",
           wechatPayType: 3,
           aliPayType: 48,
           unionPayType: 0,
@@ -113,14 +113,23 @@
 
         rules: {
           businessLicenseType: [
-            { required: true, message: "请选择营业执照类型", trigger: "blur" }
+            { required: true, message: "请选择营业执照类型", trigger: "change" }
           ],
           payeeType: [
-            { required: true, message: "请选择账户类型", trigger: "blur" }
+            { required: true, message: "请选择账户类型", trigger: "change" }
           ],
           chainStoreId: [
-            { required: true, message: "请选择门店", trigger: "blur" }
-          ]
+            { required: true, message: "请选择门店", trigger: "change" }
+          ],
+          provinceId: [
+            { required: true, message: "请选择地区", trigger: "change" }
+          ],
+          cityId: [
+            { required: true, message: "请选择地区", trigger: "change" }
+          ],
+          countyId: [
+            { required: true, message: "请选择地区", trigger: "change" }
+          ],
         },
 
         regionPicker: {
@@ -185,7 +194,7 @@
           columns: [
             // 表格展示项
             { label: "名称", prop: "chainStoreName" },
-            { label: "门店标识", prop: "chainStoreId" }
+            // { label: "门店标识", prop: "chainStoreId" }
           ],
           props: {
             key: "chainStoreId",
@@ -227,15 +236,10 @@
           }
           console.log("valid1");
 
-          this.$refs.formData.validate(valid => {
-            resolve(
-              valid
-                ? {
-                  ...this.formData,
-                  businessId: this.businessInfo.businessId
-                }
-                : null
-            );
+          this.$refs.form.validate(valid => {
+            console.log(valid);
+            const result = valid ? { ...this.formData, businessId: this.businessInfo.businessId } : null;
+            resolve(result);
           });
         });
       },
@@ -247,7 +251,6 @@
         }
 
         const data = await this.validateForm();
-        console.log(data, "validate form");
         if (!data) return;
         if (!data.appId && this.publicInfo.version === 8) {
           this.$message("请到云会员后台授权后再试!");
@@ -307,8 +310,8 @@
         const type = +this.formData.businessLicenseType;
         return [
           { label: "对私账户", value: 8 },
-          { label: "对公", value: 16, disabled: type !== 4 }, // 只有企业可用
-          { label: "非法人", value: 32, disabled: type !== 2 && type !== 4 } // 有营业执照即可用
+          { label: "对公", value: 16, disabled: type === 1 || type === 2 }, // 只有企业可用
+          { label: "非法人", value: 32, disabled: type === 1 } // 有营业执照即可用
         ];
       },
       region: {
@@ -361,6 +364,9 @@
         console.log("businessLicenseType", now);
         if (this.mchInfo) return;
         if (+now === 1) {
+          this.formData.payeeType = 8;
+        }
+        if (+now === 2 && this.formData.payeeType === 16) {
           this.formData.payeeType = 8;
         }
       }

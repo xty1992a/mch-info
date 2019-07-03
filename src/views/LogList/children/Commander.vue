@@ -10,6 +10,7 @@
       </el-dropdown-item>
       <el-dropdown-item
               command="enterPayment"
+              v-if="!isMobile"
               v-role="[$roles.AGENT, $roles.MERCHANT]">支付参数
       </el-dropdown-item>
       <el-dropdown-item
@@ -63,6 +64,10 @@
         this.$emit("command", method, this.data);
       },
     },
-    computed: {}
+    computed: {
+      isMobile() {
+        return this.$store.state.App.isMobile;
+      }
+    }
   };
 </script>

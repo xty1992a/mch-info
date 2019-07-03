@@ -129,7 +129,7 @@
       right: 0;
       top: 50px;
       left: 0;
-      overflow: hidden;
+      overflow: auto;
 
       .van-list {
         .list-wrap {

@@ -164,8 +164,9 @@ export default {
       const result = await API.bankCardOcr(this.$utils.img_cdn(now));
       console.log(result);
       if (!result.success) return;
-      const { bankCardNumber, bankName } = result.data;
+      const { bankCardNumber, bankCode } = result.data;
       this.formData.payeeBankAccount = bankCardNumber;
+      this.formData.payeeBankCode = bankCode;
     }
   }
 };

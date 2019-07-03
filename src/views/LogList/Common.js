@@ -55,27 +55,12 @@ export default {
     // 0未审核 1审核中 2审核通过 3拒绝 4弃用
     statusDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
     channelDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
-    date: v => dayjs(v).isValid() ? dayjs(v).format("YYYY-MM-DD") : ""
+    date: v => dayjs(v).isValid() ? dayjs(v).format("MM-DD") : ""
   },
   methods: {
-    
+
     // region 调起弹窗选择器
-    // 修改过滤器，页面此时应该重新请求
-    async changeQuery() {
-      const list = await this.$store.dispatch("LogList/getChannelList");
-      const result = await this.$services.filterQuery({
-        value: this.searchQuery,
-        channelList: list
-      });
-      if (result.success) {
-        // 使searchQuery得到完全替换，避免页面需要deep监视
-        this.searchQuery = Object.keys(this.searchQuery).reduce((p, key) => {
-          return { ...p, [key]: result.value[key] };
-        }, {});
-        this.searchQuery.pageIndex = 1;
-        this.fetchData();
-      }
-    },
+    // 为其他回调提供服务,弹窗,选择,返回一个值.
     // 选择商户
     async chooseMch() {
       const result = await this.$services.pickItemAsync({
@@ -96,7 +81,6 @@ export default {
           return await API.getMchList({ ...query, searchStr: query.keywords });
         }
       });
-
       if (!result.success) return;
       return result.value;
     },
@@ -124,15 +108,12 @@ export default {
           });
         }
       });
-
       if (!result.success) return null;
       return result.value;
     },
     // 选择进件通道
     async chooseChannel() {
       const list = await this.$store.dispatch("LogList/getChannelList");
-
-      console.log("getChannelList", this.channelList);
       const result = await this.$services.pickItemAsync({
         value: "",
         key: "channel_list",
@@ -149,16 +130,85 @@ export default {
           title: "channelName"
         },
       });
-
       if (!result.success) return;
-      console.log(result);
       return result.value;
     },
     // endregion
 
-    // region actions 点击按钮后的回调
-    // region 顶部按钮
-    // 导出,即下载
+    // region 会影响列表的按钮回调
+    // 修改过滤器，页面此时应该重新请求
+    async changeQuery() {
+      const list = await this.$store.dispatch("LogList/getChannelList");
+      const result = await this.$services.filterQuery({
+        value: this.searchQuery,
+        channelList: list
+      });
+      if (result.success) {
+        // 使searchQuery得到完全替换，避免页面需要deep监视
+        this.searchQuery = Object.keys(this.searchQuery).reduce((p, key) => {
+          return { ...p, [key]: result.value[key] };
+        }, {});
+        this.searchQuery.pageIndex = 1;
+        this.fetchData(true);
+      }
+    },
+    // 重新进件(复制记录,修改通道)
+    async recheckItem(item) {
+      const channelId = await this.chooseChannel();
+      if (!channelId) return;
+      const result = await API.recheckPayment({
+        checkPaymentId: item.mpsCheckPaymentId,
+        channelId
+      });
+      if (result.success) {
+        this.searchQuery.pageIndex = 1;
+        this.fetchData(true);
+      }
+    },
+    // 复制进件(拷贝记录,修改门店)
+    async repeatItem(item) {
+      const chainStoreId = await this.chooseStore(item.businessId);
+      if (!chainStoreId) return;
+      console.log(item);
+      const result = await API.copyPayment({
+        checkPaymentId: item.mpsCheckPaymentId,
+        chainStoreId
+      });
+      console.log("copy result", result);
+      if (result.success) {
+        this.searchQuery.pageIndex = 1;
+        this.fetchData(true);
+      }
+    },
+    // 删除元素
+    // 更新视图的操作由各页面监视listTotalLength自行处理
+    async deleteItem(item) {
+      this.onRequest = true;
+      const complete = await this.$store.dispatch(
+        "LogList/deleteListItem",
+        item.mpsCheckPaymentId
+      );
+      // 删除元素需要重新更新finished
+      // 确保不影响后续上拉加载
+      if (complete) {
+        this.$message({
+          type: "success",
+          message: "操作成功!"
+        });
+        this.listTotalLength--;
+        this.finished = this.listTotalLength === this.list.length;
+      }
+      this.onRequest = false;
+      // pc端回到第一页
+      if (!this.isMobile) {
+        this.searchQuery.pageIndex = 1;
+        this.fetchData();
+      }
+    },
+    // endregion
+
+    // region  不影响列表的按钮回调
+    // 下载指定时间,通道的数据
     async exportList() {
       console.log("导出数据");
       const list = await this.$store.dispatch("LogList/getChannelList");
@@ -175,62 +225,15 @@ export default {
       const { startTime, endTime, channelId } = result.data;
       downloadFile(`/api/mch/exportList?channelId=${channelId}&startTime=${startTime}&endTime=${endTime}`, Date.now() + ".xls");
     },
-    // endregion
-    // 审核进件
-    examineItem(item) {
-      this.$router.push({ name: "MchInfoDetail", query: { examine: 1, checkPaymentId: item.mpsCheckPaymentId } });
-    },
-    // 查看详情
-    enterDetail(item) {
-      this.$router.push({ name: "MchInfoDetail", query: { examine: 0, checkPaymentId: item.mpsCheckPaymentId } });
-    },
-    // 进入支付参数配置页面
-    enterPayment({ businessId, chainStoreId }) {
-      this.$router.push({ name: "PaymentCard", query: { businessId, chainStoreId } });
-    },
-    // 重新进件(复制记录,修改通道)
-    async recheckItem(item) {
-      const channelId = await this.chooseChannel();
-      if (!channelId) return;
-      const result = await API.recheckPayment({
-        checkPaymentId: item.mpsCheckPaymentId,
-        channelId
-      });
-      if (result.success) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData();
-      }
-    },
-    // 复制进件(拷贝记录,修改门店)
-    async repeatItem(item) {
-      const chainStoreId = await this.chooseStore(item.businessId);
-      if (!chainStoreId) return;
-      console.log(item);
-      const result = await API.copyPayment({
-        checkPaymentId: item.mpsCheckPaymentId,
-        chainStoreId
-      });
-      console.log("copy result", result);
-      if (result.success) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData();
-      }
-    },
-    // 编辑进件
-    editItem(item) {
-      console.log(item);
-      // 重置进件信息
-      this.$store.commit("MchInfo/CLEAR_STATE");
-      this.$router.push({ name: "MchInfoAddBase", query: { checkPaymentId: item.mpsCheckPaymentId } });
-    },
     // 修改费率
     async editFee(item) {
-      console.log("call fee edit", item);
       const result = await this.$services.editFee({
         checkPaymentId: item.mpsCheckPaymentId
       });
-      console.log(result);
     },
+    // endregion
+
+    // region 复杂的跳转
     // 点击添加按钮，代理商需要先选择商户
     async addItem() {
       const is_merchant = this.$store.state.User.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
@@ -253,32 +256,34 @@ export default {
       if (!complete) return;
       this.goToAddMchInfo();
     },
+    // endregion
+
+    // region 简单的跳转
+    // 编辑进件
+    editItem(item) {
+      console.log(item);
+      // 重置进件信息
+      this.$store.commit("MchInfo/CLEAR_STATE");
+      // 直接进入第二步
+      this.$router.push({ name: "MchInfoAddBase", query: { checkPaymentId: item.mpsCheckPaymentId } });
+    },
     // 前往进件页面
     goToAddMchInfo() {
       // 重置进件信息
       this.$store.commit("MchInfo/CLEAR_STATE");
       this.$router.push({ name: "MchInfoAddMain" });
     },
-    // 删除元素
-    // 更新视图的操作由各页面监视listTotalLength自行处理
-    async deleteItem(item) {
-      this.onRequest = true;
-      const complete = await this.$store.dispatch(
-        "LogList/deleteListItem",
-        item.mpsCheckPaymentId
-      );
-      // 删除元素需要重新更新finished
-      // 确保不影响后续上拉加载
-      if (complete) {
-        this.listTotalLength--;
-        this.finished = this.listTotalLength === this.list.length;
-      }
-      this.onRequest = false;
-      // pc端回到第一页
-      if (!this.isMobile) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData();
-      }
+    // 审核进件
+    examineItem(item) {
+      this.$router.push({ name: "MchInfoDetail", query: { examine: 1, checkPaymentId: item.mpsCheckPaymentId } });
+    },
+    // 查看详情
+    enterDetail(item) {
+      this.$router.push({ name: "MchInfoDetail", query: { examine: 0, checkPaymentId: item.mpsCheckPaymentId } });
+    },
+    // 进入支付参数配置页面
+    enterPayment({ businessId, chainStoreId }) {
+      this.$router.push({ name: "PaymentCard", query: { businessId, chainStoreId } });
     },
     // 修改结算卡
     editCart(item) {
@@ -292,6 +297,8 @@ export default {
     },
     goToAliLh(item) {
     },
+    // endregion
+
     // endregion
   },
 

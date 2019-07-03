@@ -67,11 +67,11 @@ export const getOssSignature = data => request({ url: "/api/third/getOssSignatur
 
 // ocr
 // 获取银行卡
-export const bankCardOcr = imgUrl => request({ url: "/api/third/bankCardOcr", data: { imgUrl } }, true);
+export const bankCardOcr = imgUrl => request({ url: "/api/third/bankCardOcr", data: { imgUrl }, timeout: 10000 }, true, false);
 // 银行卡头像面
-export const idBackOcr = imgUrl => request({ url: "/api/third/idCardOcr", data: { imgUrl } }, true);
+export const idBackOcr = imgUrl => request({ url: "/api/third/idCardOcr", data: { imgUrl }, timeout: 10000 }, true, false);
 // 银行卡国徽面
-export const idFrontOcr = imgUrl => request({ url: "/api/third/idCardFanOcr", data: { imgUrl } }, true);
+export const idFrontOcr = imgUrl => request({ url: "/api/third/idCardFanOcr", data: { imgUrl }, timeout: 10000 }, true, false);
 
 // 接受一个URL,返回一个级联api接口
 export const getLeaveOptions = url => data => request({ url, data }, false);

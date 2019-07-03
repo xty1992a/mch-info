@@ -1,8 +1,6 @@
-const checkMap = {
-  tel: () => "",
-  default: () => ""
-};
+import VALIDATORS from "@/utils/validators";
 
+// 返回一个校验函数,函数接受字符,不通过返回错误提示,通过返回空字符串.
 function getValidator(field) {
   //  0:无校验规则，1:正则校验，2:其它校验
   const message = field.checkMsg || field.name + "填写有误!";
@@ -17,8 +15,8 @@ function getValidator(field) {
         return () => "";
       }
     case 2:
-      const valid = checkMap[field.checkExpression] || checkMap["default"];
-      return v => valid(v) || "";
+      const valid = VALIDATORS[field.checkExpression] || VALIDATORS["default"];
+      return v => valid(v) ? "" : message;
   }
 }
 
@@ -47,6 +45,5 @@ export const formatFields = fields =>
       validator: getValidator(item),
       dateFormat: item.dateFormatStr,
       filedType: typeMap[item.filedType],
-      selectLevel: /8080/.test(location.href) ? 3 : item.selectLevel
     };
   });

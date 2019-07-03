@@ -28,6 +28,7 @@ export default {
         el: this.$refs.btn.$el,
         uploadUrl: this._uploadUrl,
         async getFormDataAsync(callback) {
+
           const res = await API.getOssSignature();
           if (res.success) {
             l = Toast.loading({
@@ -55,10 +56,12 @@ export default {
       }
 
       this.uploader.on("upload-error", e => {
+        this.uploader.insertBtn.value = null;
         l && l.clear();
       });
 
       this.uploader.on("upload", e => {
+        this.uploader.insertBtn.value = null;
         console.log("upload", e.formData.key);
         this.$emit("input", "/" + e.formData.key);
         l && l.clear();

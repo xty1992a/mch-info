@@ -47,7 +47,7 @@ axios.interceptors.response.use(
 // endregion
 
 export default function request(
-  { method = "POST", data = {}, url, headers = {} },
+  { method = "POST", data = {}, url, headers = {} , timeout = 5000},
   loading = true,
   toast = true
 ) {
@@ -62,7 +62,7 @@ export default function request(
       data,
       params,
       headers,
-      timeout: 5000
+      timeout
     })
       .then(res => {
         /*

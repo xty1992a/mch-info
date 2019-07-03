@@ -13,6 +13,7 @@
               v-for="item in formItems"
       >
         <component
+                forever
                 :ref="item.filedName"
                 :is="'f-' + item.filedType"
                 :data="item"
@@ -27,7 +28,7 @@
 
       <el-button class="foot-item" @click="cacheData">暂存</el-button>
 
-      <el-button class="foot-item" @click="saveAndConfirm">保存</el-button>
+      <el-button class="foot-item" @click="saveAndConfirm">提交</el-button>
     </footer>
   </div>
 </template>
@@ -52,6 +53,7 @@
       const success = await this.initPage();
       if (success) {
         this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
+        this.formData.remark = this.formData.remark || "无";
         this.initErrorMessage();
       }
       this.$nextTick(() => {
@@ -68,6 +70,7 @@
         if (result.success) {
           this.$message("保存成功!");
           await this.$utils.sleep(1500);
+          this.$store.commit("LogList/SET_SHOULD_REFRESH", true);
           this.$router.push({ name: "Home" });
         }
       }

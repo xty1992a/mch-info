@@ -33,9 +33,9 @@
       <svg-icon icon="filter"/>
     </FloatBtn>
     <footer class="list-foot">
-      <div class="left-btn">
-        <el-button @click="exportList">下载</el-button>
-      </div>
+      <!--<div class="left-btn">-->
+      <!--<el-button @click="exportList" v-role="[$roles.SERVICE]">下载</el-button>-->
+      <!--</div>-->
       <div class="right-btn">
         <el-button @click="addItem" size="large" type="primary">新增</el-button>
       </div>
@@ -46,7 +46,7 @@
 <script>
   import LeftGoTransition from "@/components/LeftGoTransition";
   import FloatBtn from "@/components/FloatBtn";
-  import BackTop from "@/components/FloatBtn/BackTop.js";
+  import BackTop from "@/components/FloatBtn/BackTop";
   import { mapState } from "vuex";
   import { List } from "vant";
 
@@ -76,7 +76,10 @@
       this.debouncedScroll && window.removeEventListener("scroll", this.debouncedScroll);
       this.debouncedScroll = this.$utils.debounce(this.checkScrollTop, 100);
       window.addEventListener("scroll", this.debouncedScroll);
-      this.fetchData();
+    },
+    activated() {
+      this.fetchData(this.$store.state.LogList.shouldRefresh);
+      this.$store.commit("LogList/SET_SHOULD_REFRESH", false);
     },
     methods: {
       // 加载事件视为修改pageIndex的一种行为
@@ -87,9 +90,12 @@
         };
         this.fetchData();
       },
-      async fetchData() {
+      async fetchData(shouldCover = false) {
         const result = await this.$store.dispatch("LogList/appendList", {
-          ...this.searchQuery
+          query: {
+            ...this.searchQuery
+          },
+          shouldCover,
         });
         this.loading = false;
 
