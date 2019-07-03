@@ -28,9 +28,9 @@ export default {
       const result = await API.login(params);
       console.log(result);
       if (result.success) {
-        if (/8080/.test(location.href)) {
-          Cookie.set("custom_session_id", "asdfasdf", { expires: 0.5 });
-        }
+        // if (/8080/.test(location.href)) {
+        // Cookie.set("custom_session_id", "asdfasdf", { expires: 0.5 });
+        // }
       }
       return result;
     },
