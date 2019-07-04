@@ -61,6 +61,24 @@ const list = [
   Footer,
   FormItem
 ];
-Vue.prototype.$message = isMobile ? Toast : Message;
+Vue.prototype.$message = (opt) => {
+  if (typeof opt === "string") {
+    opt = {
+      type: isMobile ? "text" : "info",
+      message: opt
+    };
+  }
+  if (isMobile) {
+    if (opt.type === "error" || opt.type === "warning") {
+      opt.type = "fail";
+    }
+  }
+  else {
+    if (opt.type === "fail") {
+      opt.type = "error";
+    }
+  }
+  isMobile ? Toast(opt) : Message(opt);
+};
 
 list.forEach(com => Vue.use(com));

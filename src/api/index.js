@@ -2,10 +2,6 @@
  * Created by TY-xie on 2018/5/10.
  */
 import request from "./request";
-import * as mock from "./mockData";
-import { getRegionOption } from "./mock/region";
-
-const mockFn = mock.default;
 
 // 登录,会获得登录cookie标识
 export const login = (data, loading = true) => request({ data, url: "/api/basic/login" }, loading);
