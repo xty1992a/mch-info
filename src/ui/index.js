@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { isMobile } from "../utils";
-import { Toast, Cell } from "vant";
+import { Toast, Cell, Dialog as VanDialog } from "vant";
 
 import {
   Message,
@@ -80,5 +80,7 @@ Vue.prototype.$message = (opt) => {
   }
   isMobile ? Toast(opt) : Message(opt);
 };
+
+Vue.prototype.$confirm = VanDialog;
 
 list.forEach(com => Vue.use(com));

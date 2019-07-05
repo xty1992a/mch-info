@@ -39,26 +39,27 @@
       zfblhUrl	string	 名蓝海地址（相对地址）
 -->
       <el-table :height="tableHeight" :data="list" style="width: 100%" @row-dblclick="enterDetail">
-        <el-table-column prop="businessAccount" label="商家账号" v-role="[$roles.SERVICE, $roles.AGENT]"/>
-        <el-table-column prop="businessName" label="商家名称" v-role="[$roles.SERVICE, $roles.AGENT]"/>
-        <el-table-column prop="agentAccount" label="代理商" v-role="[$roles.SERVICE]"/>
+        <el-table-column prop="businessAccount" label="商家账号" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
+        <el-table-column prop="businessName" label="商家名称" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
+        <el-table-column prop="agentAccount" label="代理商" v-if="[$roles.SERVICE, 'TEST'].includes(role)"/>
         <el-table-column prop="storeName" label="门店"/>
         <el-table-column prop="merchantId" label="商户号"/>
         <el-table-column prop="appId" label="AppId"/>
         <el-table-column prop="channelName" label="支付通道"/>
         <el-table-column prop="auditStatus" label="状态">
           <template slot-scope="scope">
-            <span>{{scope.row.auditStatus | statusDis}}</span>
+            <!--<span>{{scope.row.auditStatus | statusDis}}</span>-->
+
+            <el-tag type="primary" size="mini" v-if="scope.row.auditStatus===0">未审核</el-tag>
+            <el-tag type="warning" size="mini" v-if="scope.row.auditStatus===1">审核中</el-tag>
+            <el-tag type="success" size="mini" v-if="scope.row.auditStatus===2">通过</el-tag>
+            <el-tag type="danger" size="mini" v-if="scope.row.auditStatus===3">拒绝</el-tag>
+            <el-tag type="info" size="mini" v-if="scope.row.auditStatus===4">弃用</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="申请时间">
           <template slot-scope="scope">
             <span :title="$dayjs(scope.row.createTime).format('YYYY-MM-DD')">{{scope.row.createTime | date}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="updateTime" label="更新时间">
-          <template slot-scope="scope">
-            <span :title="$dayjs(scope.row.updateTime).format('YYYY-MM-DD')">{{scope.row.updateTime | date}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="auditTime" label="审核时间">
@@ -69,12 +70,12 @@
         <el-table-column label="操作" fixed="right" width="160">
           <template slot-scope="scope">
             <el-button
-                    size="mini" style="border: 0;"
+                    size="mini"
                     @click="editItem(scope.row)"
                     :disabled="scope.row.auditStatus===1"
                     v-role="[$roles.AGENT, $roles.MERCHANT]">编辑
             </el-button>
-            <el-button size="mini" style="border: 0;"
+            <el-button size="mini"
                        @click="examineItem(scope.row)"
                        v-role="$roles.SERVICE">审核
             </el-button>
@@ -149,7 +150,7 @@
 <script>
   import Container from "@/components/Container";
   import Common from "./Common";
-  import { Table, TableColumn } from "element-ui";
+  import { Table, TableColumn, Tag } from "element-ui";
   import PagingTable from "../../components/PagingTable";
   import Commander from "./children/Commander";
 
@@ -160,6 +161,7 @@
       PagingTable,
       Commander,
       ElTable: Table,
+      ElTag: Tag,
       ElTableColumn: TableColumn,
       Container
     },
@@ -187,6 +189,9 @@
     computed: {
       screenHeight() {
         return this.$store.state.App.screenHeight;
+      },
+      role() {
+        return this.$store.state.User.userInfo.role;
       }
     },
     watch: {
@@ -240,6 +245,10 @@
       border: 1px solid #ebeef5;
       border-bottom-width: 0;
 
+      td {
+        padding: 5px 0;
+      }
+
       .el-table__header-wrapper {
         background-color: #f7f7f7;
       }
@@ -251,6 +260,8 @@
 
       .el-button {
         background-color: transparent;
+        font-size: 14px;
+        border: 0;
       }
     }
   }

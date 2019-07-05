@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-          title="修改费率"
+          :title="title"
           :visible.sync="show"
           width="640px"
           class="paging-picker"

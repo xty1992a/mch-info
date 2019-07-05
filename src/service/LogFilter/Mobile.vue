@@ -16,22 +16,22 @@
       />
       <section>
         <el-form v-model="formData" label-position="top" ref="form">
-          <el-form-item label="商家账号">
+          <el-form-item label="商家账号" v-role="[$roles.SERVICE, $roles.AGENT]">
             <el-input
                     v-model="formData.businessAccount"
                     placeholder="请输入商家账号"
             />
           </el-form-item>
-          <el-form-item label="商家名称">
+          <el-form-item label="商家名称" v-role="[$roles.SERVICE, $roles.AGENT]">
             <el-input
                     v-model="formData.businessName"
                     placeholder="请输入商家名称"
             />
           </el-form-item>
-          <el-form-item label="商户号">
+          <el-form-item label="商户号" v-role="[$roles.SERVICE, $roles.AGENT]">
             <el-input v-model="formData.subMerchantId" placeholder="请输入商户号"/>
           </el-form-item>
-          <el-form-item label="代理商名称">
+          <el-form-item label="代理商账号" v-role="[$roles.SERVICE]">
             <el-input
                     v-model="formData.agentAccount"
                     placeholder="请输入代理商名称"
@@ -43,7 +43,7 @@
                     placeholder="请输入门店名称"
             />
           </el-form-item>
-          <el-form-item label="审核结果">
+          <el-form-item label="审核状态">
             <RadioBox :options="mchOptions" v-model="formData.auditStatus"/>
           </el-form-item>
           <el-form-item label="进件渠道">

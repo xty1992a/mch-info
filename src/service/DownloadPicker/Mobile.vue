@@ -1,5 +1,5 @@
 <template>
-  <van-popup class="download-picker"
+  <van-popup class="m-download-picker"
              v-model="show"
              @closed="close">
     <header>选择下载条件</header>
@@ -18,7 +18,7 @@
 <script>
   import { Popup, Cell } from "vant";
   import dayjs from "dayjs";
-  import Common from './Common'
+  import Common from "./Common";
 
   export default {
     name: "MDownloadPicker",
@@ -54,7 +54,7 @@
 <style lang="less" rel="stylesheet/less">
   @import "../../styles/variable";
 
-  .download-picker {
+  .m-download-picker {
     width: 300px;
     font-size: 15px;
 

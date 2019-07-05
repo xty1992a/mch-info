@@ -1,6 +1,6 @@
 <template>
   <div class="mch-info-add-page">
-    <Container class="mch-info-add" title="结算信息修改申请">
+    <Container class="mch-info-add" title="商户进件">
       <Steps/>
       <section class="page-body">
         <router-view/>

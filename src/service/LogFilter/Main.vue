@@ -5,19 +5,19 @@
           width="680px"
           class="log-filter"
           @closed="close">
-    <section class="log-filter-body">
+    <section class="log-filter-body" @keypress.enter="onConfirm">
       <el-form v-model="formData" ref="form" label-position="left" label-width="90px" inline>
-        <el-form-item label="商家账号" prop="businessAccount">
+        <el-form-item label="商家账号" prop="businessAccount" v-role="[$roles.SERVICE, $roles.AGENT]">
           <el-input v-model="formData.businessAccount" placeholder="请输入商家账号"/>
         </el-form-item>
-        <el-form-item label="商家名称" prop="businessName">
+        <el-form-item label="商家名称" prop="businessName" v-role="[$roles.SERVICE, $roles.AGENT]">
           <el-input v-model="formData.businessName" placeholder="请输入商家名称"/>
         </el-form-item>
-        <el-form-item label="商户号" prop="subMerchantId">
+        <el-form-item label="商户号" prop="subMerchantId" v-role="[$roles.SERVICE, $roles.AGENT]">
           <el-input v-model="formData.subMerchantId" placeholder="请输入商户号"/>
         </el-form-item>
-        <el-form-item label="代理商名称" prop="agentAccount">
-          <el-input v-model="formData.agentAccount" placeholder="请输入代理商名称"/>
+        <el-form-item label="代理商名称" prop="agentAccount" v-role="[$roles.SERVICE]">
+          <el-input v-model="formData.agentAccount" placeholder="请输入代理商账号"/>
         </el-form-item>
         <el-form-item label="门店名称" prop="storeName">
           <el-input v-model="formData.storeName" placeholder="请输入门店名称"/>
@@ -32,7 +32,7 @@
             <el-option v-for="item in channelList" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核结果" prop="auditStatus" style="display: block;width: 100%;">
+        <el-form-item label="审核状态" prop="auditStatus" style="display: block;width: 100%;">
           <!--<el-select v-model="formData.auditStatus">-->
           <!--<el-option v-for="item in mchOptions" :key="item.value" :value="item.value" :label="item.label"/>-->
           <!--</el-select>-->
@@ -43,7 +43,7 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="申请时间" prop="startEndDate" style="display: block; width: 100%;">
-          <FDateRange :is-mobile="false" :min="minDate" :max="maxDate"
+          <FDateRange :is-mobile="false" :min="minDate" :max="maxDate" :forever="false"
                       :data="{}" v-model="formData.startEndDate"/>
         </el-form-item>
         <!--<el-form-item label="审核时间" style="display: block; width: 100%;">-->
@@ -100,6 +100,7 @@
       .el-form-item {
         width: 49%;
         margin-right: 0;
+        margin-bottom: 10px;
       }
 
       .f-date-range {

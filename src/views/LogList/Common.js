@@ -55,7 +55,7 @@ export default {
     // 0未审核 1审核中 2审核通过 3拒绝 4弃用
     statusDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
     channelDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
-    date: v => dayjs(v).isValid() ? dayjs(v).format("MM-DD") : ""
+    date: v => dayjs(v).isValid() ? dayjs(v).format("MM-DD HH:mm") : ""
   },
   methods: {
 
@@ -68,6 +68,7 @@ export default {
         shouldCache: false,
         searchable: true,
         key: "business_list",
+        title: "选择商户",
         columns: [
           // 表格展示项
           { label: "名称", prop: "name" },
@@ -183,26 +184,32 @@ export default {
     // 删除元素
     // 更新视图的操作由各页面监视listTotalLength自行处理
     async deleteItem(item) {
-      this.onRequest = true;
-      const complete = await this.$store.dispatch(
-        "LogList/deleteListItem",
-        item.mpsCheckPaymentId
-      );
-      // 删除元素需要重新更新finished
-      // 确保不影响后续上拉加载
-      if (complete) {
-        this.$message({
-          type: "success",
-          message: "操作成功!"
+      try {
+        await this.$confirm.confirm({
+          message: "你确定要删除此项吗?"
         });
-        this.listTotalLength--;
-        this.finished = this.listTotalLength === this.list.length;
-      }
-      this.onRequest = false;
-      // pc端回到第一页
-      if (!this.isMobile) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData();
+        this.onRequest = true;
+        const complete = await this.$store.dispatch(
+          "LogList/deleteListItem",
+          item.mpsCheckPaymentId
+        );
+        // 删除元素需要重新更新finished
+        // 确保不影响后续上拉加载
+        if (complete) {
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+          this.listTotalLength--;
+          this.finished = this.listTotalLength === this.list.length;
+        }
+        this.onRequest = false;
+        // pc端回到第一页
+        if (!this.isMobile) {
+          this.searchQuery.pageIndex = 1;
+          this.fetchData();
+        }
+      } catch (e) {
       }
     },
     // endregion

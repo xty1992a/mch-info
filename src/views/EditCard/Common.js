@@ -44,6 +44,9 @@ export default {
     }
     this.getClearingInfo(this.$route.query.checkPaymentId);
   },
+  filters: {
+    examineStatus: v => ['未知','待审核','通过','拒绝'][v]
+  },
   methods: {
     async getClearingInfo(id) {
       this.beforeRequest = true;

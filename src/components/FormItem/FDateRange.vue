@@ -6,7 +6,7 @@
         <span class="placeholder" v-else>开始日期</span>
       </span>
       <span style="padding: 0 4px;">至</span>
-      <el-switch v-model="isForever"
+      <el-switch v-model="isForever" v-if="forever"
                  active-text="永久有效"
                  inactive-text=""/>
       <span class="end-time time-display" :class="isForever?'disabled':''" @click="callTimePicker('end')">
@@ -27,7 +27,7 @@
               :picker-options="endOptions"
               placeholder="结束日期"
       />
-      <el-switch v-model="isForever"
+      <el-switch v-model="isForever" v-if="forever"
                  active-text="永久有效"
                  inactive-text=""/>
     </template>
