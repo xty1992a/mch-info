@@ -6,9 +6,24 @@
           class="paging-picker"
           @closed="close"
   >
+    <header v-if="searchable" @keypress.enter="search">
+      <el-input
+              prefix-icon="el-icon-search"
+              slot="title"
+              size="small"
+              clearable
+              :placeholder="placeholder"
+              v-model="keywords"
+      ></el-input>
+      <el-button type="primary" icon="el-icon-search" size="mini" @click="search">搜索</el-button>
+    </header>
     <section class="paging-picker-body" v-loading="onRequest">
       <!--<el-input v-model="query."></el-input>-->
-      <PagingTable v-model="query" :total="totalLength" :head="false" v-if="paging">
+      <PagingTable v-model="query"
+                   :paging-props="{small:true}"
+                   :total="totalLength"
+                   :head="false"
+                   v-if="paging">
         <el-table
                 :data="list"
                 height="288"
@@ -82,12 +97,18 @@
     },
     data() {
       return {
-        show: false
+        show: false,
+        keywords: ""
       };
     },
     created() {
     },
-    methods: {},
+    methods: {
+      search() {
+        console.log("search");
+        this.query = { ...this.query, keywords: this.keywords };
+      }
+    },
     computed: {},
     watch: {
       query: {
@@ -114,11 +135,29 @@
   .paging-picker {
     font-size: 15px;
 
+    header {
+      padding: 10px 10px 5px;
+      display: flex;
+
+      .el-button {
+        margin-left: 20px;
+      }
+    }
+
+    .paging-foot {
+      .el-input {
+        input {
+          height: 22px;
+          line-height: 22px;
+        }
+      }
+    }
+
     .el-dialog__body {
       padding: 10px 20px;
 
       td {
-        padding: 0;
+        /*padding: 0;*/
       }
     }
 

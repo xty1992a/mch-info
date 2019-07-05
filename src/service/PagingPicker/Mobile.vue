@@ -17,13 +17,13 @@
       </van-navbar>
       <header v-if="searchable">
         <el-input
-                prefix-icon="el-icon-date"
+                prefix-icon="el-icon-search"
                 slot="title"
                 size="small"
                 :placeholder="placeholder"
                 v-model="query.keywords"
         ></el-input>
-        <el-button type="primary" size="mini" @click="search">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="search">搜索</el-button>
       </header>
       <section>
         <van-list
