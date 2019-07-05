@@ -102,7 +102,10 @@
         this.fetchBranchBank();
       },
 
+      // 银行卡图片
       async "formData.bankCardImgPath"(now) {
+        // 开户许可证不识别(对公收款),不进行OCR
+        if (this.mchInfo.payeeType === 16) return;
         if (this.beforeRequest || !now) return;
         const result = await API.bankCardOcr(this.$utils.img_cdn(now));
         if (!result.success) return;

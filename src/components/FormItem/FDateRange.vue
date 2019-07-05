@@ -178,9 +178,8 @@
     watch: {
       endTime: {
         handler(now) {
-          if (dayjs("9999-12-31").isSame(now, "date")) {
-            this.isForever = true;
-          }
+          console.log(now);
+          this.isForever = dayjs("9999-12-31").isSame(now, "date");
         }, immediate: true
       },
       isForever(now) {

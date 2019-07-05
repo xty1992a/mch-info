@@ -34,7 +34,7 @@
           <el-form-item label="代理商账号" v-role="[$roles.SERVICE]">
             <el-input
                     v-model="formData.agentAccount"
-                    placeholder="请输入代理商名称"
+                    placeholder="请输入代理商账号"
             />
           </el-form-item>
           <el-form-item label="门店名称">
@@ -42,6 +42,9 @@
                     v-model="formData.storeName"
                     placeholder="请输入门店名称"
             />
+          </el-form-item>
+          <el-form-item label="结算卡变更">
+            <RadioBox radio :options="changeOptions" v-model="formData.payeeInfoChangeStatus"/>
           </el-form-item>
           <el-form-item label="审核状态">
             <RadioBox :options="mchOptions" v-model="formData.auditStatus"/>

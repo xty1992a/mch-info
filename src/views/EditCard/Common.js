@@ -45,7 +45,7 @@ export default {
     this.getClearingInfo(this.$route.query.checkPaymentId);
   },
   filters: {
-    examineStatus: v => ['未知','待审核','通过','拒绝'][v]
+    examineStatus: v => ["未知", "待审核", "通过", "拒绝"][v]
   },
   methods: {
     async getClearingInfo(id) {
@@ -117,6 +117,7 @@ export default {
           type: "success"
         });
         await this.$utils.sleep(1500);
+        this.$store.commit("LogList/SET_SHOULD_REFRESH", true);
         this.$router.push({ name: "Home" });
       }
     },

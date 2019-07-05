@@ -4,6 +4,7 @@ import { Toast, Cell, Dialog as VanDialog } from "vant";
 
 import {
   Message,
+  MessageBox,
   Button,
   Select,
   Option,
@@ -81,6 +82,21 @@ Vue.prototype.$message = (opt) => {
   isMobile ? Toast(opt) : Message(opt);
 };
 
-Vue.prototype.$confirm = VanDialog;
+const dftOpt = {
+  title: "提示",
+};
+
+Vue.prototype.$confirm = opt => {
+  if (typeof opt === "string") {
+    opt = { message: opt };
+  }
+  opt = { ...opt, ...dftOpt };
+  console.log(opt);
+
+  if (isMobile) {
+    return VanDialog.confirm(opt);
+  }
+  return MessageBox.confirm(opt.message, opt.title);
+};
 
 list.forEach(com => Vue.use(com));

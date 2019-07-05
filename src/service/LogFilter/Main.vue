@@ -16,24 +16,29 @@
         <el-form-item label="商户号" prop="subMerchantId" v-role="[$roles.SERVICE, $roles.AGENT]">
           <el-input v-model="formData.subMerchantId" placeholder="请输入商户号"/>
         </el-form-item>
-        <el-form-item label="代理商名称" prop="agentAccount" v-role="[$roles.SERVICE]">
+        <el-form-item label="代理商账号" prop="agentAccount" v-role="[$roles.SERVICE]">
           <el-input v-model="formData.agentAccount" placeholder="请输入代理商账号"/>
         </el-form-item>
         <el-form-item label="门店名称" prop="storeName">
           <el-input v-model="formData.storeName" placeholder="请输入门店名称"/>
         </el-form-item>
+        <el-form-item label="结算卡变更" prop="payeeInfoChangeStatus">
+          <el-select v-model="formData.payeeInfoChangeStatus" clearable>
+            <el-option v-for="item in changeOptions" :key="item.value" :value="item.value" :label="item.label"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="进件结果" prop="existMerchantId">
-          <el-select v-model="formData.existMerchantId">
+          <el-select v-model="formData.existMerchantId" clearable>
             <el-option v-for="item in checkOptions" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
         <el-form-item label="进件渠道" prop="channel">
-          <el-select v-model="formData.channel">
+          <el-select v-model="formData.channel" clearable>
             <el-option v-for="item in channelList" :key="item.value" :value="item.value" :label="item.label"/>
           </el-select>
         </el-form-item>
         <el-form-item label="审核状态" prop="auditStatus" style="display: block;width: 100%;">
-          <!--<el-select v-model="formData.auditStatus">-->
+          <!--<el-select v-model="formData.auditStatus" clearable>-->
           <!--<el-option v-for="item in mchOptions" :key="item.value" :value="item.value" :label="item.label"/>-->
           <!--</el-select>-->
           <el-checkbox-group v-model="formData.auditStatus">

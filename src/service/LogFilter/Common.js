@@ -21,11 +21,18 @@ export default {
         { label: "T+1", value: "1" },
         { label: "T+2", value: "2" }
       ],
+      changeOptions: [
+        { label: "未申请", value: "0" },
+        { label: "待审核", value: "1" },
+        { label: "已处理", value: "2" },
+        { label: "已拒绝", value: "3" },
+      ],
 
       minDate: dayjs().subtract(1, "year").toDate(),
       maxDate: dayjs().toDate(),
 
       formData: {
+        payeeInfoChangeStatus: '',
         businessAccount: "",
         businessName: "",
         agentAccount: "",
