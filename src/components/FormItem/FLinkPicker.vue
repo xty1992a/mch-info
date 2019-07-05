@@ -55,14 +55,16 @@
       async initPickedItems() {
         if (!this.value) return;
         // 有本地缓存,使用本地缓存
-        const cachedItems = this.$storage.getItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items");
-        if (cachedItems) {
-          this.pickedItems = cachedItems;
-          if (!this.value) {
-            this.$emit("input", this.pickedItems.map(it => it.value).join(","));
-          }
-          return;
-        }
+        /*        const cachedItems = this.$storage.getItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items");
+
+                console.log(cachedItems, '<----------cached items ');
+                if (cachedItems) {
+                  this.pickedItems = cachedItems;
+                  if (!this.value) {
+                    this.$emit("input", this.pickedItems.map(it => it.value).join(","));
+                  }
+                  return;
+                }*/
 
         // 否则,依次请求值的[平级]数据集,并从中找到值的item
         const levels = `,${this.value}`.split(",").map((value, index) => ({ level: index, value }));

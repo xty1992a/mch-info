@@ -5,6 +5,11 @@
         </span>
     <el-dropdown-menu slot="dropdown" class="log-set-dropdown">
       <el-dropdown-item
+              command="editItem"
+              :disabled="data.auditStatus===1"
+              v-role="[$roles.SERVICE]">编辑
+      </el-dropdown-item>
+      <el-dropdown-item
               command="recheckItem"
               v-role="[$roles.AGENT, $roles.SERVICE]">重新进件
       </el-dropdown-item>
