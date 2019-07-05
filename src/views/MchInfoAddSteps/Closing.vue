@@ -77,6 +77,7 @@
         const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
         if (result.success) {
           this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
+          this.formData.payeeBankBranchCode = "";
         }
       }
 

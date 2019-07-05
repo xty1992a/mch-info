@@ -76,7 +76,7 @@
       },
       max: {
         type: Date,
-        default: () => dayjs().add(10, "year").toDate()
+        default: () => dayjs().add(35, "year").toDate()
       },
       forever: {
         type: Boolean,

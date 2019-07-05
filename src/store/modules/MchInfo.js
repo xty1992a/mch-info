@@ -64,10 +64,12 @@ export default {
     SET_FORM_FIELDS: (state, fields) => (state.formFields = fields),
     SET_MCH_INFO: (state, data) => (state.mchInfo = data),
     SYNC_MCH_INFO: (state, model) => { // 缓存数据
+      console.log({ ...model }, "before sync ");
       const mchInfo = { ...state.mchInfo };
       Object.keys(model).forEach(key => {
         mchInfo[key] = model[key] || mchInfo[key];
       });
+      console.log({ ...mchInfo }, "after sync ");
       state.mchInfo = mchInfo;
     }
   },
@@ -113,7 +115,7 @@ export default {
     async getMchInfo({ commit, state }, id) {
       console.log("get mch info ", id, state.checkPaymentId);
       if (state.mchInfo) {
-        if (state.checkPaymentId === id) {
+        if (+state.checkPaymentId === +id) {
           return true;
         }
       }

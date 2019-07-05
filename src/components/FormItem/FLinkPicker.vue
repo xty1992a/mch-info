@@ -55,11 +55,11 @@
       async initPickedItems() {
         if (!this.value) return;
         // 有本地缓存,使用本地缓存
-        const cachedItems = this.$storage.getItem(this.data.filedName + "_f_link_picked_items");
-        if (cachedItems) {
-          this.pickedItems = cachedItems;
-          return;
-        }
+        // const cachedItems = this.$storage.getItem(this.data.filedName + "_f_link_picked_items");
+        // if (cachedItems) {
+        //   this.pickedItems = cachedItems;
+        //   return;
+        // }
 
         // 否则,依次请求值的[平级]数据集,并从中找到值的item
         const levels = `,${this.value}`.split(",").map((value, index) => ({ level: index, value }));
@@ -120,11 +120,7 @@
     },
     watch: {
       value(now, old) {
-        if (this.hadInitItems) return;
-        if (!old) {
-          this.hadInitItems = true;
-          this.initPickedItems();
-        }
+        this.initPickedItems();
       }
     }
   };
