@@ -55,11 +55,14 @@
       async initPickedItems() {
         if (!this.value) return;
         // 有本地缓存,使用本地缓存
-        // const cachedItems = this.$storage.getItem(this.data.filedName + "_f_link_picked_items");
-        // if (cachedItems) {
-        //   this.pickedItems = cachedItems;
-        //   return;
-        // }
+        const cachedItems = this.$storage.getItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items");
+        if (cachedItems) {
+          this.pickedItems = cachedItems;
+          if (!this.value) {
+            this.$emit("input", this.pickedItems.map(it => it.value).join(","));
+          }
+          return;
+        }
 
         // 否则,依次请求值的[平级]数据集,并从中找到值的item
         const levels = `,${this.value}`.split(",").map((value, index) => ({ level: index, value }));
@@ -82,7 +85,7 @@
         }
         if (this.value && items.length) {
           this.pickedItems = items.map(it => ({ ...it, label: it[this.props.label] }));
-          this.$storage.setItem(this.data.filedName + "_f_link_picked_items", this.pickedItems);
+          this.$storage.setItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items", this.pickedItems);
           // 顺便把弹窗的数据也请求了
           this.$storage.setItem(this.data.filedName + "_link_pick_optionMap", options);
         }
@@ -100,7 +103,7 @@
         if (result.success) {
           this.$emit("input", result.value);
           this.pickedItems = result.data;
-          this.$storage.setItem(this.data.filedName + "_f_link_picked_items", this.pickedItems);
+          this.$storage.setItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items", this.pickedItems);
         }
       }
     },

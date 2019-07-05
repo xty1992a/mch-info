@@ -187,6 +187,7 @@
           this.endTime = "9999-12-31";
         }
         else {
+          if (!dayjs(this.endTime).isSame(dayjs("9999-12-31"), "date")) return;
           this.endTime = this.max;
         }
       }

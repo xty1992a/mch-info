@@ -1,6 +1,6 @@
 <template>
   <div class="f-form-item f-display">
-    <span>展示型</span>
+    <span>{{value}}</span>
     <DescBtn :text="data.description"/>
   </div>
 </template>
@@ -10,16 +10,7 @@
 
   export default {
     name: "FDisplay",
-    components: {},
     mixins: [Common],
-    props: {},
-    data() {
-      return {};
-    },
-    created() {
-    },
-    methods: {},
-    computed: {}
   };
 </script>
 

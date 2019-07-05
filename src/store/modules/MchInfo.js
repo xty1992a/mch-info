@@ -93,7 +93,7 @@ export default {
       }
       const result = await API.getFormFields(id);
       if (result.success) {
-        const data = Object.keys(result.data).reduce((obj, key) => ({ ...obj, [key]: formatFields(result.data[key]) }), {});
+        const data = Object.keys(result.data).reduce((obj, key) => ({ ...obj, [key]: formatFields(result.data[key], id) }), {});
         console.log("formatted  --->", data);
         commit("SET_FORM_FIELDS", data);
       }

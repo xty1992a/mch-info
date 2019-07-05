@@ -36,11 +36,12 @@ const typeMap = [
   "display",
   "picker"
 ];
-export const formatFields = fields =>
+export const formatFields = (fields, checkPaymentId) =>
   fields.map(item => {
     const enumJson = Array.isArray(item.enumJson) ? item.enumJson : JSON.parse(item.enumJson);
     return {
       ...item,
+      checkPaymentId,
       options: enumJson.map(it => ({ label: it.text, value: it.value })),
       validator: getValidator(item),
       dateFormat: item.dateFormatStr,
