@@ -4,8 +4,10 @@
       <el-form label-width="120px">
         <template v-if="isMobile">
           <van-cell title="当前状态" :value="currentStatus"/>
-          <van-cell is-link title="进件通道" @click="showChannel=!showChannel" :value="displayChannel" :arrow-direction="showChannel?'down':''"/>
-          <RadioBox v-model="formData.channelIds" :options="channelOptions" v-show="showChannel" style="padding: 10px;"/>
+          <template v-if="channelOptions.length">
+            <van-cell is-link title="进件通道" @click="showChannel=!showChannel" :value="displayChannel" :arrow-direction="showChannel?'down':''"/>
+            <RadioBox v-model="formData.channelIds" :options="channelOptions" v-show="showChannel" style="padding: 10px;"/>
+          </template>
           <van-cell title="备注说明"></van-cell>
           <div class="textarea-panel">
             <el-input type="textarea" v-model="formData.auditResult"/>
@@ -17,7 +19,7 @@
             <span>{{currentStatus}}</span>
           </el-form-item>
 
-          <el-form-item label="进件通道">
+          <el-form-item label="进件通道" v-if="channelOptions.length">
             <el-checkbox-group v-model="formData.channelIds">
               <el-checkbox :label="item.value" v-for="item in channelOptions" :key="item.value">{{item.label}}</el-checkbox>
             </el-checkbox-group>
@@ -66,8 +68,6 @@
       };
     },
     created() {
-      this.$store.dispatch("LogList/getChannelList");
-      console.log(this.data);
       this.formData.channelIds = [...this.data.selectChannelIds];
     },
     methods: {
@@ -122,7 +122,7 @@
         return audit[0].value;
       },
       channelList() {
-        return this.$store.state.LogList.channelList;
+        return (this.data.channelList || []).map(it => ({ ...it, label: it.channelName, value: it.id }));
       },
       channelOptions() {
         if (!this.data) return [];

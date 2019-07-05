@@ -54,7 +54,10 @@
 <style lang="less" rel="stylesheet/less">
   .display-block {
     .block {
-      margin-bottom: 10px;
+      margin-bottom: 18px;
+      border: 1px solid #F0F2F5;
+      border-radius: 8px;
+      overflow: hidden;
 
       .block-body {
       }
@@ -64,7 +67,6 @@
 
         .image-col {
           margin-bottom: 15px;
-
         }
       }
 

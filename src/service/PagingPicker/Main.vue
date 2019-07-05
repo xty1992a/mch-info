@@ -116,6 +116,10 @@
 
     .el-dialog__body {
       padding: 10px 20px;
+
+      td {
+        padding: 0;
+      }
     }
 
     .el-dialog__footer {
