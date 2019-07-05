@@ -2,11 +2,11 @@
   <div class="mchInfo-add-closing mch-info-page">
     <el-form
             :label-position="labelPosition"
-            label-width="130px"
+            label-width="150px"
             v-if="formData"
     >
       <el-form-item
-              :label="item.name"
+              :label="item.name+':'"
               :prop="item.filedName"
               :key="item.filedName"
               :error="errorMessages[item.filedName]"

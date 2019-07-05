@@ -6,10 +6,10 @@
             :label-position="labelPosition"
             :rules="rules"
             ref="form"
-            label-width="130px"
+            label-width="150px"
             class="formData"
     >
-      <el-form-item label="营业执照类型" prop="businessLicenseType">
+      <el-form-item label="营业执照类型:" prop="businessLicenseType">
         <el-radio-group v-model="formData.businessLicenseType">
           <el-radio
                   :label="item.value"
@@ -20,7 +20,7 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="账户类型" prop="payeeType">
+      <el-form-item label="账户类型:" prop="payeeType">
         <el-radio-group v-model="formData.payeeType">
           <el-radio
                   v-for="item in payeeOptions"
@@ -31,7 +31,7 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="支付方式" :error="payTypeError">
+      <el-form-item label="支付方式:" :error="payTypeError">
         <!--微信 1:扫码，2:立牌和线上，4:刷脸，8:押金。-->
         <LinkCheck
                 v-model="wechatPayType"
@@ -52,27 +52,27 @@
         />
         <p class="error" slot="error" style="color:red;">{{ payTypeError }}</p>
       </el-form-item>
-      <el-form-item label="选择地区" prop="provinceId">
+      <el-form-item label="选择地区:" prop="provinceId">
         <FLinkPicker
                 :data="regionPicker"
                 v-model="region"
                 :is-mobile="isMobile"
         />
       </el-form-item>
-      <el-form-item label="门店" prop="chainStoreId" v-show="!isMobile">
+      <el-form-item label="门店:" prop="chainStoreId" v-show="!isMobile">
         <div class="pick-holder" @click="pickStore" style="width: 220px;">
           <el-input :value="storeName" placeholder="请选择门店"/>
         </div>
       </el-form-item>
       <el-form-item prop="chainStoreId" v-show="isMobile">
-        <van-cell title="门店" @click="pickStore" style="margin-left: -20px;">
+        <van-cell title="门店:" @click="pickStore" style="margin-left: -20px;">
           <span>{{ storeName }}</span>
         </van-cell>
       </el-form-item>
       <el-row v-if="publicInfo && publicInfo.version !== 1">
         <el-col :span="24">
           <el-form-item
-                  label="公众号主体"
+                  label="公众号主体:"
                   prop="samePrincipal"
           >
             <!-- 64:一致，128:不一致-->
@@ -86,12 +86,12 @@
           </el-form-item>
         </el-col>
         <el-col :xs="24" :span="12">
-          <el-form-item label="公众号AppId" prop="appId">
+          <el-form-item label="公众号AppId:" prop="appId">
             <p style="font-weight: bold;">{{ publicInfo.appId }}</p>
           </el-form-item>
         </el-col>
         <el-col :xs="24" :span="12">
-          <el-form-item label="公众号主体名称" prop="publicName">
+          <el-form-item label="公众号主体名称:" prop="publicName">
             <p style="font-weight: bold;">{{ publicInfo.principalName }}</p>
           </el-form-item>
         </el-col>
