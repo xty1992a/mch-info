@@ -47,7 +47,7 @@ axios.interceptors.response.use(
 // endregion
 
 export default function request(
-  { method = "POST", data = {}, url, headers = {} , timeout = 5000},
+  { method = "POST", data = {}, url, headers = {}, timeout = 30000 },
   loading = true,
   toast = true
 ) {
@@ -66,8 +66,8 @@ export default function request(
     })
       .then(res => {
         /*
-        * param response : {success: boolean, data: any, message: string, code: int}
-        * */
+         * param response : {success: boolean, data: any, message: string, code: int}
+         * */
         // success为true时,不作任何处理,直接返回
         // 不为true时,检查code,进行错误处理
         const response = res.data; //后端返回结果
