@@ -1,3 +1,7 @@
+/*
+* 为页面提供三个监视方法,当监视的图片路径变化时,调用OCR接口,将结果赋给指定的字段
+* */
+
 import * as API from "@/api";
 
 export default {

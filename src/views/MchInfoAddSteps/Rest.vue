@@ -57,10 +57,11 @@
         this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.formData.remark = this.formData.remark || "无";
         this.initErrorMessage();
+        // 监视agentPayeeArea,agentPayeeBankCode,为agentPayeeBankBranchCode获取支行选项
         this.initObservers("agentPayeeArea", "agentPayeeBankCode", "agentPayeeBankBranchCode");
       }
+      // 监视需要OCR的字段
       this.$nextTick(() => {
-        // this.beforeRequest = false;
         this.observerIdBack("agentPayeeIdImg1Path", "agentPayeeName", "agentPayeeId");
         this.observerIdFront("agentPayeeIdImg2Path", "agentPayeeIdExpiryDate");
       });
@@ -92,26 +93,6 @@
         });
       }
     },
-
-    /*    watch: {
-          // 人像面,获取人名,身份证号
-          async "formData.agentPayeeIdImg1Path"(now) {
-            if (this.beforeRequest) return;
-            const result = await API.idBackOcr(this.$utils.img_cdn(now));
-            if (!result.success) return;
-            const { idCardNumber, idCardName } = result.data;
-            this.formData.agentPayeeName = idCardName;
-            this.formData.agentPayeeId = idCardNumber;
-          },
-          // 国徽面,获取有效期
-          async "formData.agentPayeeIdImg2Path"(now) {
-            if (this.beforeRequest) return;
-            const result = await API.idFrontOcr(this.$utils.img_cdn(now));
-            if (!result.success) return;
-            const { startTime, endTime } = result.data;
-            this.formData.agentPayeeIdExpiryDate = [startTime, endTime].join(",");
-          },
-        }*/
   };
 </script>
 

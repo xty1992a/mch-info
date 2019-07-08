@@ -1,3 +1,7 @@
+/*
+* 页面调用initObservers,监视地区和银行code,两者均有时,获取支行
+* */
+
 import * as API from "@/api";
 
 export default {

@@ -8,6 +8,7 @@ export default {
     };
   },
   methods: {
+    // 初始化页面,获取表单项,暂存的数据,
     async initPage() {
       const id = this.$route.query["checkPaymentId"];
       if (!id) {
@@ -27,6 +28,7 @@ export default {
       return true;
     },
 
+    // 初始化errorMessages,使其与formData有一样的字段
     initErrorMessage() {
       this.errorMessages = Object.keys(this.formData).reduce((p, key) => {
         p[key] = "";
@@ -34,7 +36,7 @@ export default {
       }, {});
     },
 
-    // 校验数据
+    // 校验数据,通过返回完整formData,否则返回null
     checkData(nullable) {
       console.log("校验数据");
       const keys = Object.keys(this.formData);
@@ -65,6 +67,7 @@ export default {
       return { ...this.formData };
     },
 
+    // 依次弹出错误提示
     async toastMessages(messages) {
       while (messages.length) {
         this.$message({
@@ -88,6 +91,7 @@ export default {
       }
     },
 
+    // 使页面跳转带有统一的参数
     goToPage(name) {
       const checkPaymentId = this.$route.query["checkPaymentId"] || 0;
       if (checkPaymentId !== 0) {
@@ -105,6 +109,7 @@ export default {
     ...mapState("User", ["publicInfo"]),
     ...mapState("MchInfo", ["mchInfo"]),
     ...mapGetters("App", ["screenType"]),
+    // 注意,该businessId与用户businessId可能不一致,这是进件信息中的businessId
     businessId() {
       if (!this.mchInfo) return "";
       return this.mchInfo.businessId;

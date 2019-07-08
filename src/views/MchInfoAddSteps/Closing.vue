@@ -52,15 +52,15 @@
       };
     },
     async created() {
-      this.beforeRequest = true;
       const success = await this.initPage();
       if (success) {
         this.formData = this.secondFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
+        // 监视payeeArea,payeeBankCode,为payeeBankBranchCode获取支行选项
         this.initObservers("payeeArea", "payeeBankCode", "payeeBankBranchCode");
       }
+      // 监视需要OCR的字段
       this.$nextTick(() => {
-        // this.beforeRequest = false;
         this.observerIdBack("payeeIdImg1Path", "payeeName", "payeeId");
         this.observerIdFront("payeeIdImg2Path", "payeeIdExpiryDate");
         this.observerCard("bankCardImgPath", "payeeBankAccount", "payeeBankCode");
@@ -89,36 +89,6 @@
         });
       }
     },
-    watch: {
-      /*      // 银行卡图片
-            async "formData.bankCardImgPath"(now) {
-              // 开户许可证不识别(对公收款),不进行OCR
-              if (this.mchInfo.payeeType === 16) return;
-              if (this.beforeRequest || !now) return;
-              const result = await API.bankCardOcr(this.$utils.img_cdn(now));
-              if (!result.success) return;
-              const { bankCardNumber, bankCode } = result.data;
-              this.formData.payeeBankAccount = bankCardNumber;
-              this.formData.payeeBankCode = bankCode;
-            },
-            // 人像面,获取人名,身份证号
-            async "formData.payeeIdImg1Path"(now) {
-              if (this.beforeRequest || !now) return;
-              const result = await API.idBackOcr(this.$utils.img_cdn(now));
-              if (!result.success) return;
-              const { idCardNumber, idCardName } = result.data;
-              this.formData.payeeName = idCardName;
-              this.formData.payeeId = idCardNumber;
-            },
-            // 国徽面,获取有效期
-            async "formData.payeeIdImg2Path"(now) {
-              if (this.beforeRequest || !now) return;
-              const result = await API.idFrontOcr(this.$utils.img_cdn(now));
-              if (!result.success) return;
-              const { startTime, endTime } = result.data;
-              this.formData.payeeIdExpiryDate = [startTime, endTime].join(",");
-            },*/
-    }
   };
 </script>
 
