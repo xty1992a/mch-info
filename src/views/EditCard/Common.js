@@ -1,5 +1,6 @@
 import * as API from "@/api";
 import { mapState } from "vuex";
+import BranchBankCode from "@/mixins/BranchBankCode";
 
 export default {
   data() {
@@ -18,8 +19,6 @@ export default {
 
       pageData: null,
 
-      branchBankList: [],
-
       editResult: "",
 
       bankPicker: {
@@ -36,13 +35,17 @@ export default {
       }
     };
   },
-  created() {
+  mixins: [BranchBankCode],
+  async created() {
     if (!this.$route.query.checkPaymentId) {
       this.$message("缺少必要参数");
       this.$router.push({ name: "Home" });
       return;
     }
-    this.getClearingInfo(this.$route.query.checkPaymentId);
+    const success = await this.getClearingInfo(this.$route.query.checkPaymentId);
+    if (success) {
+      this.initObservers("payeeBankProvinceCityId", "payeeBankCode", "payeeBankBranchCode");
+    }
   },
   filters: {
     examineStatus: v => ["未知", "待审核", "通过", "拒绝"][v]
@@ -51,31 +54,28 @@ export default {
     async getClearingInfo(id) {
       this.beforeRequest = true;
       const result = await API.getClearingInfo(id);
-      if (result.success) {
-        result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId.replace(/null/g, "").replace(/^,$/, "");
-        Object.keys(this.formData).forEach(key => {
-          if (!result.data.hasOwnProperty(key)) return;
-          this.formData[key] = result.data[key];
-        });
-        this.formData.checkPaymentId = this.$route.query.checkPaymentId;
-        this.pageData = result.data;
-        this.$nextTick(() => {
-          this.beforeRequest = false;
-        });
-        return;
-      }
-      console.log(result);
+      if (!result.success) return false;
+      result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId.replace(/null/g, "").replace(/^,$/, "");
+      Object.keys(this.formData).forEach(key => {
+        if (!result.data.hasOwnProperty(key)) return;
+        this.formData[key] = result.data[key];
+      });
+      this.formData.checkPaymentId = this.$route.query.checkPaymentId;
+      this.pageData = result.data;
+      this.$nextTick(() => {
+        this.beforeRequest = false;
+      });
     },
-    async fetchBranchBank() {
-      if (!this.formData.payeeBankProvinceCityId) return;
-      if (!this.formData.payeeBankCode) return;
-      const [p, cityId] = this.formData.payeeBankProvinceCityId.split(",");
-      const bankCode = this.formData.payeeBankCode;
-      const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
-      if (result.success) {
-        this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
-      }
-    },
+    /*    async fetchBranchBank() {
+          if (!this.formData.payeeBankProvinceCityId) return;
+          if (!this.formData.payeeBankCode) return;
+          const [p, cityId] = this.formData.payeeBankProvinceCityId.split(",");
+          const bankCode = this.formData.payeeBankCode;
+          const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
+          if (result.success) {
+            this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
+          }
+        },*/
 
     async submit() {
       if (Object.keys(this.formData).some(k => !this.formData[k])) {
@@ -140,29 +140,17 @@ export default {
       "isMobile"
     ]),
 
-    // payeeArea: {
-    //   get() {
-    //     const { payeeBankProvinceId, payeeBankCityId } = this.formData;
-    //     if (!payeeBankCityId || !payeeBankProvinceId) return "";
-    //     return payeeBankProvinceId + "," + payeeBankCityId;
-    //   },
-    //   set(v) {
-    //     if (!v) return;
-    //     const [payeeBankProvinceId, payeeBankCityId] = v.split(",");
-    //     this.formData = { ...this.formData, payeeBankProvinceId, payeeBankCityId };
-    //   }
-    // },
     examine() {
       return +this.$route.query.examine === 1;
     }
   },
   watch: {
-    async "formData.payeeBankProvinceCityId"() {
-      this.fetchBranchBank();
-    },
-    async "formData.payeeBankCode"() {
-      this.fetchBranchBank();
-    },
+    // async "formData.payeeBankProvinceCityId"() {
+    //   this.fetchBranchBank();
+    // },
+    // async "formData.payeeBankCode"() {
+    //   this.fetchBranchBank();
+    // },
     async "formData.payeeIdImgPath"(now) {
       if (this.beforeRequest || !now) return;
       const result = await API.bankCardOcr(this.$utils.img_cdn(now));
