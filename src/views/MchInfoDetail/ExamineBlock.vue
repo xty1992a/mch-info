@@ -25,6 +25,7 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="拒绝说明">
+            <RejectMessages v-model="pickedMessages"/>
             <div class="textarea-panel">
               <el-input type="textarea" v-model="formData.auditResult"/>
             </div>
@@ -46,11 +47,14 @@
   import { Cell } from "vant";
   import Common from "./Common";
   import RadioBox from "@/components/RadioBox";
+  import RejectMessages from "./children/RejectMessages";
+
+  const diff = (a, b) => a.find(it => !b.includes(it)) || b.find(it => !a.includes(it));
 
   export default {
     name: "ExamineBlock",
     mixins: [Common],
-    components: { VanCell: Cell, RadioBox },
+    components: { VanCell: Cell, RadioBox, RejectMessages },
     props: {
       isExamine: Boolean,
       data: Object,
@@ -58,6 +62,7 @@
     data() {
       return {
         showChannel: true,
+        pickedMessages: [],
         formData: {
           auditResult: "",
           channelIds: []
@@ -134,6 +139,25 @@
             disabled: selectChannelIds.includes(it.value)
           }));
         }
+      }
+    },
+    watch: {
+      pickedMessages(now, old) {
+        if (!Array.isArray(now) || !Array.isArray(old)) return;
+        if (Math.abs(now.length - old.length) !== 1) return;
+        let changeOne = diff(now, old);
+        if (!changeOne) return;
+        let message = this.formData.auditResult;
+        if (now.length > old.length) {
+          console.log("add ", changeOne);
+          message += changeOne;
+        }
+        else {
+          console.log("sub ", changeOne);
+          message = message.replace(changeOne, "");
+        }
+
+        this.formData.auditResult = message;
       }
     }
   };
