@@ -28,7 +28,7 @@ export default {
           subMerchantId	string	 商户号
           channel	string	 渠道 1光大银行通道 10钱客多兴业 11一卡易兴业 12新大陆 14兴业微信通道 16乐刷 32网商 38汇付 50得仕 78拉卡拉
 */
-        payeeInfoChangeStatus: '',
+        payeeInfoChangeStatus: "",
         channel: "",
         pageIndex: 1,
         pageSize: 10,

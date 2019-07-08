@@ -18,7 +18,7 @@ lg	    ≥1200px
 xl	    ≥1920px
 */
 
-const aliveRoutes = ["LogList"];
+const aliveRoutes = ["LogList", "LogTable"];
 
 export default {
   namespaced: true,
@@ -31,7 +31,8 @@ export default {
     aliveRoutes
   },
   mutations: {
-    CLEAR_STATE: state => {},
+    CLEAR_STATE: state => {
+    },
     SET_SCREEN_WIDTH: (state, width) => (state.screenWith = width),
     SET_SCREEN_HEIGHT: (state, height) => (state.screenHeight = height)
   },
