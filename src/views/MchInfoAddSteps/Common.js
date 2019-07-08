@@ -4,7 +4,8 @@ import "./common.less";
 export default {
   data() {
     return {
-      errorMessages: null
+      errorMessages: null,
+      onRequest: false,
     };
   },
   methods: {
@@ -82,7 +83,9 @@ export default {
     async cacheData() {
       const data = this.checkData(true);
       if (!data) return;
+      this.onRequest = true;
       const success = await this.$store.dispatch("MchInfo/cacheMchInfo", data);
+      this.onRequest = false;
       if (success) {
         this.$message({
           type: "success",

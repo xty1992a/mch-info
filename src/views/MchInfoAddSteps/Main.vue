@@ -1,5 +1,5 @@
 <template>
-  <div class="mchInfo-add-main mch-info-page">
+  <div class="mchInfo-add-main mch-info-page" v-loading="onRequest">
     <el-form
             :disabled="checkPaymentId !== 0"
             :model="formData"
@@ -131,6 +131,7 @@
     data() {
       return {
         checkShow: false,
+        onRequest:false,
         formData: {
           businessLicenseType: "",
           payeeType: "",

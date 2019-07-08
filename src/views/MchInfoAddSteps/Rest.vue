@@ -1,5 +1,5 @@
 <template>
-  <div class="mchInfo-add-rest mch-info-page">
+  <div class="mchInfo-add-rest mch-info-page" v-loading="onRequest">
     <el-form
             :label-position="labelPosition"
             label-width="150px"
@@ -72,7 +72,9 @@
         if (!data) return;
         this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
         console.log({ ...this.mchInfo });
+        this.onRequest = true
         const result = await API.submitMchInfo({ ...this.mchInfo });
+        this.onRequest = false
         if (result.success) {
           this.$message("保存成功!");
           await this.$utils.sleep(1500);

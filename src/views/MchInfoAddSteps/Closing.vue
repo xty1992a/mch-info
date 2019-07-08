@@ -1,5 +1,5 @@
 <template>
-  <div class="mchInfo-add-closing mch-info-page">
+  <div class="mchInfo-add-closing mch-info-page" v-loading="onRequest">
     <el-form
             :label-position="labelPosition"
             label-width="150px"
