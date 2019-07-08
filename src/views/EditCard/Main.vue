@@ -1,7 +1,7 @@
 <template>
-  <Container title="结算信息修改申请" class="edit-card">
+  <Container title="结算信息修改申请" class="edit-card" v-loading="onRequest">
     <section class="content">
-      <Panel label="审核状态" :value="pageData.state | examineStatus"></Panel>
+      <Panel label="审核状态" :value="pageData.state | examineStatus" v-if="pageData"></Panel>
       <Panel label="商户号" :value="formData.merchantId"></Panel>
       <Panel label="结算户名" :value="formData.payeeName"></Panel>
       <Panel label="结算人身份证" :value="formData.payeeId"></Panel>

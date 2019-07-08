@@ -1,6 +1,6 @@
 <template>
-  <div class="m-edit-card">
-    <van-cell title="审核状态" :value="pageData.state | examineStatus"/>
+  <div class="m-edit-card" v-loading="onRequest">
+    <van-cell title="审核状态" :value="pageData.state | examineStatus" v-if="pageData"/>
     <van-cell title="商户号" :value="formData.merchantId"></van-cell>
     <van-cell title="结算户名" :value="formData.payeeName"></van-cell>
     <van-cell title="结算人身份证" :value="formData.payeeId"></van-cell>

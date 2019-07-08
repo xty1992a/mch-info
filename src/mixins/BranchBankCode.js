@@ -18,6 +18,7 @@ export default {
     },
 
     clearObservers() {
+      if (!this.branchObserverProps) return;
       const { area, bank } = this.branchObserverProps;
       this[`watcher_${area}`]();
       this[`watcher_${bank}`]();

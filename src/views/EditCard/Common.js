@@ -5,6 +5,7 @@ import BranchBankCode from "@/mixins/BranchBankCode";
 export default {
   data() {
     return {
+      onRequest: true,
       formData: {
         checkPaymentId: "",
         merchantId: "",
@@ -43,6 +44,7 @@ export default {
       return;
     }
     const success = await this.getClearingInfo(this.$route.query.checkPaymentId);
+    this.onRequest = false;
     if (success) {
       this.initObservers("payeeBankProvinceCityId", "payeeBankCode", "payeeBankBranchCode");
     }
@@ -65,6 +67,7 @@ export default {
       this.$nextTick(() => {
         this.beforeRequest = false;
       });
+      return true;
     },
     /*    async fetchBranchBank() {
           if (!this.formData.payeeBankProvinceCityId) return;
