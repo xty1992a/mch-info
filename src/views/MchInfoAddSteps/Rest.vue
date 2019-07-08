@@ -38,11 +38,12 @@
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
+  import BranchBankCode from '@/mixins/BranchBankCode'
 
   export default {
     name: "MchInfoAddRest",
     components: { ...comList },
-    mixins: [Common],
+    mixins: [Common, BranchBankCode],
     data() {
       return {
         formData: null
@@ -55,6 +56,7 @@
         this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.formData.remark = this.formData.remark || "无";
         this.initErrorMessage();
+        this.initObservers("agentPayeeArea", "agentPayeeBankCode", "agentPayeeBankBranchCode");
       }
       this.$nextTick(() => {
         this.beforeRequest = false;

@@ -38,11 +38,12 @@
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
+  import BranchBankCode from "@/mixins/BranchBankCode";
 
   export default {
     name: "MchInfoAddClosing",
     components: { ...comList },
-    mixins: [Common],
+    mixins: [Common, BranchBankCode],
     data() {
       return {
         formData: null,
@@ -55,6 +56,7 @@
       if (success) {
         this.formData = this.secondFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
         this.initErrorMessage();
+        this.initObservers("payeeArea", "payeeBankCode", "payeeBankBranchCode");
       }
       this.$nextTick(() => {
         this.beforeRequest = false;
@@ -68,20 +70,6 @@
         this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
         this.goToPage("MchInfoAddRest");
       },
-
-      async fetchBranchBank() {
-        if (!this.formData.payeeArea) return;
-        if (!this.formData.payeeBankCode) return;
-        const [p, cityId] = this.formData.payeeArea.split(",");
-        const bankCode = this.formData.payeeBankCode;
-        const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
-        if (result.success) {
-          this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
-          // 如果新的列表里包含了现有的支行,直接返回
-          if (this.branchBankList.findIndex(it => it.value === this.formData.payeeBankBranchCode) !== -1) return;
-          this.formData.payeeBankBranchCode = "";
-        }
-      }
 
     },
     computed: {
@@ -98,13 +86,6 @@
       }
     },
     watch: {
-      async "formData.payeeArea"() {
-        this.fetchBranchBank();
-      },
-      async "formData.payeeBankCode"() {
-        this.fetchBranchBank();
-      },
-
       // 银行卡图片
       async "formData.bankCardImgPath"(now) {
         // 开户许可证不识别(对公收款),不进行OCR

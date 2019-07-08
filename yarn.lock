@@ -37,9 +37,9 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@redbuck/image-uploader@^0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@redbuck/image-uploader/-/image-uploader-0.1.15.tgz#25865728c507d29096201ae73a273a60428601a2"
+"@redbuck/image-uploader@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@redbuck/image-uploader/-/image-uploader-0.1.16.tgz#ec9116af36a1d576d727d4cc9bf11a11b7f2a237"
   dependencies:
     cropperjs "^1.4.3"
     preact "^8.4.2"
@@ -47,7 +47,6 @@
 "@redbuck/sorter@0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@redbuck/sorter/-/sorter-0.0.6.tgz#655597b510f8728425cc0e56af910cb5d7cb61af"
-  integrity sha512-NJhkpTMcpBhtblUJXIRBcbhxVmC54a7hEPnzHdIfKVi9DkCI4QN6a2oVaVNTOEq+ZBhAS5tIJf56gVxgFSla4g==
 
 "@vant/icons@1.1.8":
   version "1.1.8"
