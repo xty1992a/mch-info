@@ -150,7 +150,7 @@ export const routes = [
     },
     component: () => import("../views/MchInfoDetail/Main.vue"),
     meta: {
-      title: "结算信息修改申请",
+      title: "进件详情",
       keepAlive: false,
       free: true
     }

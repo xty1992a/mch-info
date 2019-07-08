@@ -28,9 +28,12 @@ export default {
     isMobile: Boolean
   },
   methods: {
-    // 校验本组件,参数为true表示可以为空
+    // 校验本组件,参数为true表示可以为空,
+    // 实际是是否是暂存,暂存时,允许不全部填完整,但填了的,还是需要校验
+    // fieldNullable表示field是否必填,为true的,不使用任何校验
     validate(nullable) {
-      const { value, data: { name, validator } } = this;
+      const { value, data: { name, validator, nullable: fieldNullable } } = this;
+      if (fieldNullable) return "";
       if (nullable && (!value || isUnfilledTime(value))) return ""; // 没有填且可为空直接不检查
       if (!nullable && (!value || /^,$/.test(value))) return "请填写" + name;
       return validator(value);

@@ -55,7 +55,6 @@
       const success = await this.initPage();
       if (success) {
         this.formData = this.thirdFieldKeys.reduce((p, key) => ({ ...p, [key]: this.mchInfo[key] }), {});
-        this.formData.remark = this.formData.remark || "无";
         this.initErrorMessage();
         // 监视agentPayeeArea,agentPayeeBankCode,为agentPayeeBankBranchCode获取支行选项
         this.initObservers("agentPayeeArea", "agentPayeeBankCode", "agentPayeeBankBranchCode");
@@ -72,11 +71,14 @@
         if (!data) return;
         this.$store.commit("MchInfo/SYNC_MCH_INFO", data);
         console.log({ ...this.mchInfo });
-        this.onRequest = true
+        this.onRequest = true;
         const result = await API.submitMchInfo({ ...this.mchInfo });
-        this.onRequest = false
+        this.onRequest = false;
         if (result.success) {
-          this.$message("保存成功!");
+          this.$message({
+            type: "success",
+            message: "保存成功!"
+          });
           await this.$utils.sleep(1500);
           this.$store.commit("LogList/SET_SHOULD_REFRESH", true);
           this.$router.push({ name: "Home" });

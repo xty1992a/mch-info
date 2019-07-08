@@ -63,6 +63,8 @@
       this.$nextTick(() => {
         this.observerIdBack("payeeIdImg1Path", "payeeName", "payeeId");
         this.observerIdFront("payeeIdImg2Path", "payeeIdExpiryDate");
+        // 对公收款时,bankCardImgPath字段实际是[开户许可证],不进行OCR
+        if (this.mchInfo.payeeType === 16) return;
         this.observerCard("bankCardImgPath", "payeeBankAccount", "payeeBankCode");
       });
     },

@@ -20,6 +20,11 @@ function getValidator(field) {
   }
 }
 
+function nullable(field) {
+  const names = ['remark', 'supplement']
+  return names.includes(field.filedName)
+}
+
 const typeMap = [
   // 1:单行文本，2:多行文本，3:单选，4:多选，5:开关，6:级连选择，7:时间选择，8:时间区间选择，9:图片上传，10:文件上传，11:标签, 12,下拉
   "span",
@@ -42,6 +47,7 @@ export const formatFields = (fields, checkPaymentId) =>
     return {
       ...item,
       checkPaymentId,
+      nullable: nullable(item),
       options: enumJson.map(it => ({ label: it.text, value: it.value })),
       validator: getValidator(item),
       dateFormat: item.dateFormatStr,
