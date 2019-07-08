@@ -119,6 +119,8 @@
   import Collapse from "@/components/Collapse";
   import * as API from "@/api";
 
+  // 按位与得出勾选数组
+  // value:3,list:[1,2,4,8]-->[1,2]
   const value2Array = (value, list) =>
     list.reduce((p, it) => (!!(it & value) ? [...p, it] : p), []);
   const sumList = list => list.reduce((p, i) => p + i, 0);
@@ -219,11 +221,10 @@
             title: "chainStoreName"
           },
           request: async query => {
-            console.log();
             return await API.getStoreList({
               ...query,
               chainStoreName: query.keywords,
-              businessId: this.$store.state.User.businessInfo.businessId
+              businessId: this.businessInfo.businessId
             });
           }
         });
@@ -232,15 +233,6 @@
         console.log(result);
         this.pickedStore = result.data;
         this.formData.chainStoreId = result.value;
-      },
-
-      async pickItem(options, prop) {
-        const result = await this.$services.pickItem({
-          options,
-          value: this.formData[prop]
-        });
-        if (!result.success) return;
-        this.formData[prop] = result.value;
       },
 
       validateForm() {
@@ -252,8 +244,6 @@
             this.payTypeError = "请至少选择一种支付方式!";
             return resolve(null);
           }
-          console.log("valid1");
-
           this.$refs.form.validate(valid => {
             console.log(valid);
             const result = valid
@@ -315,6 +305,8 @@
         return this.screenType === "xs";
       },
 
+      // region 选项
+      // 营业执照选项
       licenseOptions() {
         let disabled = false;
         if (this.publicInfo) {
@@ -327,6 +319,7 @@
           { label: "企业", value: 4 }
         ];
       },
+      // 银联支付方式选项
       unionPayTypeOptions() {
         const { businessLicenseType: type, payeeType: pay } = this.formData;
         return [
@@ -335,7 +328,7 @@
           { label: "闪付", value: 128, disabled: +type === 1 }
         ];
       },
-
+      // 微信支付方式选项
       //   1:扫码，2:立牌和线上，4:刷脸，8:押金。
       wechatPayTypeOptions() {
         const { businessLicenseType: type, payeeType: pay } = this.formData;
@@ -346,6 +339,7 @@
           { label: "押金", value: 8, disabled: +type === 1 || +pay === 32 }
         ];
       },
+      // 账户类型选项
       // --8:对私，16:对公，32:非法人。无营业执照时只能选8；营业执照为个体时只能选8，32
       payeeOptions() {
         const type = +this.formData.businessLicenseType;
@@ -355,6 +349,8 @@
           { label: "非法人", value: 32, disabled: type === 1 } // 有营业执照即可用
         ];
       },
+      // endregion
+      // 地址使用link-picker组件,对应formData三个字段,这里做个映射
       region: {
         set(v) {
           const [provinceId, cityId, countyId] = v.split(",");
@@ -363,9 +359,12 @@
         get() {
           const { provinceId, cityId, countyId } = this.formData;
           if (!provinceId || !cityId || !countyId) return "";
-          return provinceId + "," + cityId + "," + countyId;
+          return [provinceId, cityId, countyId].join(",");
         }
       },
+      // region 支付方式的值
+      // 后端所需支付方式是一个已勾选值的累加值.
+      // 前端组件需要的是一个勾选数组,这里做个映射
       wechatPayType: {
         get() {
           return value2Array(
@@ -399,6 +398,7 @@
           this.formData.unionPayType = sumList(v);
         }
       }
+      // endregion
     },
     watch: {
       publicInfo(now) {

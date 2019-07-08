@@ -88,7 +88,9 @@
       ]),
       formItems() {
         return this.thirdFields.map(it => {
-          if (it.filedType !== "link-picker") return { ...it };
+          const options = it.filedName === "agentPayeeBankBranchCode" ? this.branchBankList : it.options;
+
+          if (it.filedType !== "link-picker") return { ...it, options };
           return { ...it, request: API.getLeaveOptions(it.sourceUrl) };
         });
       }
