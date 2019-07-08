@@ -54,6 +54,8 @@
       // 有值时,恢复值的文字状态
       async initPickedItems() {
         if (!this.value) return;
+
+        if (this.pickedItems.map(it => it.value).join(",") === this.value) return;
         // 有本地缓存,使用本地缓存
         /*        const cachedItems = this.$storage.getItem(this.data.filedName + this.data.checkPaymentId + "_f_link_picked_items");
 

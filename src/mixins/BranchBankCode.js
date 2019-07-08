@@ -1,5 +1,7 @@
 /*
-* 页面调用initObservers,监视地区和银行code,两者均有时,获取支行
+* 页面调用initObservers,监视地区和银行code,两者均有时,获取支行列表
+*
+* 注意,获取支行列表,还需要将支行列表赋给对应Field的options
 * */
 
 import * as API from "@/api";
