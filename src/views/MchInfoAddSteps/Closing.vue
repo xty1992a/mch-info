@@ -77,6 +77,8 @@
         const result = await API.getLeaveOptions("/api/basic/getBankBranch")({ bankCode, cityId });
         if (result.success) {
           this.branchBankList = result.data.map(it => ({ ...it, label: it.text }));
+          // 如果新的列表里包含了现有的支行,直接返回
+          if (this.branchBankList.findIndex(it => it.value === this.formData.payeeBankBranchCode) !== -1) return;
           this.formData.payeeBankBranchCode = "";
         }
       }
