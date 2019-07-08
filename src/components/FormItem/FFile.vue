@@ -2,7 +2,7 @@
   <div class="f-image f-form-item" :class="isMobile?'mobile':''">
     <div style="margin-bottom: 10px;">
       <el-button ref="btn" class="upload-btn">上传图片</el-button>
-      <a class="file-download" href="http://baidu.com"><i class="el-icon-download"></i>下载{{data.attachment}}</a>
+      <a class="file-download" :href="data.attachmentUrl"><i class="el-icon-download"></i>下载{{data.attachment}}</a>
       <DescBtn :text="data.description"/>
     </div>
     <div class="f-image-body" v-if="imageData">
