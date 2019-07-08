@@ -38,12 +38,13 @@
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
-  import BranchBankCode from '@/mixins/BranchBankCode'
+  import BranchBankCode from "@/mixins/BranchBankCode";
+  import OCRObserver from "@/mixins/OCRObserver";
 
   export default {
     name: "MchInfoAddRest",
     components: { ...comList },
-    mixins: [Common, BranchBankCode],
+    mixins: [Common, BranchBankCode, OCRObserver],
     data() {
       return {
         formData: null
@@ -59,7 +60,9 @@
         this.initObservers("agentPayeeArea", "agentPayeeBankCode", "agentPayeeBankBranchCode");
       }
       this.$nextTick(() => {
-        this.beforeRequest = false;
+        // this.beforeRequest = false;
+        this.observerIdBack("agentPayeeIdImg1Path", "agentPayeeName", "agentPayeeId");
+        this.observerIdFront("agentPayeeIdImg2Path", "agentPayeeIdExpiryDate");
       });
     },
     methods: {
@@ -89,25 +92,26 @@
         });
       }
     },
-    watch: {
-      // 人像面,获取人名,身份证号
-      async "formData.agentPayeeIdImg1Path"(now) {
-        if (this.beforeRequest) return;
-        const result = await API.idBackOcr(this.$utils.img_cdn(now));
-        if (!result.success) return;
-        const { idCardNumber, idCardName } = result.data;
-        this.formData.agentPayeeName = idCardName;
-        this.formData.agentPayeeId = idCardNumber;
-      },
-      // 国徽面,获取有效期
-      async "formData.agentPayeeIdImg2Path"(now) {
-        if (this.beforeRequest) return;
-        const result = await API.idFrontOcr(this.$utils.img_cdn(now));
-        if (!result.success) return;
-        const { startTime, endTime } = result.data;
-        this.formData.agentPayeeIdExpiryDate = [startTime, endTime].join(",");
-      },
-    }
+
+    /*    watch: {
+          // 人像面,获取人名,身份证号
+          async "formData.agentPayeeIdImg1Path"(now) {
+            if (this.beforeRequest) return;
+            const result = await API.idBackOcr(this.$utils.img_cdn(now));
+            if (!result.success) return;
+            const { idCardNumber, idCardName } = result.data;
+            this.formData.agentPayeeName = idCardName;
+            this.formData.agentPayeeId = idCardNumber;
+          },
+          // 国徽面,获取有效期
+          async "formData.agentPayeeIdImg2Path"(now) {
+            if (this.beforeRequest) return;
+            const result = await API.idFrontOcr(this.$utils.img_cdn(now));
+            if (!result.success) return;
+            const { startTime, endTime } = result.data;
+            this.formData.agentPayeeIdExpiryDate = [startTime, endTime].join(",");
+          },
+        }*/
   };
 </script>
 

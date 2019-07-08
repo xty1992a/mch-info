@@ -21,15 +21,6 @@
       <input type="text" placeholder="请输入结算账号" v-model="formData.payeeBankAccount" v-if="!examine"/>
       <span v-else>{{formData.payeeBankAccount}}</span>
     </van-cell>
-    <van-cell title="开户银行">
-      <FLinkPicker
-              v-if="!examine"
-              :is-mobile="true"
-              :data="bankPicker"
-              v-model="formData.payeeBankCode"
-      />
-      <span>{{pageData&&pageData.payeeBankCodeName}}</span>
-    </van-cell>
     <van-cell title="开户地址">
       <FLinkPicker
               :is-mobile="true"
@@ -38,6 +29,15 @@
               v-model="formData.payeeBankProvinceCityId"
       />
       <span v-else>{{pageData&&pageData.payeeBankProvinceCityIdName}}</span>
+    </van-cell>
+    <van-cell title="开户银行">
+      <FLinkPicker
+              v-if="!examine"
+              :is-mobile="true"
+              :data="bankPicker"
+              v-model="formData.payeeBankCode"
+      />
+      <span>{{pageData&&pageData.payeeBankCodeName}}</span>
     </van-cell>
     <van-cell
             title="开户支行"

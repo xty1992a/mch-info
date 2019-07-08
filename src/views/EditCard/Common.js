@@ -1,6 +1,7 @@
 import * as API from "@/api";
 import { mapState } from "vuex";
 import BranchBankCode from "@/mixins/BranchBankCode";
+import OCRObserver from "@/mixins/OCRObserver";
 
 export default {
   data() {
@@ -36,7 +37,7 @@ export default {
       }
     };
   },
-  mixins: [BranchBankCode],
+  mixins: [BranchBankCode, OCRObserver],
   async created() {
     if (!this.$route.query.checkPaymentId) {
       this.$message("缺少必要参数");
@@ -54,7 +55,6 @@ export default {
   },
   methods: {
     async getClearingInfo(id) {
-      this.beforeRequest = true;
       const result = await API.getClearingInfo(id);
       if (!result.success) return false;
       result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId.replace(/null/g, "").replace(/^,$/, "");
@@ -65,7 +65,7 @@ export default {
       this.formData.checkPaymentId = this.$route.query.checkPaymentId;
       this.pageData = result.data;
       this.$nextTick(() => {
-        this.beforeRequest = false;
+        this.observerCard("payeeIdImgPath", "payeeBankAccount", "payeeBankCode");
       });
       return true;
     },
@@ -154,14 +154,14 @@ export default {
     // async "formData.payeeBankCode"() {
     //   this.fetchBranchBank();
     // },
-    async "formData.payeeIdImgPath"(now) {
-      if (this.beforeRequest || !now) return;
-      const result = await API.bankCardOcr(this.$utils.img_cdn(now));
-      console.log(result);
-      if (!result.success) return;
-      const { bankCardNumber, bankCode } = result.data;
-      this.formData.payeeBankAccount = bankCardNumber;
-      this.formData.payeeBankCode = bankCode;
-    }
+    /*    async "formData.payeeIdImgPath"(now) {
+          if (this.beforeRequest || !now) return;
+          const result = await API.bankCardOcr(this.$utils.img_cdn(now));
+          console.log(result);
+          if (!result.success) return;
+          const { bankCardNumber, bankCode } = result.data;
+          this.formData.payeeBankAccount = bankCardNumber;
+          this.formData.payeeBankCode = bankCode;
+        }*/
   }
 };

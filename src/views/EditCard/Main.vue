@@ -28,6 +28,16 @@
         <span v-else>{{formData.payeeBankAccount}}</span>
       </Panel>
       <Panel>
+        <div class="slot-label" slot="label">开户地区</div>
+        <FLinkPicker
+                v-if="!examine"
+                :is-mobile="false"
+                :data="addressPicker"
+                v-model="formData.payeeBankProvinceCityId"
+        />
+        <span v-else>{{pageData&&pageData.payeeBankProvinceCityIdName}}</span>
+      </Panel>
+      <Panel>
         <div class="slot-label" slot="label">开户银行</div>
 
         <div style="width: 100%;" v-if="!examine">
@@ -38,16 +48,6 @@
           />
         </div>
         <span v-else>{{pageData&&pageData.payeeBankCodeName}}</span>
-      </Panel>
-      <Panel>
-        <div class="slot-label" slot="label">开户地区</div>
-        <FLinkPicker
-                v-if="!examine"
-                :is-mobile="false"
-                :data="addressPicker"
-                v-model="formData.payeeBankProvinceCityId"
-        />
-        <span v-else>{{pageData&&pageData.payeeBankProvinceCityIdName}}</span>
       </Panel>
 
       <Panel>

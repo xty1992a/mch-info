@@ -40,11 +40,12 @@
   import * as comList from "../../components/FormItem";
   import * as API from "../../api";
   import Common from "./Common";
+  import OCRObserver from "@/mixins/OCRObserver";
 
   export default {
     name: "MchInfoAddBase",
     components: { ...comList },
-    mixins: [Common],
+    mixins: [Common, OCRObserver],
     data() {
       return {
         formData: null
@@ -58,7 +59,9 @@
         this.initErrorMessage();
       }
       this.$nextTick(() => {
-        this.beforeRequest = false;
+        // this.beforeRequest = false;
+        this.observerIdBack("corporationIdImg1Path", "corporationName", "corporationId");
+        this.observerIdFront("corporationIdImg2Path", "corporationIdExpiryDate");
       });
     },
     methods: {
@@ -82,23 +85,23 @@
       },
     },
     watch: {
-      // 人像面,获取人名,身份证号
-      async "formData.corporationIdImg1Path"(now) {
-        if (this.beforeRequest || !now) return;
-        const result = await API.idBackOcr(this.$utils.img_cdn(now));
-        if (!result.success) return;
-        const { idCardNumber, idCardName } = result.data;
-        this.formData.corporationName = idCardName;
-        this.formData.corporationId = idCardNumber;
-      },
-      // 国徽面,获取有效期
-      async "formData.corporationIdImg2Path"(now) {
-        if (this.beforeRequest || !now) return;
-        const result = await API.idFrontOcr(this.$utils.img_cdn(now));
-        if (!result.success) return;
-        const { startTime, endTime } = result.data;
-        this.formData.corporationIdExpiryDate = [startTime, endTime].join(",");
-      },
+      /*      // 人像面,获取人名,身份证号
+            async "formData.corporationIdImg1Path"(now) {
+              if (this.beforeRequest || !now) return;
+              const result = await API.idBackOcr(this.$utils.img_cdn(now));
+              if (!result.success) return;
+              const { idCardNumber, idCardName } = result.data;
+              this.formData.corporationName = idCardName;
+              this.formData.corporationId = idCardNumber;
+            },
+            // 国徽面,获取有效期
+            async "formData.corporationIdImg2Path"(now) {
+              if (this.beforeRequest || !now) return;
+              const result = await API.idFrontOcr(this.$utils.img_cdn(now));
+              if (!result.success) return;
+              const { startTime, endTime } = result.data;
+              this.formData.corporationIdExpiryDate = [startTime, endTime].join(",");
+            },*/
     }
   };
 </script>
