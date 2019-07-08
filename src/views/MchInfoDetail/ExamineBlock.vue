@@ -24,13 +24,10 @@
               <el-checkbox :label="item.value" v-for="item in channelOptions" :key="item.value">{{item.label}}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="备注说明">
+          <el-form-item label="拒绝说明">
             <div class="textarea-panel">
               <el-input type="textarea" v-model="formData.auditResult"/>
             </div>
-          </el-form-item>
-          <el-form-item label="进件结果">
-            <el-button size="small">查看详情</el-button>
           </el-form-item>
         </template>
       </el-form>
