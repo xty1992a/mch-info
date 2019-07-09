@@ -22,13 +22,13 @@ export default {
       this.uploader = new ImageUploader({
         width: 1760,
         height: 1100,
+        MIME: "image/jpeg",
         toast: this.$message,
         limit: 50000000,
         fileName: "file",
         el: this.$refs.btn.$el,
         uploadUrl: this._uploadUrl,
         async getFormDataAsync(callback) {
-
           const res = await API.getOssSignature();
           if (res.success) {
             l = Toast.loading({
@@ -43,8 +43,7 @@ export default {
               key: res.data.key,
               success_action_status: "200"
             });
-          }
-          else {
+          } else {
             callback(null);
           }
         }
@@ -67,5 +66,5 @@ export default {
         l && l.clear();
       });
     }
-  },
+  }
 };
