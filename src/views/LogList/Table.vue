@@ -170,7 +170,11 @@
         tableHeight: 300
       };
     },
-    created() {
+    activated() {
+      if (this.$store.state.LogList.shouldRefresh) {
+        this.fetchData();
+        this.$store.commit("LogList/SET_SHOULD_REFRESH", false);
+      }
     },
     methods: {
       commandHandler(method, item) {
