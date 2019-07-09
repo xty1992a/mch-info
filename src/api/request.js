@@ -2,6 +2,8 @@ import axios from "axios";
 import { Loading, Message } from "element-ui";
 import { Toast } from "vant";
 import { isMobile } from "@/utils";
+import Vue from "vue";
+import router from "@/router";
 
 // region tools
 const callLoading = loading => {
@@ -39,7 +41,6 @@ axios.interceptors.response.use(
   },
   function(error) {
     // 对响应错误做点什么
-    console.log("响应错误");
     return Promise.reject(error);
   }
 );
@@ -98,20 +99,34 @@ export default function request(
         resolve(response);
       })
       // 网络异常及代码错误
-      .catch(err => {
+      .catch(async (data) => {
         clearLoading(loading);
-        console.log(err, "net error");
-        callToast(
-          {
-            type: "error",
-            message: "网络故障"
-          },
-          toast
-        );
+        let { response } = data;
+        let message = response.data.message;
+        if (response && response.status === 401) {
+          message = message || "身份过期";
+          toast = false;
+          try {
+            await Vue.prototype.$confirm({
+              title: "提示",
+              message: "您的身份信息已失效或没有权限,点击确认重新登录"
+            });
+            router.push({ name: "Home" });
+          } catch (e) {
+            router.push({ name: "Home" });
+          }
+        }
+        else {
+          message = response.data.message || "网络故障";
+        }
+        callToast({
+          type: "error",
+          message
+        }, toast);
         resolve({
           success: false,
-          message: err.message || "网络故障",
-          data: err
+          message,
+          data: response || data
         });
       });
   });

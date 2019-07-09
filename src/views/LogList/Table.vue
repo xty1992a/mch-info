@@ -9,7 +9,11 @@
       <el-table :height="tableHeight" :data="list" style="width: 100%" @row-dblclick="enterDetail">
         <el-table-column prop="businessAccount" label="商家账号" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
         <el-table-column prop="businessName" label="商家名称" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
-        <el-table-column prop="agentAccount" label="代理商" v-if="[$roles.SERVICE, 'TEST'].includes(role)"/>
+        <el-table-column prop="agentAccount" label="代理商" v-if="[$roles.SERVICE, 'TEST'].includes(role)">
+          <template slot-scope="scope">
+            <span :title="scope.row.agentUserName">{{scope.row.agentAccount}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="storeName" label="门店"/>
         <el-table-column prop="merchantId" label="商户号"/>
         <el-table-column prop="appId" label="AppId"/>
@@ -19,7 +23,7 @@
             <el-tag type="primary" size="mini" v-if="scope.row.auditStatus===0">未审核</el-tag>
             <el-tag type="warning" size="mini" v-if="scope.row.auditStatus===1">审核中</el-tag>
             <el-tag type="success" size="mini" v-if="scope.row.auditStatus===2">通过</el-tag>
-            <el-tag type="danger" size="mini" v-if="scope.row.auditStatus===3" @click="showReason(scope.row)">
+            <el-tag type="danger" size="mini" v-if="scope.row.auditStatus===3" @click="showReason(scope.row)" :title="scope.row.auditResult">
               <span>拒绝</span>
               <i class="el-icon-warning"></i>
             </el-tag>
@@ -50,65 +54,6 @@
             </el-button>
             <Commander :data="scope.row"
                        @command="v => commandHandler(v, scope['row'])"/>
-
-            <!--            <el-dropdown
-                                trigger="click"
-                                @command="v => commandHandler(v, scope['row'])"
-                        >
-                          <span class="set-btn ">
-                            更多<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
-                          </span>
-                          <el-dropdown-menu slot="dropdown" class="log-set-dropdown">
-
-                            <el-dropdown-item
-                                    command="recheckItem"
-                                    v-role="[$roles.AGENT, $roles.SERVICE]">重新进件
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="enterPayment"
-                                    v-role="[$roles.AGENT, $roles.MERCHANT]">支付参数
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="deleteItem"
-                                    v-role="[$roles.MERCHANT]">删除
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="deleteItem"
-                                    :disabled="scope.row.auditStatus===1"
-                                    v-role="[$roles.AGENT, $roles.SERVICE]">弃用
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="editFee"
-                                    :disabled="scope.row.auditStatus!==2"
-                                    v-role="[$roles.AGENT, $roles.SERVICE]">修改费率
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="checkCard"
-                                    :disabled="scope.row.payeeInfoChangeStatus===0"
-                                    v-role="[$roles.SERVICE]">审核结算卡
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="repeatItem"
-                                    v-role="[$roles.AGENT, $roles.SERVICE]"
-                                    :disabled="scope.row.channelId===0">复制进件
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="goToAliLh"
-                                    v-role="[$roles.AGENT]"
-                                    :disabled="!scope.row.zfblhUrl&&scope.row.zfblhRecord===0">参加蓝海
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="goToWxLz"
-                                    v-role="[$roles.AGENT]"
-                                    :disabled="!scope.row.wxlzUrl&&scope.row.wxlzRecord===0">参加绿洲
-                            </el-dropdown-item>
-                            <el-dropdown-item
-                                    command="editCart"
-                                    :disabled="scope.row.auditStatus!==2"
-                                    v-role="[$roles.AGENT, $roles.MERCHANT]">修改结算卡
-                            </el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>-->
           </template>
         </el-table-column>
       </el-table>

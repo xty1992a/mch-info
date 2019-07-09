@@ -108,7 +108,10 @@
         console.log(data);
         const result = await API.auditPayment(data);
         if (result.success) {
-          this.$message(data.auditStatus === 3 ? "拒绝成功!" : "进件成功!");
+          this.$message({
+            type: "success",
+            message: data.auditStatus === 3 ? "拒绝成功!" : "进件成功!"
+          });
           await this.$utils.sleep(1500);
           this.$store.commit("LogList/SET_SHOULD_REFRESH", true);
           this.$router.push({ name: "Home" });
