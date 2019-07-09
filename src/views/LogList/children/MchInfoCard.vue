@@ -6,7 +6,10 @@
         <el-tag type="primary" size="mini" v-if="data.auditStatus===0">未审核</el-tag>
         <el-tag type="warning" size="mini" v-if="data.auditStatus===1">审核中</el-tag>
         <el-tag type="success" size="mini" v-if="data.auditStatus===2">审核通过</el-tag>
-        <el-tag type="danger" size="mini" v-if="data.auditStatus===3">审核拒绝</el-tag>
+        <el-tag type="danger" size="mini" v-if="data.auditStatus===3" @click.stop="showReason">
+          <span>拒绝</span>
+          <i class="el-icon-warning"></i>
+        </el-tag>
         <el-tag type="info" size="mini" v-if="data.auditStatus===4">弃用</el-tag>
       </van-cell>
       <van-cell :border="false" title="商家账户" :value="data.businessAccount"/>
@@ -19,59 +22,6 @@
     </div>
     <div class="card-foot" @click.stop>
       <Commander :data="data" @command="commandHandler"/>
-      <!-- <el-dropdown trigger="click" @command="commandHandler">
-         <span class="set-btn" style="margin-right: 10px;">
-           更多<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
-         </span>
-         <el-dropdown-menu slot="dropdown" class="log-set-dropdown">
-           <el-dropdown-item
-                   command="editItem"
-                   :disabled="data.auditStatus===1"
-                   v-role="[$roles.AGENT, $roles.MERCHANT]">编辑
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="enterPayment"
-                   v-role="[$roles.AGENT, $roles.MERCHANT]">支付参数
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="deleteItem"
-                   v-role="[$roles.MERCHANT]">删除
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="deleteItem"
-                   :disabled="data.auditStatus===1"
-                   v-role="[$roles.AGENT, $roles.SERVICE]">弃用
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="editFee"
-                   :disabled="data.auditStatus!==2"
-                   v-role="[$roles.AGENT, $roles.SERVICE]">修改费率
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="checkCard"
-                   :disabled="data.payeeInfoChangeStatus===0"
-                   v-role="[$roles.SERVICE]">审核结算卡
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="repeatItem"
-                   v-role="[$roles.AGENT, $roles.SERVICE]" :disabled="data.channelId===0">复制进件
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="goToAliLh"
-                   v-role="[$roles.AGENT]" :disabled="!data.zfblhUrl&&data.zfblhRecord===0">参加蓝海
-           </el-dropdown-item>
-           <el-dropdown-item
-                   command="goToWxLz"
-                   v-role="[$roles.AGENT]" :disabled="!data.wxlzUrl&&data.wxlzRecord===0">参加绿洲
-           </el-dropdown-item>
-         </el-dropdown-menu>
-       </el-dropdown>-->
-      <!--      <el-button size="small"
-                       @click="commandHandler('editCart')"
-                       :disabled="data.auditStatus!==2"
-                       v-role="[$roles.AGENT, $roles.MERCHANT]"
-            >修改结算卡
-            </el-button>-->
       <el-button size="small"
                  @click="v=>commandHandler('editItem')"
                  :disabled="data.auditStatus===1"
@@ -86,7 +36,7 @@
 </template>
 
 <script>
-  import { Cell, CellGroup } from "vant";
+  import { Cell, CellGroup, Dialog } from "vant";
   import { Tag } from "element-ui";
   import Commander from "./Commander";
 
@@ -96,11 +46,6 @@
       data: Object
     },
     components: { Commander, VanCell: Cell, VanCellGroup: CellGroup, ElTag: Tag },
-    data() {
-      return {};
-    },
-    created() {
-    },
     methods: {
       commandHandler(method) {
         console.log(method);
@@ -110,6 +55,12 @@
         if (this.role === this.$roles.SERVICE) return;
         // console.log(this.role, this.$role.Ser)
         this.commandHandler("enterDetail");
+      },
+      showReason() {
+        Dialog({
+          title: "拒绝原因",
+          message: this.data.auditResult
+        });
       }
     },
     computed: {

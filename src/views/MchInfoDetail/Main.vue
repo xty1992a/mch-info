@@ -1,7 +1,7 @@
 <template>
   <Container title="进件详情" class="mch-info-detail">
     <section class="content">
-      <DisplayBlock :data="blockList"/>
+      <DisplayBlock :data="blockList" :reason="pageData.audit[1].value" v-if="pageData"/>
       <ExamineBlock :data="pageData" :is-examine="isExamine" v-if="pageData"/>
     </section>
   </Container>

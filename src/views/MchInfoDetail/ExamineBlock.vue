@@ -71,6 +71,7 @@
     },
     created() {
       this.formData.channelIds = [...this.data.selectChannelIds];
+      this.formData.auditResult = this.data.audit[1].value;
     },
     methods: {
       async callPicker() {

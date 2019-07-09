@@ -1,5 +1,13 @@
 <template>
   <div class="display-block">
+    <el-alert v-role="[$roles.MERCHANT, $roles.AGENT]"
+              v-if="reason"
+              title="拒绝原因"
+              :closable="false"
+              :description="reason"
+              style="margin-bottom: 15px;"
+              type="error">
+    </el-alert>
     <Block :title="block.title" :is-mobile="isMobile" v-for="(block,i) in blockList" :key="block.title+i">
       <el-row type="flex" align="center" style="flex-wrap: wrap">
         <el-col :xs="24" :md="12"
@@ -22,13 +30,15 @@
   import ImageBlock from "./children/ImageBlock";
   import imgs from "@/assets/imgs";
   import Cell from "./children/Cell";
+  import { Alert } from "element-ui";
 
   export default {
     name: "DisplayBlock",
-    components: { Cell, ImageBlock },
+    components: { Cell, ImageBlock, ElAlert: Alert },
     mixins: [Common],
     props: {
       data: Array,
+      reason: String
     },
     data() {
       return {};

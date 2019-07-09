@@ -6,38 +6,6 @@
       <el-button @click="exportList" v-role="[$roles.SERVICE]">导出变更关注列表</el-button>
     </div>
     <PagingTable ref="table" v-model="searchQuery" :total="listTotalLength" class="log-paging-table">
-      <!--
-      mpsCheckPaymentId	integer	 进件记录主键id
-      businessId	string	 商家guid
-      businessName	string	 商家名称
-      businessAccount	 string	 商家账号
-      agentAccount	 string	 代理账号
-      merchantId	  string	 商户号
-      storeName 	string	 门店名称
-      chainStoreId	string	 门店guid
-      auditStatus 	integer	 审核状态	  0未审核 1审核中 2审核通过 3拒绝 4弃用
-      createTime	integer	 创建时间
-      updateTime	integer	 更新时间
-      auditTime	integer	 审核时间
-      auditUser	string	 审核人
-      channelName	string	 渠道名称
-      agentName	string	 代理名称
-      agentId	string	 代理商guid
-      userAgentUsers	string	 代理商跟踪人
-      agentUserName	string
-      wxlzRecord	integer	 是否已报名绿洲	 0 未报名 1 已报名
-      zfblhRecord	integer	 是否已报名蓝海	  0 未报名 1 已报名
-      industryDining	integer	 是否符合报名绿洲蓝海行业要求	 0 不符合 1 符合
-      channelId	integer	 渠道id
-      businessLicenceType	integer	 营业执照类型（0无1个人2企业）
-      basicInfoId	integer	 基础信息id
-      auditResult	string	 审核拒绝原因
-      appId	string	 appid
-      businessLicenseTypeName	string	 营业执照类型名称
-      payParaUrl	string	 门店支付参数链接（相对地址）
-      wxlzUrl	string	 报名绿洲地址（相对地址）
-      zfblhUrl	string	 名蓝海地址（相对地址）
--->
       <el-table :height="tableHeight" :data="list" style="width: 100%" @row-dblclick="enterDetail">
         <el-table-column prop="businessAccount" label="商家账号" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
         <el-table-column prop="businessName" label="商家名称" v-if="[$roles.SERVICE, $roles.AGENT].includes(role)"/>
@@ -48,12 +16,13 @@
         <el-table-column prop="channelName" label="支付通道"/>
         <el-table-column prop="auditStatus" label="状态">
           <template slot-scope="scope">
-            <!--<span>{{scope.row.auditStatus | statusDis}}</span>-->
-
             <el-tag type="primary" size="mini" v-if="scope.row.auditStatus===0">未审核</el-tag>
             <el-tag type="warning" size="mini" v-if="scope.row.auditStatus===1">审核中</el-tag>
             <el-tag type="success" size="mini" v-if="scope.row.auditStatus===2">通过</el-tag>
-            <el-tag type="danger" size="mini" v-if="scope.row.auditStatus===3">拒绝</el-tag>
+            <el-tag type="danger" size="mini" v-if="scope.row.auditStatus===3" @click="showReason(scope.row)">
+              <span>拒绝</span>
+              <i class="el-icon-warning"></i>
+            </el-tag>
             <el-tag type="info" size="mini" v-if="scope.row.auditStatus===4">弃用</el-tag>
           </template>
         </el-table-column>
@@ -150,7 +119,7 @@
 <script>
   import Container from "@/components/Container";
   import Common from "./Common";
-  import { Table, TableColumn, Tag } from "element-ui";
+  import { Table, TableColumn, Tag, MessageBox } from "element-ui";
   import PagingTable from "../../components/PagingTable";
   import Commander from "./children/Commander";
 
@@ -177,6 +146,9 @@
       }
     },
     methods: {
+      showReason(item) {
+        MessageBox.alert(item.auditResult, "拒绝原因");
+      },
       commandHandler(method, item) {
         console.log(method, item);
         this[method](item);
