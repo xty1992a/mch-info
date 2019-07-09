@@ -248,7 +248,7 @@
           this.$refs.form.validate(valid => {
             console.log(valid);
             const result = valid
-              ? { ...this.formData, businessId: this.businessInfo.businessId }
+              ? { ...this.formData, businessId: this.businessInfo.businessId, ...this.publicInfo }
               : null;
             resolve(result);
           });
