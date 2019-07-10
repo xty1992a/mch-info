@@ -5,7 +5,7 @@ export default {
   data() {
     return {
       errorMessages: null,
-      onRequest: false,
+      onRequest: false
     };
   },
   methods: {
@@ -80,18 +80,19 @@ export default {
     },
 
     // 将页面数据同步到vuex
-    async cacheData() {
-      const data = this.checkData(true);
-      if (!data) return;
+    async cacheData(isNext = false) {
+      const data = this.checkData(!isNext);
+      if (!data) return false;
       this.onRequest = true;
       const success = await this.$store.dispatch("MchInfo/cacheMchInfo", data);
       this.onRequest = false;
-      if (success) {
+      if (success && !isNext) {
         this.$message({
           type: "success",
           message: "暂存成功!"
         });
       }
+      return true;
     },
 
     // 使页面跳转带有统一的参数
