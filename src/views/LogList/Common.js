@@ -70,6 +70,7 @@ export default {
         searchable: true,
         key: "business_list",
         title: "选择商户",
+        placeholder: "请输入商家账号",
         columns: [
           // 表格展示项
           { label: "名称", prop: "name" },
@@ -287,6 +288,7 @@ export default {
     },
     // 查看详情
     enterDetail(item) {
+      if (this.userInfo.role === this.$roles.SERVICE) return;
       this.$router.push({ name: "MchInfoDetail", query: { examine: 0, checkPaymentId: item.mpsCheckPaymentId } });
     },
     // 进入支付参数配置页面

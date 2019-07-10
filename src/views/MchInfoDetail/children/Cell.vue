@@ -8,7 +8,7 @@
       return context.props.isMobile ? (
         <Cell {...context} class="van-hairline--bottom"/>
       ) : (
-        <div class="cell">
+        <div class="ui-cell">
           <div class="title">
             <slot><span title={context.props.title}>{context.props.title}</span></slot>
           </div>
@@ -24,7 +24,7 @@
 <style lang="less" rel="stylesheet/less">
   @import "../../../styles/variable";
 
-  .cell {
+  .ui-cell {
     padding: 10px;
     display: flex;
     align-items: center;

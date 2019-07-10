@@ -131,7 +131,7 @@
     data() {
       return {
         checkShow: false,
-        onRequest:false,
+        onRequest: false,
         formData: {
           businessLicenseType: "",
           payeeType: "",
@@ -212,6 +212,7 @@
           value: this.formData.chainStoreId,
           key: "cached__chain_store__list",
           shouldCache: false,
+          placeholder: "请输入门店名称",
           columns: [
             // 表格展示项
             { label: "名称", prop: "chainStoreName" }
@@ -345,7 +346,7 @@
       payeeOptions() {
         const type = +this.formData.businessLicenseType;
         return [
-          { label: "对私账户", value: 8 },
+          { label: "对私", value: 8 },
           { label: "对公", value: 16, disabled: type === 1 || type === 2 }, // 只有企业可用
           { label: "非法人", value: 32, disabled: type === 1 } // 有营业执照即可用
         ];
@@ -406,6 +407,16 @@
         // if (now && now.version === 8) {
         //   this.formData.businessLicenseType = 0;
         // }
+      },
+      "formData.payeeType"(now) {
+        if (+now === 16 && this.publicInfo.version !== 1) {
+          this.formData.samePrincipal = 64;
+        }
+      },
+      "formData.samePrincipal"(now) {
+        if (this.publicInfo.version !== 1 && +now === 128) {
+          this.formData.payeeType = 0;
+        }
       },
       "formData.businessLicenseType"(now) {
         console.log("businessLicenseType", now);
