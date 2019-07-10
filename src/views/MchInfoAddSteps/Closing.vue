@@ -79,8 +79,9 @@ export default {
     });
   },
   methods: {
-    saveAndNext() {
-      if (!this.cacheData(true)) return;
+    async saveAndNext() {
+      const success = await this.cacheData(true);
+      if (!success) return;
       this.goToPage("MchInfoAddRest");
     }
   },
