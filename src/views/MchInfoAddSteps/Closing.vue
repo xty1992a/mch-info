@@ -61,6 +61,9 @@ export default {
       if (this.mchInfo.payeeType === 16) {
         this.formData.payeeName =
           this.mchInfo.payeeName || this.mchInfo["businessLicenceName"] || "";
+      } else if (this.mchInfo.payeeType === 8) {
+        this.formData.payeeName =
+          this.mchInfo.payeeName || this.mchInfo["corporationName"] || "";
       }
       this.initErrorMessage();
       // 监视payeeArea,payeeBankCode,为payeeBankBranchCode获取支行选项
