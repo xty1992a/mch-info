@@ -77,6 +77,7 @@
           >
             <!-- 64:一致，128:不一致-->
             <el-switch
+                    :disabled="!!publicInfo.appId"
                     v-model="formData.samePrincipal"
                     :active-value="64"
                     :inactive-value="128"
@@ -206,6 +207,7 @@
       }
     },
     methods: {
+
       async pickStore() {
         if (this.checkPaymentId) return;
         const result = await this.$services.pickItemAsync({
@@ -312,8 +314,8 @@
       licenseOptions() {
         let disabled = false;
         if (this.publicInfo) {
-          const { version } = this.publicInfo;
-          disabled = version === 8;
+          const { version, appId } = this.publicInfo;
+          disabled = version === 8 || !appId;
         }
         return [
           { label: "无", value: 1, disabled },
@@ -424,7 +426,7 @@
         if (+now === 2 && this.formData.payeeType === 16) {
           this.formData.payeeType = 8;
         }
-      }
+      },
     }
   };
 </script>
