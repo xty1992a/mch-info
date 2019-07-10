@@ -92,6 +92,7 @@ export default {
       const result = await this.$services.pickItemAsync({
         value: "",
         title: "选择门店",
+        placeholder: "请输入门店名称",
         key: "cached__chain_store__list",
         shouldCache: false,
         columns: [
