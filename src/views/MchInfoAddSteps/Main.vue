@@ -323,11 +323,11 @@
       },
       // 银联支付方式选项
       unionPayTypeOptions() {
-        const { businessLicenseType: type, payeeType: pay } = this.formData;
+        const { businessLicenseType: type, samePrincipal } = this.formData;
         return [
           //  1:扫码，16:闪付。
           { label: "扫码", value: 64 },
-          { label: "闪付", value: 128, disabled: +type === 1 }
+          { label: "闪付", value: 128, disabled: +type === 1 || samePrincipal === 128 }
         ];
       },
       // 微信支付方式选项
@@ -403,11 +403,6 @@
       // endregion
     },
     watch: {
-      publicInfo(now) {
-        // if (now && now.version === 8) {
-        //   this.formData.businessLicenseType = 0;
-        // }
-      },
       "formData.payeeType"(now) {
         if (+now === 16 && this.publicInfo.version !== 1) {
           this.formData.samePrincipal = 64;
@@ -416,6 +411,7 @@
       "formData.samePrincipal"(now) {
         if (this.publicInfo.version !== 1 && +now === 128) {
           this.formData.payeeType = 0;
+          this.formData.unionPayType = 0;
         }
       },
       "formData.businessLicenseType"(now) {
