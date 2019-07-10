@@ -21,6 +21,9 @@ export default {
       };
       this[`watcher_${areaKey}`] = this.observerFormDataProp(areaKey);
       this[`watcher_${bankKey}`] = this.observerFormDataProp(bankKey);
+      if (!this.branchBankList.length) {
+        this.fetchBranchBank();
+      }
     },
 
     clearObservers() {
