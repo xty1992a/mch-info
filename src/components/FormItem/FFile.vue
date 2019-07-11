@@ -1,65 +1,61 @@
 <template>
-  <div class="f-image f-form-item" :class="isMobile?'mobile':''">
+  <div class="f-file f-form-item" :class="isMobile ? 'mobile' : ''">
     <div style="margin-bottom: 10px;">
       <el-button ref="btn" class="upload-btn">上传图片</el-button>
-      <a class="file-download" download :href="data.attachmentUrl"><i class="el-icon-download"></i>下载{{data.attachment}}</a>
-      <DescBtn :text="data.description"/>
+      <a class="file-download" download :href="data.attachmentUrl"
+        ><i class="el-icon-download"></i>下载{{ data.attachment }}</a
+      >
+      <DescBtn :text="data.description" />
     </div>
     <div class="f-image-body" v-if="value">
-      <img :src="value | img_cdn" alt=""/>
-      <DelBtn @click="clear"/>
+      <AspectRatio :width="133.3">
+        <img :src="value | img_cdn" alt="" />
+        <DelBtn @click="clear" />
+      </AspectRatio>
     </div>
   </div>
 </template>
 
 <script>
-  import ImageUpload from "./ImageUpload";
-  import Common from "./Common";
+import Common from "./Common";
+import ImageUpload from "./ImageUpload";
+import DelBtn from "@/components/DelAble/DelBtn";
+import AspectRatio from "@/components/AspectRatio";
 
-  export default {
-    name: "FFile",
-    components: {},
-    mixins: [Common, ImageUpload],
-    props: {},
-    data() {
-      return {};
-    },
-    computed: {}
-  };
+export default {
+  name: "FFile",
+  components: { DelBtn, AspectRatio },
+  mixins: [Common, ImageUpload]
+};
 </script>
 
 <style lang="less" rel="stylesheet/less">
-  @import "../../styles/variable";
+@import "../../styles/variable";
 
-  .f-image {
-    /*max-width: 300px;*/
-    width: 300px;
+.f-file {
+  width: 300px;
 
-    &.mobile {
-      width: 100%;
-    }
-
-    .f-image-body {
-      border: 1px dashed #e5e5e5;
-      border-radius: 5px;
-      position: relative;
-      padding-bottom: 62.7%;
-      overflow: hidden;
-      height: 0;
-      width: 100%;
-    }
-
-    img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .file-download {
-      padding: 0 15px;
-      color: @activeC;
-    }
+  &.mobile {
+    width: 100%;
   }
+
+  .f-image-body {
+    border: 1px dashed #e5e5e5;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+  }
+}
 </style>

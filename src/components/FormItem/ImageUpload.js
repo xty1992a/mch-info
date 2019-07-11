@@ -20,8 +20,8 @@ export default {
     initUploader() {
       let l;
       this.uploader = new ImageUploader({
-        width: 1760,
-        height: 1100,
+        width: 1200,
+        height: 900,
         MIME: "image/jpeg",
         toast: this.$message,
         limit: 50000000,
@@ -57,6 +57,13 @@ export default {
       this.uploader.on("upload-error", e => {
         this.uploader.insertBtn.value = null;
         l && l.clear();
+      });
+
+      this.uploader.on("cropper-created", cropper => {
+        console.log(cropper);
+        setTimeout(() => {
+          // cropper.rotate(90);
+        }, 30);
       });
 
       this.uploader.on("upload", e => {
