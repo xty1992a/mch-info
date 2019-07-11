@@ -30,6 +30,7 @@ export default {
 */
         payeeInfoChangeStatus: "",
         channel: "",
+        businessLicenceType: [],
         pageIndex: 1,
         pageSize: 10,
         businessAccount: "",
@@ -152,6 +153,7 @@ export default {
           return { ...p, [key]: result.value[key] };
         }, {});
         this.searchQuery.pageIndex = 1;
+        console.log("change ");
         this.fetchData(true);
       }
     },
