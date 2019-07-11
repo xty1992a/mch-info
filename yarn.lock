@@ -37,9 +37,9 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@redbuck/image-uploader@^0.1.16":
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/@redbuck/image-uploader/-/image-uploader-0.1.16.tgz#ec9116af36a1d576d727d4cc9bf11a11b7f2a237"
+"@redbuck/image-uploader@^0.1.17":
+  version "0.1.17"
+  resolved "https://registry.yarnpkg.com/@redbuck/image-uploader/-/image-uploader-0.1.17.tgz#55eaadecd9aa0e42737cd4d5753c8e11b19eb806"
   dependencies:
     cropperjs "^1.4.3"
     preact "^8.4.2"
