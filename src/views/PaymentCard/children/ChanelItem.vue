@@ -27,8 +27,8 @@
           class="btn-text"
           @click="toggle"
           :disabled="!data.merchantParamList.length"
-          >配置</el-button
-        >
+          >配置
+        </el-button>
       </el-col>
       <el-col class="pay-cell pay-switch" :span="2" style="text-align: center;">
         <el-switch
@@ -85,12 +85,32 @@
                   />
                 </template>
               </el-form-item>
-              <img :src="img" alt="" />
+              <div class="pay-guide-block">
+                <p class="pay-guide">
+                  <span class="label">支付目录①</span>
+                  <span>(选择http://)m.yunhuiyuan.cn/Pay</span>
+                  <a href="http://sz1card1.udesk.cn/hc/articles/64015"
+                    >配置说明</a
+                  >
+                </p>
+                <p class="pay-guide">
+                  <span class="label">支付目录②</span>
+                  <span>(选择https://)m.yunhuiyuan.cn/Pay</span>
+                  <a href="http://sz1card1.udesk.cn/hc/articles/64015"
+                    >配置说明</a
+                  >
+                </p>
+              </div>
+
+              <div v-if="data.providerId === 5">
+                <a :href="getLink">立即授权</a>
+              </div>
+
               <div style="text-align: center;">
                 <el-button size="small" @click="showList = []">取消</el-button>
                 <el-button size="small" type="primary" @click="confirm"
-                  >确认</el-button
-                >
+                  >确认
+                </el-button>
               </div>
             </el-form>
           </div>
@@ -118,8 +138,7 @@ export default {
   data() {
     return {
       formData: {},
-      showList: [],
-      img: ""
+      showList: []
     };
   },
   created() {
@@ -139,6 +158,30 @@ export default {
     changeIndex(type) {
       this.$emit(type, this.index);
     },
+
+    getLink() {
+      let params = {},
+        data = this.data;
+      return (
+        "https://openauth.alipay.com/oauth2/appToAppAuth.htm?app_id=" +
+        data.aliAppid +
+        "&redirect_uri=https%3A%2F%2Fmps.1card1.cn%2Fpay-param%2Falipayauth?businessId=" +
+        params.businessId +
+        "&chainStoreId=" +
+        params.chainStoreId +
+        "&agentId=" +
+        params.agentId +
+        "&userAccount=" +
+        params.userAccount +
+        "&timeStamp=" +
+        params.timeStamp +
+        "&signature=" +
+        params.signature +
+        "&channelId=" +
+        data.channelId
+      );
+    },
+
     async toggle() {
       this.showList = this.showList.length ? [] : ["1"];
       await this.$utils.sleep(300);
@@ -266,6 +309,26 @@ export default {
 
     .el-collapse-item__content {
       padding: 0;
+    }
+  }
+
+  .pay-guide-block {
+    margin-bottom: 10px;
+
+    .pay-guide {
+      overflow: hidden;
+      line-height: 1.6;
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .label {
+        width: 180px;
+        padding-right: 12px;
+        text-align: right;
+      }
     }
   }
 
