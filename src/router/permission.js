@@ -28,7 +28,11 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.free) {
     log("free");
     // 已登录前往登录的,重定向首页
-    if ((to.path.toLowerCase() === "/login" || to.path.toLowerCase() === "/adminlogin") && loged) {
+    if (
+      (to.path.toLowerCase() === "/login" ||
+        to.path.toLowerCase() === "/adminlogin") &&
+      loged
+    ) {
       log("go to login");
       next({ name: "Root" });
       return;
@@ -57,6 +61,7 @@ router.beforeEach(async (to, from, next) => {
     console.log(userResult);
     if (!userResult.success || userResult.data.role === ROLES.NONE) {
       logOut();
+      store.dispatch("User/Logout");
       log("fetch userInfo fail; should login again");
       // next(`/Login?redirect_url=${to.fullPath}`);
       next({ name: "Home" });

@@ -30,8 +30,7 @@ export const routes = [
     beforeEnter(to, from, next) {
       if (isMobile) {
         next({ ...to, name: "LogList" });
-      }
-      else {
+      } else {
         next({ ...to, name: "LogTable" });
       }
     },
@@ -93,9 +92,16 @@ export const routes = [
         component: () => import("../views/MchInfoAddSteps/Main.vue"),
         beforeEnter(to, from, next) {
           console.log({ ...from.query }, from.name, { ...to });
-          if (from.name === "MchInfoAddBase" && from.query.checkPaymentId && !to.query.checkPaymentId) {
+          if (
+            from.name === "MchInfoAddBase" &&
+            from.query.checkPaymentId &&
+            !to.query.checkPaymentId
+          ) {
             // to.query.checkPaymentId = from.query.checkPaymentId;
-            next({ ...to, query: { checkPaymentId: from.query.checkPaymentId } });
+            next({
+              ...to,
+              query: { checkPaymentId: from.query.checkPaymentId }
+            });
           }
           next();
         },
@@ -152,7 +158,7 @@ export const routes = [
     meta: {
       title: "进件详情",
       keepAlive: false,
-      free: true
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -167,9 +173,8 @@ export const routes = [
     component: () => import("../views/EditCard/Main.vue"),
     meta: {
       title: "结算信息修改申请",
-
       keepAlive: false,
-      free: true
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -184,9 +189,8 @@ export const routes = [
     component: () => import("../views/EditCard/Mobile.vue"),
     meta: {
       title: "结算信息修改申请",
-
       keepAlive: false,
-      free: true
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -201,9 +205,8 @@ export const routes = [
     component: () => import("../views/PaymentCard/Main.vue"),
     meta: {
       title: "支付方式配置",
-
       keepAlive: false,
-      free: true
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -218,9 +221,8 @@ export const routes = [
     component: () => import("../views/PaymentCard/Mobile.vue"),
     meta: {
       title: "支付方式配置",
-
       keepAlive: false,
-      free: true
+      roles: [AGENT, SERVICE, MERCHANT]
     }
   },
   {
@@ -229,7 +231,6 @@ export const routes = [
     component: Login,
     meta: {
       title: "登录",
-
       keepAlive: false,
       free: true
     }
@@ -240,7 +241,6 @@ export const routes = [
     component: Login,
     meta: {
       title: "登录",
-
       keepAlive: false,
       free: true
     }
@@ -267,8 +267,7 @@ const router = new Router({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    }
-    else {
+    } else {
       return { x: 0, y: 0 };
     }
   }

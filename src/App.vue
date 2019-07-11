@@ -1,6 +1,6 @@
 <template>
   <div id="app" :class="screenType === 'xs' ? 'mobile-app' : 'desktop-app'">
-    <keep-alive :include="aliveRoutes">
+    <keep-alive :include="aliveRoutes" v-if="freshToken">
       <router-view />
     </keep-alive>
   </div>
@@ -9,6 +9,16 @@
 <script>
 export default {
   name: "App",
+  data() {
+    return {
+      freshToken: true
+    };
+  },
+  provide() {
+    return {
+      refresh: this.refresh
+    };
+  },
   created() {
     this.debouncedResize &&
       window.removeEventListener("resize", this.debouncedResize);
@@ -22,6 +32,13 @@ export default {
       const height = document.documentElement.clientHeight;
       this.$store.commit("App/SET_SCREEN_WIDTH", width);
       this.$store.commit("App/SET_SCREEN_HEIGHT", height);
+    },
+    refresh() {
+      this.freshToken = false;
+      this.$nextTick(() => {
+        console.log("refresh over");
+        this.freshToken = true;
+      });
     }
   },
   computed: {

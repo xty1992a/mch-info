@@ -340,12 +340,12 @@ export default {
     // 微信支付方式选项
     //   1:扫码，2:立牌和线上，4:刷脸，8:押金。
     wechatPayTypeOptions() {
-      const { businessLicenseType: type, payeeType: pay } = this.formData;
+      // const { businessLicenseType: type, payeeType: pay } = this.formData;
       return [
         { label: "扫码", value: 1 },
-        { label: "立牌和线上", value: 2 },
-        { label: "刷脸", value: 4, disabled: +type === 1 || +pay === 32 },
-        { label: "押金", value: 8, disabled: +type === 1 || +pay === 32 }
+        { label: "立牌和线上", value: 2 }
+        // { label: "刷脸", value: 4, disabled: +type === 1 || +pay === 32 },
+        // { label: "押金", value: 8, disabled: +type === 1 || +pay === 32 }
       ];
     },
     // 账户类型选项

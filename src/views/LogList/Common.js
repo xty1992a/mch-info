@@ -56,10 +56,9 @@ export default {
     // 0未审核 1审核中 2审核通过 3拒绝 4弃用
     statusDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
     channelDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
-    date: v => dayjs(v).isValid() ? dayjs(v).format("MM-DD HH:mm") : ""
+    date: v => (dayjs(v).isValid() ? dayjs(v).format("MM-DD HH:mm") : "")
   },
   methods: {
-
     // region 调起弹窗选择器
     // 为其他回调提供服务,弹窗,选择,返回一个值.
     // 选择商户
@@ -74,7 +73,7 @@ export default {
         columns: [
           // 表格展示项
           { label: "名称", prop: "name" },
-          { label: "账号", prop: "account" },
+          { label: "账号", prop: "account" }
         ],
         props: {
           key: "businessId",
@@ -127,12 +126,12 @@ export default {
         columns: [
           // 表格展示项
           { label: "名称", prop: "channelName" },
-          { label: "唯一标识", prop: "id" },
+          { label: "唯一标识", prop: "id" }
         ],
         props: {
           key: "id",
           title: "channelName"
-        },
+        }
       });
       if (!result.success) return;
       return result.value;
@@ -212,8 +211,7 @@ export default {
           this.searchQuery.pageIndex = 1;
           this.fetchData();
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     },
     // endregion
 
@@ -233,7 +231,10 @@ export default {
       console.log(result);
       if (!result.success) return;
       const { startTime, endTime, channelId } = result.data;
-      downloadFile(`/api/mch/exportList?channelId=${channelId}&startTime=${startTime}&endTime=${endTime}`, Date.now() + ".xls");
+      downloadFile(
+        `/api/mch/exportList?channelId=${channelId}&startTime=${startTime}&endTime=${endTime}`,
+        Date.now() + ".xls"
+      );
     },
     // 修改费率
     async editFee(item) {
@@ -246,7 +247,8 @@ export default {
     // region 复杂的跳转
     // 点击添加按钮，代理商需要先选择商户
     async addItem() {
-      const is_merchant = this.$store.state.User.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
+      const is_merchant =
+        this.$store.state.User.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
       let businessId;
       if (!is_merchant) {
         businessId = await this.chooseMch();
@@ -275,7 +277,10 @@ export default {
       // 重置进件信息
       this.$store.commit("MchInfo/CLEAR_STATE");
       // 直接进入第二步
-      this.$router.push({ name: "MchInfoAddBase", query: { checkPaymentId: item.mpsCheckPaymentId } });
+      this.$router.push({
+        name: "MchInfoAddBase",
+        query: { checkPaymentId: item.mpsCheckPaymentId }
+      });
     },
     // 前往进件页面
     goToAddMchInfo() {
@@ -285,38 +290,49 @@ export default {
     },
     // 审核进件
     examineItem(item) {
-      this.$router.push({ name: "MchInfoDetail", query: { examine: 1, checkPaymentId: item.mpsCheckPaymentId } });
+      this.$router.push({
+        name: "MchInfoDetail",
+        query: { examine: 1, checkPaymentId: item.mpsCheckPaymentId }
+      });
     },
     // 查看详情
     enterDetail(item) {
       if (this.userInfo.role === this.$roles.SERVICE) return;
-      this.$router.push({ name: "MchInfoDetail", query: { examine: 0, checkPaymentId: item.mpsCheckPaymentId } });
+      this.$router.push({
+        name: "MchInfoDetail",
+        query: { examine: 0, checkPaymentId: item.mpsCheckPaymentId }
+      });
     },
     // 进入支付参数配置页面
     enterPayment({ businessId, chainStoreId }) {
-      this.$router.push({ name: "PaymentCard", query: { businessId, chainStoreId } });
+      this.$router.push({
+        name: "PaymentCard",
+        query: { businessId, chainStoreId }
+      });
     },
     // 修改结算卡
     editCart(item) {
-      this.$router.push({ name: "EditCard", query: { checkPaymentId: item.mpsCheckPaymentId, examine: 0 } });
+      this.$router.push({
+        name: "EditCard",
+        query: { checkPaymentId: item.mpsCheckPaymentId, examine: 0 }
+      });
     },
     // 审核结算卡
     checkCard(item) {
-      this.$router.push({ name: "EditCard", query: { checkPaymentId: item.mpsCheckPaymentId, examine: 1 } });
+      this.$router.push({
+        name: "EditCard",
+        query: { checkPaymentId: item.mpsCheckPaymentId, examine: 1 }
+      });
     },
-    goToWxLz(item) {
-    },
-    goToAliLh(item) {
-    },
-    // endregion
-
+    goToWxLz(item) {},
+    goToAliLh(item) {}
     // endregion
   },
 
   computed: {
     ...mapState("LogList", ["list"]),
     ...mapState("App", ["isMobile"]),
-    ...mapState("User", ["userInfo"]),
+    ...mapState("User", ["userInfo"])
   },
   watch: {
     "searchQuery.pageSize"() {

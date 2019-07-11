@@ -16,11 +16,15 @@ export default {
   state: {
     list: [],
     channelList: [],
-    shouldRefresh: true,
+    shouldRefresh: false,
     searchQuery: null
   },
   mutations: {
     CLEAR_STATE: state => {
+      state.list = [];
+      state.channelList = [];
+      state.shouldRefresh = true;
+      state.searchQuery = null;
     },
     SET_LIST: (state, list) => (state.list = list),
     SET_SEARCH_QUERY: (state, query) => (state.searchQuery = query),
@@ -28,7 +32,8 @@ export default {
     SET_SHOULD_REFRESH: (state, flag) => (state.shouldRefresh = flag),
     SET_LIST_ITEM: (state, item) =>
       (state.list = state.list.map(it => (it.key === item.key ? item : it))),
-    DEL_LIST_ITEM: (state, item) => (state.list = state.list.filter(it => it.key !== item.key))
+    DEL_LIST_ITEM: (state, item) =>
+      (state.list = state.list.filter(it => it.key !== item.key))
   },
   actions: {
     // 请求新的列表,覆盖state的列表
@@ -46,7 +51,8 @@ export default {
     async appendList({ commit, state }, { query, shouldCover }) {
       // 检查查询参数是否变化
       const change = findChangeProp(query, state.searchQuery || {});
-      const indexOnly = change.keys.length === 1 && change.keys[0] === "pageIndex";
+      const indexOnly =
+        change.keys.length === 1 && change.keys[0] === "pageIndex";
       if (!change.change && !shouldCover) return {};
 
       console.log("should new list by ", query);
@@ -77,7 +83,10 @@ export default {
       if (state.channelList.length) return state.channelList;
       const res = await API.getChannelList();
       if (res.success) {
-        commit("SET_CHANNEL_LIST", res.data.map(it => ({ ...it, label: it.channelName, value: it.id })));
+        commit(
+          "SET_CHANNEL_LIST",
+          res.data.map(it => ({ ...it, label: it.channelName, value: it.id }))
+        );
       }
       return state.channelList;
     }
