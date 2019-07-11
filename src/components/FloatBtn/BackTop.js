@@ -46,14 +46,26 @@ async function onEnter(el, done) {
   done();
 }
 
-export default {
+const BackTop = {
   name: "BackTop",
   functional: true,
   render(h, data) {
-    return <transition-group onEnter={onEnter} onLeave={onLeave}>
-      <FloatBtn v-show={data.props.show} key="backTopBtn" {...data} onClick={() => backTop(300)}>
-        {data.children}
-      </FloatBtn>;
-    </transition-group>;
+    return (
+      <transition-group onEnter={onEnter} onLeave={onLeave}>
+        <FloatBtn
+          v-show={data.props.show}
+          key="backTopBtn"
+          {...data}
+          onClick={() => backTop(300)}
+        >
+          {data.children}
+        </FloatBtn>
+        ;
+      </transition-group>
+    );
   }
 };
+
+BackTop.backTop = backTop;
+
+export default BackTop;

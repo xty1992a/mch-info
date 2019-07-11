@@ -9,29 +9,12 @@ export default {
     return {
       onRequest: false,
       listTotalLength: 0,
+      hadRequest: false,
       searchQuery: {
-        /*
-        * pageIndex	integer	 当前页
-          pageSize	integer	 每页条数
-          businessAccount	string	 商家账号
-          businessName	string	 商家名称
-          agentAccount	string	 代理商账号
-          storeName	string	 门店名称
-          startDate	string	 申请开始日期2019-06-07
-          endDate	string	 申请结束日期2019-06-07
-          updateStartDate	string	 更新开始日期2019-06-07
-          updateEndDate	string	 更新结束日期2019-06-07
-          auditStartDate	string	 审核开始日期2019-06-07
-          auditEndDate	string	 审核结束日期2019-06-07
-          auditStatus	integer []	 审核状态	0未审核 1审核中 2审核通过 3拒绝 4弃用
-          existMerchantId	integer	 是否进件成功 1 是 0 否
-          subMerchantId	string	 商户号
-          channel	string	 渠道 1光大银行通道 10钱客多兴业 11一卡易兴业 12新大陆 14兴业微信通道 16乐刷 32网商 38汇付 50得仕 78拉卡拉
-*/
         payeeInfoChangeStatus: "",
         channel: "",
         businessLicenceType: [],
-        pageIndex: 1,
+        pageIndex: 0,
         pageSize: 10,
         businessAccount: "",
         subMerchantId: "",
@@ -139,6 +122,17 @@ export default {
     },
     // endregion
 
+    async getData({ isList }) {
+      const query = this.searchQuery;
+      if (query.pageIndex === 1 || !isList) {
+        console.log("cover list ");
+        return await this.$store.dispatch("LogList/coverList", query);
+      } else {
+        console.log("append list");
+        return await this.$store.dispatch("LogList/appendList", query);
+      }
+    },
+
     // region 会影响列表的按钮回调
     // 修改过滤器，页面此时应该重新请求
     async changeQuery() {
@@ -148,13 +142,7 @@ export default {
         channelList: list
       });
       if (result.success) {
-        // 使searchQuery得到完全替换，避免页面需要deep监视
-        this.searchQuery = Object.keys(this.searchQuery).reduce((p, key) => {
-          return { ...p, [key]: result.value[key] };
-        }, {});
-        this.searchQuery.pageIndex = 1;
-        console.log("change ");
-        this.fetchData(true);
+        this.searchQuery = { ...result.value, pageIndex: 1 };
       }
     },
     // 重新进件(复制记录,修改通道)
@@ -166,8 +154,7 @@ export default {
         channelId
       });
       if (result.success) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData(true);
+        this.searchQuery = { ...this.searchQuery, pageIndex: 1 };
       }
     },
     // 复制进件(拷贝记录,修改门店)
@@ -181,8 +168,7 @@ export default {
       });
       console.log("copy result", result);
       if (result.success) {
-        this.searchQuery.pageIndex = 1;
-        this.fetchData(true);
+        this.searchQuery = { ...this.searchQuery, pageIndex: 1 };
       }
     },
     // 删除元素
@@ -208,11 +194,11 @@ export default {
           this.finished = this.listTotalLength === this.list.length;
         }
         this.onRequest = false;
-        // pc端回到第一页
-        if (!this.isMobile) {
-          this.searchQuery.pageIndex = 1;
-          this.fetchData();
-        }
+        this.searchQuery = { ...this.searchQuery, pageIndex: 1 };
+        // if (this.userInfo.role === this.$roles.MERCHANT) {
+        // } else {
+        // this.$store
+        // }
       } catch (e) {}
     },
     // endregion
@@ -335,10 +321,5 @@ export default {
     ...mapState("LogList", ["list"]),
     ...mapState("App", ["isMobile"]),
     ...mapState("User", ["userInfo"])
-  },
-  watch: {
-    "searchQuery.pageSize"() {
-      !this.isMobile && this.fetchData();
-    }
   }
 };

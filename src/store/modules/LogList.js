@@ -48,28 +48,16 @@ export default {
     },
 
     // 请求新的列表,追加到state的列表中
-    async appendList({ commit, state }, { query, shouldCover }) {
+    async appendList({ commit, state }, query) {
       // 检查查询参数是否变化
-      const change = findChangeProp(query, state.searchQuery || {});
-      const indexOnly =
-        change.keys.length === 1 && change.keys[0] === "pageIndex";
-      if (!change.change && !shouldCover) return {};
-
-      console.log("should new list by ", query);
+      // const change = findChangeProp(query, state.searchQuery || {});
+      // const indexOnly =
+      //   change.keys.length === 1 && change.keys[0] === "pageIndex";
+      // if (!change.change && !shouldCover) return {};
       const result = await API.getPaymentList(query);
       commit("SET_SEARCH_QUERY", { ...query });
-
       if (!result.success) return result;
-
-      let list = result.data.list;
-
-      // TODO, 是否可以简单的判断pageIndex为1即可覆盖数组?
-      // 只有index变化，且pageIndex不为1,追加
-      if (indexOnly && query.pageIndex !== 1) {
-        list = [...state.list, ...list];
-      }
-      commit("SET_LIST", list);
-
+      commit("SET_LIST", [...state.list, ...result.data.list]);
       return result;
     },
 

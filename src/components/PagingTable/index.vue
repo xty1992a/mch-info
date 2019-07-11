@@ -13,96 +13,93 @@
     </el-main>
     <el-footer class="paging-foot" style="height: auto;">
       <el-pagination
-              v-bind="pagingProps"
-              :current-page.sync="pageIndex"
-              :page-sizes="pageSizes"
-              :page-size.sync="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
+        v-bind="pagingProps"
+        :current-page.sync="pageIndex"
+        :page-sizes="pageSizes"
+        :page-size.sync="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
       />
     </el-footer>
   </el-container>
 </template>
 
 <script>
-  import { Pagination } from "element-ui";
+import { Pagination } from "element-ui";
 
-  export default {
-    name: "PagingTable",
-    props: {
-      label: String,
-      value: {
-        type: Object,
-        validate: v => ["pageIndex", "pageSize"].every(k => v.hasOwnProperty(k))
-      },
-      pageSizes: {
-        type: Array,
-        default: () => [10, 20, 30, 40]
-      },
-      total: Number,
-      pagingProps: {
-        type: Object,
-        default: () => ({})
-      }
+export default {
+  name: "PagingTable",
+  props: {
+    label: String,
+    value: {
+      type: Object,
+      validate: v => ["pageIndex", "pageSize"].every(k => v.hasOwnProperty(k))
     },
-    components: { ElPagination: Pagination },
-    mounted() {
-      console.log(this.$slots);
+    pageSizes: {
+      type: Array,
+      default: () => [10, 20, 30, 40]
     },
-    computed: {
-      pageIndex: {
-        get() {
-          return this.value.pageIndex;
-        },
-        set(v) {
-          this.$emit("input", { ...this.value, pageIndex: v });
-        }
-      },
-      pageSize: {
-        get() {
-          return this.value.pageSize;
-        },
-        set(v) {
-          this.$emit("input", { ...this.value, pageSize: v });
-        }
-      },
-      showHead() {
-        return this.label || this.$slots.hasOwnProperty("set");
-      }
+    total: Number,
+    pagingProps: {
+      type: Object,
+      default: () => ({})
     }
-  };
+  },
+  components: { ElPagination: Pagination },
+  computed: {
+    pageIndex: {
+      get() {
+        return this.value.pageIndex;
+      },
+      set(v) {
+        this.$emit("input", { ...this.value, pageIndex: v });
+      }
+    },
+    pageSize: {
+      get() {
+        return this.value.pageSize;
+      },
+      set(v) {
+        this.$emit("input", { ...this.value, pageSize: v });
+      }
+    },
+    showHead() {
+      return this.label || this.$slots.hasOwnProperty("set");
+    }
+  }
+};
 </script>
 
 <style lang="less" rel="stylesheet/less">
-  .paging-table {
-    height: 100%;
+.paging-table {
+  height: 100%;
 
-    .paging-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
+  .paging-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
 
-      .label {
-        font-size: 18px;
-      }
-
-      .el-button {
-        height: 36px;
-        line-height: 36px;
-        padding: 0 20px;
-      }
+    .label {
+      font-size: 18px;
     }
 
-    .paging-main {
-      padding: 0;
-    }
-
-    .paging-foot {
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+    .el-button {
+      height: 36px;
+      line-height: 36px;
+      padding: 0 20px;
     }
   }
+
+  .paging-main {
+    padding: 0;
+  }
+
+  .paging-foot {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
 </style>
