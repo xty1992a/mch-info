@@ -312,8 +312,12 @@ export default {
         query: { checkPaymentId: item.mpsCheckPaymentId, examine: 1 }
       });
     },
-    goToWxLz(item) {},
-    goToAliLh(item) {}
+    goToWxLz(item) {
+      location.href = location.origin + item.wxlzUrl;
+    },
+    goToAliLh(item) {
+      location.href = location.origin + item.zfblhUrl;
+    }
     // endregion
   },
 
