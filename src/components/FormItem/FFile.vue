@@ -5,8 +5,9 @@
       <a class="file-download" download :href="data.attachmentUrl"><i class="el-icon-download"></i>下载{{data.attachment}}</a>
       <DescBtn :text="data.description"/>
     </div>
-    <div class="f-image-body" v-if="imageData">
-      <img :src="imageData" alt="">
+    <div class="f-image-body" v-if="value">
+      <img :src="value | img_cdn" alt=""/>
+      <DelBtn @click="clear"/>
     </div>
   </div>
 </template>
@@ -16,7 +17,7 @@
   import Common from "./Common";
 
   export default {
-    name: "FImage",
+    name: "FFile",
     components: {},
     mixins: [Common, ImageUpload],
     props: {},
