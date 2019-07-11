@@ -2,6 +2,7 @@ import * as API from "@/api";
 import { mapState } from "vuex";
 import BranchBankCode from "@/mixins/BranchBankCode";
 import OCRObserver from "@/mixins/OCRObserver";
+import PreviewImage from "@/mixins/PreviewImage";
 
 export default {
   data() {
@@ -16,7 +17,7 @@ export default {
         payeeBankProvinceCityId: "",
         payeeBankCode: "",
         payeeBankBranchCode: "",
-        payeeIdImgPath: "",
+        payeeIdImgPath: ""
       },
 
       pageData: null,
@@ -27,28 +28,39 @@ export default {
         filedName: "payeeBankCode",
         request: API.getLeaveOptions("/api/basic/getBank"),
         name: "开户银行",
-        selectLevel: 1,
+        selectLevel: 1
       },
       addressPicker: {
         filedName: "payeeArea",
         request: API.getLeaveOptions("/api/basic/getArea"),
         selectLevel: 2,
-        name: "开户地址",
+        name: "开户地址"
       }
     };
   },
-  mixins: [BranchBankCode, OCRObserver],
+  mixins: [BranchBankCode, OCRObserver, PreviewImage],
   async created() {
     if (!this.$route.query.checkPaymentId) {
       this.$message("缺少必要参数");
       this.$router.push({ name: "Home" });
       return;
     }
-    const success = await this.getClearingInfo(this.$route.query.checkPaymentId);
+    const success = await this.getClearingInfo(
+      this.$route.query.checkPaymentId
+    );
     this.onRequest = false;
     if (success) {
-      this.initObservers("payeeBankProvinceCityId", "payeeBankCode", "payeeBankBranchCode");
+      this.initObservers(
+        "payeeBankProvinceCityId",
+        "payeeBankCode",
+        "payeeBankBranchCode"
+      );
     }
+  },
+  mounted() {
+    if (this.examine) return;
+    if (!this.formData.payeeIdImgPath) return;
+    this.initImagePreview([this.formData.payeeIdImgPath]);
   },
   filters: {
     examineStatus: v => ["未知", "待审核", "通过", "拒绝"][v]
@@ -57,7 +69,9 @@ export default {
     async getClearingInfo(id) {
       const result = await API.getClearingInfo(id);
       if (!result.success) return false;
-      result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId.replace(/null/g, "").replace(/^,$/, "");
+      result.data.payeeBankProvinceCityId = result.data.payeeBankProvinceCityId
+        .replace(/null/g, "")
+        .replace(/^,$/, "");
       Object.keys(this.formData).forEach(key => {
         if (!result.data.hasOwnProperty(key)) return;
         this.formData[key] = result.data[key];
@@ -65,7 +79,11 @@ export default {
       this.formData.checkPaymentId = this.$route.query.checkPaymentId;
       this.pageData = result.data;
       this.$nextTick(() => {
-        this.observerCard("payeeIdImgPath", "payeeBankAccount", "payeeBankCode");
+        this.observerCard(
+          "payeeIdImgPath",
+          "payeeBankAccount",
+          "payeeBankCode"
+        );
       });
       return true;
     },
@@ -139,9 +157,7 @@ export default {
     }
   },
   computed: {
-    ...mapState("App", [
-      "isMobile"
-    ]),
+    ...mapState("App", ["isMobile"]),
 
     examine() {
       return +this.$route.query.examine === 1;

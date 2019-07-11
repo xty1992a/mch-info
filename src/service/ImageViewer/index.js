@@ -1,24 +1,88 @@
-import Main from "./Main";
-import Vue from "vue";
+import PhotoSwipe from "photoswipe/dist/photoswipe";
+import PhotoSwipeUIDefault from "photoswipe/dist/photoswipe-ui-default";
+import "photoswipe/dist/photoswipe.css";
+import "photoswipe/dist/default-skin/default-skin.css";
 
-const Com = Vue.extend(Main);
-const copy = o => JSON.parse(JSON.stringify(o));
+const modalStr = `
+<div id="modal" class="pswp photo-full-screen" tabindex="-1" role="dialog" aria-hidden="true">
+      <!-- 背景 -->
+      <div class="pswp__bg"></div>
+      <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+          <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <div class="pswp__button pswp__button--close"></div>
+            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+            <div class="pswp__preloader">
+              <div class="pswp__preloader__icn">
+                <div class="pswp__preloader__cut">
+                  <div class="pswp__preloader__donut"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip"></div>
+          </div>
+          <div class="pswp__caption">
+            <div class="pswp__caption__center"></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
 
-function createVm(opt) {
-  const vm = new Com({ data: opt }).$mount();
-  document.body.appendChild(vm.$el);
-  return vm;
+function getModal() {
+  const el = document.getElementById("modal");
+  if (el) return el;
+  const div = document.createElement("div");
+  div.innerHTML = modalStr;
+  document.body.appendChild(div);
+  return document.getElementById("modal");
 }
 
-const dftOpt = {
-  isMobile: false,
-  current: 0,
-  images: []
+getModal();
+
+const dftOption = {
+  items: [],
+  triggerEl: null,
+  rect: { x: 0, y: 0, w: 100 },
+  index: 0
 };
 
-export default (opt = {}) => new Promise(resolve => {
-  console.log(opt);
-  opt = { ...dftOpt, ...opt, resolve, value: copy(opt.value || "") };
-  let vm = createVm(opt);
-  vm.show = true;
-})
+export default (opt = {}) =>
+  new Promise(resolve => {
+    const option = { ...dftOption, ...opt };
+    if (option.triggerEl && option.triggerEl.tagName.toLowerCase() === "img") {
+      option.index = option.items.findIndex(
+        it => it.src === option.triggerEl.src
+      );
+    }
+
+    const modal = getModal();
+    const options = {
+      index: option.index,
+      // galleryUID: containEl.getAttribute('data-pswp-uid'),
+      getThumbBoundsFn(index) {
+        let rect = option.rect;
+        if (option.triggerEl) {
+          const imgRect = option.triggerEl.getBoundingClientRect();
+          const top = document.scrollingElement.scrollTop;
+          rect = { x: imgRect.left, y: imgRect.top + top, w: imgRect.width };
+        }
+        return rect;
+      }
+    };
+    console.log(options, option.items);
+    const gallery = new PhotoSwipe(
+      modal,
+      PhotoSwipeUIDefault,
+      option.items,
+      options
+    );
+    gallery.init();
+  });
