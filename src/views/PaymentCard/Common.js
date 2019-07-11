@@ -51,7 +51,11 @@ export default {
     },
 
     async toggleItem(query) {
-      const result = await API.toggleConfig({ ...query, businessId: this.businessId, chainStoreId: this.chainStoreId });
+      const result = await API.toggleConfig({
+        ...query,
+        businessId: this.businessId,
+        chainStoreId: this.chainStoreId
+      });
       console.log(result);
       // 修改失败,将其还原
       if (!result.success) {
@@ -63,7 +67,18 @@ export default {
     async confirmParams(merchantParam) {
       const id = merchantParam.id;
       delete merchantParam.id;
-      const data = { merchantParam, businessId: this.businessId, chainStoreId: this.chainStoreId, id };
+      let cert = merchantParam.refundCertificate;
+      if (cert && cert.indexOf("base64,") !== -1) {
+        merchantParam.refundCertificate = cert.substr(
+          cert.indexOf("base64,") + 7
+        );
+      }
+      const data = {
+        merchantParam,
+        businessId: this.businessId,
+        chainStoreId: this.chainStoreId,
+        id
+      };
       const result = await API.editConfig(data);
       if (result.success) {
         this.$message({
@@ -74,8 +89,15 @@ export default {
     },
 
     async sortIndex() {
-      const map = this.list.reduce((p, it, index) => ({ ...p, [it.paramId]: this.priorityList[index] }), {});
-      const result = await API.sortIndex({ priorityMap: map, businessId: this.businessId, chainStoreId: this.chainStoreId });
+      const map = this.list.reduce(
+        (p, it, index) => ({ ...p, [it.paramId]: this.priorityList[index] }),
+        {}
+      );
+      const result = await API.sortIndex({
+        priorityMap: map,
+        businessId: this.businessId,
+        chainStoreId: this.chainStoreId
+      });
       console.log(result);
     },
 
@@ -136,6 +158,6 @@ export default {
     },
     chainStoreId() {
       return this.$route.query.chainStoreId;
-    },
+    }
   }
 };
