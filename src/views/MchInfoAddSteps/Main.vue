@@ -74,7 +74,7 @@
           <el-form-item label="公众号主体:" prop="samePrincipal">
             <!-- 64:一致，128:不一致-->
             <el-switch
-              :disabled="publicInfo && publicInfo.appId"
+              :disabled="publicInfo && !publicInfo.appId"
               v-model="formData.samePrincipal"
               :active-value="64"
               :inactive-value="128"
