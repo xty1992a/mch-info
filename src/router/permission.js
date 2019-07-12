@@ -127,18 +127,18 @@ function genAuthList(list, check) {
 function setLoginPath(role) {
   switch (role) {
     case ROLES.MERCHANT:
-      localStorage.setItem("USER_LOGIN_PATH", "/Error/NoAuth");
+      localStorage && localStorage.setItem("USER_LOGIN_PATH", "/Error/NoAuth");
       break;
     case ROLES.SERVICE:
-      localStorage.setItem("USER_LOGIN_PATH", "/AdminLogin");
+      localStorage && localStorage.setItem("USER_LOGIN_PATH", "/AdminLogin");
       break;
     default:
-      localStorage.setItem("USER_LOGIN_PATH", "/Login");
+      localStorage && localStorage.setItem("USER_LOGIN_PATH", "/Login");
   }
 }
 
 function getLoginPath() {
-  const path = localStorage.getItem("USER_LOGIN_PATH");
+  const path = localStorage ? localStorage.getItem("USER_LOGIN_PATH") : "";
   return path || "/Login";
 }
 
