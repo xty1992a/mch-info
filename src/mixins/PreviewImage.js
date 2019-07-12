@@ -2,7 +2,7 @@ import axios from "axios";
 
 function request(url) {
   return new Promise(resolve => {
-    if (url === "http://files.1card1.cn") {
+    if (/https?:\/\/files\.1card1\.cn$/.test(url)) {
       resolve(null);
       return;
     }
