@@ -4,8 +4,8 @@
       <el-button @click="changeQuery">查询</el-button>
       <el-button type="primary" @click="addItem">+新增</el-button>
       <el-button @click="exportList" v-role="[$roles.SERVICE]"
-        >导出变更关注列表</el-button
-      >
+        >导出变更关注列表
+      </el-button>
     </div>
     <PagingTable
       ref="table"
@@ -50,20 +50,20 @@
               type="primary"
               size="mini"
               v-if="scope.row.auditStatus === 0"
-              >未审核</el-tag
-            >
+              >未审核
+            </el-tag>
             <el-tag
               type="warning"
               size="mini"
               v-if="scope.row.auditStatus === 1"
-              >审核中</el-tag
-            >
+              >审核中
+            </el-tag>
             <el-tag
               type="success"
               size="mini"
               v-if="scope.row.auditStatus === 2"
-              >通过</el-tag
-            >
+              >通过
+            </el-tag>
             <el-tag
               type="danger"
               size="mini"
@@ -75,8 +75,8 @@
               <i class="el-icon-warning"></i>
             </el-tag>
             <el-tag type="info" size="mini" v-if="scope.row.auditStatus === 4"
-              >弃用</el-tag
-            >
+              >弃用
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="申请时间">
@@ -182,6 +182,10 @@ export default {
         if (!this.$refs.table) {
           await this.$utils.sleep(300);
         }
+        if (!this.$refs.table && !this.$refs.table.$el) {
+          console.log("table & no $el");
+        }
+        if (!this.$refs.table) return;
         const table = this.$refs.table.$el;
         const main = table.getElementsByClassName("el-main")[0];
         if (!main) return;
@@ -202,12 +206,12 @@ export default {
       }
     }
     /*      "searchQuery.pageIndex": {
-              async handler(now) {
-                console.log(now, "<---------");
-                this.fetchData();
-              },
-              immediate: true
-            },*/
+                async handler(now) {
+                  console.log(now, "<---------");
+                  this.fetchData();
+                },
+                immediate: true
+              },*/
   }
 };
 </script>
