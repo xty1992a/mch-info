@@ -22,10 +22,12 @@ export default {
       this.uploader = new ImageUploader({
         width: 1200,
         height: 900,
+        blob: true,
         MIME: "image/jpeg",
         toast: this.$message,
         limit: 50000000,
         fileName: "file",
+        crop: false,
         el: this.$refs.btn.$el,
         uploadUrl: this._uploadUrl,
         async getFormDataAsync(callback) {
