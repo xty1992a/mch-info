@@ -206,12 +206,12 @@ export default {
       }
     }
     /*      "searchQuery.pageIndex": {
-                async handler(now) {
-                  console.log(now, "<---------");
-                  this.fetchData();
-                },
-                immediate: true
-              },*/
+                  async handler(now) {
+                    console.log(now, "<---------");
+                    this.fetchData();
+                  },
+                  immediate: true
+                },*/
   }
 };
 </script>

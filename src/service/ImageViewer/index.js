@@ -50,7 +50,6 @@ getModal();
 const dftOption = {
   items: [],
   triggerEl: null,
-  rect: { x: 0, y: 0, w: 100 },
   index: 0
 };
 
@@ -62,19 +61,20 @@ export default (opt = {}) =>
         it => it.src === option.triggerEl.src
       );
     }
-
+    const srcList = option.items.map(it => it.src);
+    const allImages = [...document.body.getElementsByTagName("img")];
+    const imgList = allImages.filter(it => srcList.includes(it.src));
     const modal = getModal();
     const options = {
       index: option.index,
-      // galleryUID: containEl.getAttribute('data-pswp-uid'),
       getThumbBoundsFn(index) {
-        let rect = option.rect;
-        if (option.triggerEl) {
-          const imgRect = option.triggerEl.getBoundingClientRect();
-          const top = document.scrollingElement.scrollTop;
-          rect = { x: imgRect.left, y: imgRect.top + top, w: imgRect.width };
+        let imgEl = imgList[index];
+        if (!imgEl) {
+          imgEl = option.triggerEl;
         }
-        return rect;
+        const imgRect = imgList[index].getBoundingClientRect();
+        const top = document.scrollingElement.scrollTop;
+        return { x: imgRect.left, y: imgRect.top + top, w: imgRect.width };
       }
     };
     console.log(options, option.items);

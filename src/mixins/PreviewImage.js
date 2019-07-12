@@ -58,9 +58,11 @@ export default {
       let results = [];
       while (list.length) {
         let url = this.$utils.img_cdn(list.shift());
+        let title = this.getTitleByUrl ? this.getTitleByUrl(url) : "";
         const result = await request(url);
         if (!result) continue;
         results.push({
+          title,
           src: url,
           w: +result.ImageWidth.value,
           h: +result.ImageHeight.value

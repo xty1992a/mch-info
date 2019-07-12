@@ -72,9 +72,17 @@ export default {
     return {};
   },
   mounted() {
-    this.initImagePreview(this.imgList);
+    this.initImagePreview(this.imgList.map(it => it.value));
   },
-  methods: {},
+  methods: {
+    getTitleByUrl(url) {
+      let item = this.imgList.find(it => this.$utils.img_cdn(it.value) === url);
+      if (item) {
+        return item.title;
+      }
+      return "暂无标题";
+    }
+  },
   computed: {
     blockList() {
       if (!this.data || !this.data.length) return;
@@ -93,8 +101,7 @@ export default {
     imgList() {
       return this.data
         .reduce((p, it) => [...p, ...it.list], [])
-        .filter(it => it.type === "img")
-        .map(it => it.value);
+        .filter(it => it.type === "img");
     }
   }
 };
