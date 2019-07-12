@@ -419,8 +419,8 @@ export default {
     "formData.samePrincipal"(now) {
       if (!this.publicInfo) return;
       if (this.publicInfo.version !== 1 && +now === 128) {
-        this.formData.payeeType = 0;
-        this.formData.unionPayType = 0;
+        this.formData.payeeType = "";
+        this.formData.unionPayType = "";
       }
     },
     "formData.businessLicenseType"(now) {
@@ -428,7 +428,7 @@ export default {
       if (this.mchInfo) return;
       if (+now === 1) {
         this.formData.payeeType = 8;
-        this.formData.unionPayType = 0;
+        this.formData.unionPayType = "";
       }
       if (+now === 2 && this.formData.payeeType === 16) {
         this.formData.payeeType = 8;

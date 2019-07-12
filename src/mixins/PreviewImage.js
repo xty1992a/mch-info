@@ -1,29 +1,22 @@
-import axios from "axios";
-
-function request(url) {
+function getImgInfo(src) {
   return new Promise(resolve => {
-    if (/https?:\/\/files\.1card1\.cn$/.test(url)) {
+    const img = new Image();
+    img.src = src;
+    img.addEventListener("load", () => {
+      resolve({ width: img.width, height: img.height });
+    });
+    img.addEventListener("error", () => {
       resolve(null);
-      return;
-    }
-    axios
-      .get(url + "?x-oss-process=image/info")
-      .then(res => {
-        resolve(res.data);
-      })
-      .catch(() => {
-        resolve(null);
-      });
+    });
   });
 }
 
 export default {
-  data() {},
   methods: {
-    // 参数为阿里云OSS图片链接数组
+    // 参数为图片链接数组,不可用的图片将忽略
     async initImagePreview(imgList) {
       if (!Array.isArray(imgList)) {
-        console.warn("参数为阿里云OSS图片链接数组");
+        console.warn("参数为图片链接数组");
         return;
       }
       this.imgInfoList = await this.getInfoList(imgList);
@@ -59,16 +52,15 @@ export default {
       while (list.length) {
         let url = this.$utils.img_cdn(list.shift());
         let title = this.getTitleByUrl ? this.getTitleByUrl(url) : "";
-        const result = await request(url);
+        const result = await getImgInfo(url);
         if (!result) continue;
         results.push({
           title,
           src: url,
-          w: +result.ImageWidth.value,
-          h: +result.ImageHeight.value
+          w: result.width,
+          h: result.height
         });
       }
-      console.log(results);
       return results;
     }
   }

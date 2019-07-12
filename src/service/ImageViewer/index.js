@@ -72,7 +72,7 @@ export default (opt = {}) =>
         if (!imgEl) {
           imgEl = option.triggerEl;
         }
-        const imgRect = imgList[index].getBoundingClientRect();
+        const imgRect = imgEl.getBoundingClientRect();
         const top = document.scrollingElement.scrollTop;
         return { x: imgRect.left, y: imgRect.top + top, w: imgRect.width };
       }
