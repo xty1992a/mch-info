@@ -41,6 +41,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="storeName" label="门店" />
+        <el-table-column prop="businessLicenceType" label="营业执照">
+          <template slot-scope="scope">
+            <p style="text-align: center;">
+              {{ scope.row.businessLicenceType | licenceType }}
+            </p>
+          </template>
+        </el-table-column>
         <el-table-column prop="merchantId" label="商户号" />
         <el-table-column prop="appId" label="AppId" />
         <el-table-column prop="channelName" label="支付通道" />
@@ -206,12 +213,12 @@ export default {
       }
     }
     /*      "searchQuery.pageIndex": {
-                  async handler(now) {
-                    console.log(now, "<---------");
-                    this.fetchData();
-                  },
-                  immediate: true
-                },*/
+                    async handler(now) {
+                      console.log(now, "<---------");
+                      this.fetchData();
+                    },
+                    immediate: true
+                  },*/
   }
 };
 </script>

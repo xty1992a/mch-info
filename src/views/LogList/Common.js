@@ -40,7 +40,8 @@ export default {
     // 0未审核 1审核中 2审核通过 3拒绝 4弃用
     statusDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
     channelDis: v => ["未审核", "审核中", "通过", "拒绝", "弃用"][v],
-    date: v => (dayjs(v).isValid() ? dayjs(v).format("MM-DD HH:mm") : "")
+    date: v => (dayjs(v).isValid() ? dayjs(v).format("MM-DD HH:mm") : ""),
+    licenceType: v => ["未知", "无", "个体", "企业"][+v]
   },
   methods: {
     // region 调起弹窗选择器

@@ -71,7 +71,7 @@ export default {
     this.initImagePreview([this.formData.payeeIdImgPath]);
   },
   filters: {
-    examineStatus: v => ["未知", "待审核", "通过", "拒绝"][v]
+    examineStatus: v => ["未提交", "待审核", "通过", "拒绝"][v]
   },
   methods: {
     async getClearingInfo(id) {
