@@ -1,5 +1,10 @@
 <template>
-  <Container title="进件管理" class="log-table" v-loading="onRequest">
+  <Container
+    title="进件管理"
+    class="log-table"
+    v-loading="onRequest"
+    :columns="{ xs: 24, md: 24, lg: 24, xl: 22 }"
+  >
     <div slot="head">
       <el-button @click="changeQuery">查询</el-button>
       <el-button type="primary" @click="addItem">+新增</el-button>
@@ -213,12 +218,12 @@ export default {
       }
     }
     /*      "searchQuery.pageIndex": {
-                    async handler(now) {
-                      console.log(now, "<---------");
-                      this.fetchData();
-                    },
-                    immediate: true
-                  },*/
+                      async handler(now) {
+                        console.log(now, "<---------");
+                        this.fetchData();
+                      },
+                      immediate: true
+                    },*/
   }
 };
 </script>
