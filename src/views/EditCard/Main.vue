@@ -14,18 +14,13 @@
         <div class="slot-label" style="padding-top: 5px;" slot="label">
           银行卡正面照片
         </div>
-        <FImage
-          v-if="!examine"
-          :data="{}"
-          v-model="formData.payeeIdImgPath"
-          @click.native="viewImage"
-        />
+        <FImage v-if="!examine" :data="{}" v-model="formData.payeeIdImgPath" />
         <AspectRatio
           :width="133.3"
           style="background-color: #f7f7f7;width: 300px;"
           v-else
         >
-          <img :src="formData.payeeIdImgPath | img_cdn" />
+          <img :src="formData.payeeIdImgPath | img_cdn" @click="viewImage" />
         </AspectRatio>
       </Panel>
       <Panel>
@@ -94,7 +89,7 @@
 
       <Panel v-if="examine">
         <div class="slot-label" slot="label">审核状态</div>
-        <el-select v-model="formData.payeeCheckStatus" placeholder="选择状态">
+        <el-select v-model="payeeCheckStatus" placeholder="选择状态">
           <el-option
             v-for="item in payeeCheckOptions"
             :value="item.value"
@@ -105,9 +100,11 @@
       </Panel>
     </section>
     <footer class="footer" slot="foot">
+      <el-button @click="$router.push({ name: 'Home' })">返回</el-button>
       <el-button type="primary" @click="submit" v-if="!examine">确定</el-button>
-      <el-button type="primary" @click="confirm" v-if="examine">确定</el-button>
-      <el-button @click="reject" v-if="examine">拒绝</el-button>
+      <el-button type="primary" @click="confirmCheck" v-if="examine"
+        >确定</el-button
+      >
     </footer>
   </Container>
 </template>
@@ -138,8 +135,6 @@ export default {
       showBank: true
     };
   },
-  created() {},
-  methods: {},
   computed: {
     screenType() {
       return this.$store.getters["App/screenType"];

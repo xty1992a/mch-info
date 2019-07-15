@@ -68,19 +68,23 @@
       @click="pickState"
       :value="displayState"
     />
-    <van-cell title="审核备注" v-if="examine"> </van-cell>
+    <van-cell title="审核备注" v-if="examine"></van-cell>
     <div class="text-area">
       <textarea type="text" v-model="editResult" />
     </div>
 
     <footer class="fixed-foot">
+      <el-button @click="$router.push({ name: 'Home' })">返回</el-button>
       <el-button size="small" type="primary" @click="submit" v-if="!examine"
-        >确定</el-button
-      >
-      <el-button size="small" type="primary" @click="confirm" v-if="examine"
-        >确定</el-button
-      >
-      <el-button size="small" @click="reject" v-if="examine">拒绝</el-button>
+        >确定
+      </el-button>
+      <el-button
+        size="small"
+        type="primary"
+        @click="confirmCheck"
+        v-if="examine"
+        >确定
+      </el-button>
     </footer>
   </div>
 </template>
@@ -107,11 +111,11 @@ export default {
 
     async pickState() {
       const result = await this.$services.pickItem({
-        value: this.formData.payeeCheckStatus,
+        value: this.payeeCheckStatus,
         options: this.payeeCheckOptions.map(it => ({ ...it, label: it.text }))
       });
       if (!result.success) return;
-      this.formData.payeeCheckStatus = result.value;
+      this.payeeCheckStatus = result.value;
     }
   },
   computed: {
