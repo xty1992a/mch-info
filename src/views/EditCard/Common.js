@@ -112,7 +112,6 @@ export default {
           type: "success",
           message: "保存成功!"
         });
-        await this.$utils.sleep(1500);
         this.$router.push({ name: "Home" });
       }
     },
