@@ -25,7 +25,7 @@
           style="background-color: #f7f7f7;width: 300px;"
           v-else
         >
-          <img :src="formData.payeeIdImgPath | img_cdn" style="width: 100%;" />
+          <img :src="formData.payeeIdImgPath | img_cdn" />
         </AspectRatio>
       </Panel>
       <Panel>
@@ -66,6 +66,7 @@
       <Panel>
         <div class="slot-label" slot="label">开户支行</div>
         <el-select
+          clearable
           v-model="formData.payeeBankBranchCode"
           placeholder="选择支行"
           v-if="!examine"
@@ -77,16 +78,30 @@
             :label="item.text"
           />
         </el-select>
-        <span v-else>{{ pageData && pageData.payeeBankBranchCodeName }}</span>
+        <span v-else style="display:inline-block;padding-top: 7px;">{{
+          pageData && pageData.payeeBankBranchCodeName
+        }}</span>
       </Panel>
       <Panel v-if="examine">
         <div class="slot-label" slot="label">审核备注</div>
         <el-input
           type="textarea"
-          placeholder="输入审核备注！"
+          placeholder="输入审核备注"
           v-model="editResult"
           style="max-width: 400px"
         />
+      </Panel>
+
+      <Panel v-if="examine">
+        <div class="slot-label" slot="label">审核状态</div>
+        <el-select v-model="formData.payeeCheckStatus" placeholder="选择状态">
+          <el-option
+            v-for="item in payeeCheckOptions"
+            :value="item.value"
+            :key="item.value"
+            :label="item.text"
+          />
+        </el-select>
       </Panel>
     </section>
     <footer class="footer" slot="foot">
@@ -165,6 +180,14 @@ export default {
     height: 0;
     overflow: hidden;
     border-bottom: 0;
+  }
+
+  .aspect-ratio {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   .footer {

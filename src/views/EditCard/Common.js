@@ -17,12 +17,20 @@ export default {
         payeeBankProvinceCityId: "",
         payeeBankCode: "",
         payeeBankBranchCode: "",
-        payeeIdImgPath: ""
+        payeeIdImgPath: "",
+        payeeCheckStatus: ""
       },
 
       pageData: null,
 
       editResult: "",
+
+      payeeCheckOptions: [
+        { text: "待审核", value: "1" },
+        { text: "通过", value: "2" },
+        { text: "拒绝", value: "3" },
+        { text: "审核中", value: "4" }
+      ],
 
       bankPicker: {
         filedName: "payeeBankCode",
@@ -76,6 +84,7 @@ export default {
         if (!result.data.hasOwnProperty(key)) return;
         this.formData[key] = result.data[key];
       });
+      this.formData.payeeCheckStatus = result.data.state + "" || "1";
       this.formData.checkPaymentId = this.$route.query.checkPaymentId;
       this.pageData = result.data;
       this.$nextTick(() => {
