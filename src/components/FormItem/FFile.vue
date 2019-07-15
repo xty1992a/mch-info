@@ -2,12 +2,16 @@
   <div class="f-file f-form-item" :class="isMobile ? 'mobile' : ''">
     <div style="margin-bottom: 10px;">
       <el-button ref="btn" class="upload-btn">上传图片</el-button>
-      <a class="file-download" download :href="data.attachmentUrl"
+      <a
+        class="file-download"
+        download
+        :href="data.attachmentUrl"
+        style="white-space: nowrap"
         ><i class="el-icon-download"></i>下载{{ data.attachment }}</a
       >
       <DescBtn :text="data.description" />
     </div>
-    <div class="f-image-body" v-if="value">
+    <div class="f-image-body" v-if="value" style="width: 300px">
       <AspectRatio :width="133.3">
         <img :src="value | img_cdn" alt="" />
         <DelBtn @click="clear" />
@@ -33,8 +37,6 @@ export default {
 @import "../../styles/variable";
 
 .f-file {
-  width: 300px;
-
   &.mobile {
     width: 100%;
   }
