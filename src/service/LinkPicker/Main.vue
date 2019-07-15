@@ -142,12 +142,25 @@ export default {
         this.currentKey = keys[0];
         return;
       }
-      // 如果value是option中不存在的,过滤掉
-      this.pickedItems = values
-        .map((val, index) => {
-          return this.optionMap[keys[index]].find(it => it.value === val);
-        })
-        .filter(i => Boolean(i));
+      this.pickedItems = values.map((val, index) => {
+        return this.optionMap[keys[index]].find(it => it.value === val);
+      });
+
+      // value与option可能不匹配,将其重置
+      if (this.pickedItems.includes(undefined)) {
+        setTimeout(() => {
+          this.$message({
+            type: "warning",
+            message: "您的数据可能已更新,请重新选择!"
+          });
+        }, 50);
+
+        this.pickedItems = [];
+        this.currentKey = "topLevel";
+        this.currentLevel = 0;
+        return;
+      }
+
       this.currentLevel = keys.length - 1;
       this.currentKey = keys.slice(-1)[0];
     },
