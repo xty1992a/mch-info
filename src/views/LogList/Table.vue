@@ -79,6 +79,7 @@
             <el-tag
               type="danger"
               size="mini"
+              style="cursor: pointer;"
               v-if="scope.row.auditStatus === 3"
               @click="showReason(scope.row)"
               :title="scope.row.auditResult"
