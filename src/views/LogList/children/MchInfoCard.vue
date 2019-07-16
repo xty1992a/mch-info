@@ -4,14 +4,14 @@
       <van-cell :border="false">
         <h3 slot="title" style="white-space: nowrap;">{{ data.storeName }}</h3>
         <el-tag type="primary" size="mini" v-if="data.auditStatus === 0"
-          >未审核</el-tag
-        >
+          >未审核
+        </el-tag>
         <el-tag type="warning" size="mini" v-if="data.auditStatus === 1"
-          >审核中</el-tag
-        >
+          >审核中
+        </el-tag>
         <el-tag type="success" size="mini" v-if="data.auditStatus === 2"
-          >审核通过</el-tag
-        >
+          >审核通过
+        </el-tag>
         <el-tag
           type="danger"
           size="mini"
@@ -22,8 +22,8 @@
           <i class="el-icon-warning"></i>
         </el-tag>
         <el-tag type="info" size="mini" v-if="data.auditStatus === 4"
-          >弃用</el-tag
-        >
+          >弃用
+        </el-tag>
       </van-cell>
       <van-cell
         :border="false"
@@ -72,7 +72,7 @@ export default {
     data: Object
   },
   filters: {
-    licenceType: v => ["未知", "无", "个体", "企业"][+v]
+    licenceType: v => ["无", "个体", "企业"][+v]
   },
   components: { Commander, VanCell: Cell, VanCellGroup: CellGroup, ElTag: Tag },
   methods: {
