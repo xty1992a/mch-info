@@ -28,6 +28,7 @@
       <van-cell
         :border="false"
         title="商家账户"
+        v-role="[$roles.SERVICE, $roles.AGENT]"
         :value="data.businessAccount"
       />
       <van-cell :border="false" title="商户号" :value="data.merchantId" />
@@ -36,7 +37,12 @@
         title="营业执照"
         :value="data.businessLicenceType | licenceType"
       />
-      <van-cell :border="false" title="代理商账号" :value="data.agentAccount" />
+      <van-cell
+        :border="false"
+        title="代理商账号"
+        :value="data.agentAccount"
+        v-role="[$roles.SERVICE]"
+      />
       <van-cell :border="false" title="审核时间" :value="data.auditTime" />
       <van-cell :border="false" title="申请时间" :value="data.createTime" />
       <van-cell :border="false" title="支付通道" :value="data.channelName" />
