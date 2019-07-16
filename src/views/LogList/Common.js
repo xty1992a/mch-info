@@ -236,8 +236,7 @@ export default {
     // region 复杂的跳转
     // 点击添加按钮，代理商需要先选择商户
     async addItem() {
-      const is_merchant =
-        this.$store.state.User.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
+      const is_merchant = this.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
       let businessId;
       if (!is_merchant) {
         businessId = await this.chooseMch();
@@ -261,8 +260,16 @@ export default {
 
     // region 简单的跳转
     // 编辑进件
-    editItem(item) {
+    async editItem(item) {
       console.log(item);
+      const is_merchant = this.userInfo.role === ROLES.MERCHANT; // 非商家需要先选择商家
+      if (!is_merchant) {
+        const complete = await this.$store.dispatch(
+          "User/fetchMchInfo",
+          item.businessId
+        );
+        if (!complete) return;
+      }
       // 重置进件信息
       this.$store.commit("MchInfo/CLEAR_STATE");
       // 直接进入第二步
