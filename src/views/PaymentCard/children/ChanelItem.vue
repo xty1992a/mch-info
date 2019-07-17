@@ -238,7 +238,6 @@ export default {
         margin: 5px 0;
 
         svg {
-          color: @activeC;
           font-size: 18px;
           filter: grayscale(100%);
         }
