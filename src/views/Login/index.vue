@@ -2,6 +2,24 @@
   <div class="login">
     <div @keypress.enter="enterPress" class="container">
       <div class="content">
+        <el-row class="account-type" style="margin: auto;" v-if="DEVELOPMENT">
+          <el-col
+            :span="12"
+            class="type-item"
+            :class="params.accountType === 0 ? 'active' : ''"
+            @click.native="params.accountType = 0"
+          >
+            <span>管理员</span>
+          </el-col>
+          <el-col
+            :span="12"
+            class="type-item"
+            :class="params.accountType === 1 ? 'active' : ''"
+            @click.native="params.accountType = 1"
+          >
+            <span>代理商</span>
+          </el-col>
+        </el-row>
         <h3 style="padding: 10px;">请登录</h3>
         <el-form>
           <div class="form-item">
@@ -29,7 +47,7 @@ export default {
       params: {
         account: "",
         password: "",
-        accountType: /adminlogin/i.test(location.href) ? 0 : 1
+        accountType: /admin\/index/i.test(location.pathname) ? 0 : 1
       }
     };
   },

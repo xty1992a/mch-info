@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 
 Vue.config.productionTip = false;
 
+Vue.prototype.DEVELOPMENT = process.env.NODE_ENV === "development";
 Vue.prototype.$storage = storage;
 Vue.prototype.$utils = utils;
 Vue.prototype.$dayjs = dayjs;

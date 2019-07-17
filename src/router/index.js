@@ -236,16 +236,6 @@ export const routes = [
     }
   },
   {
-    path: "/AdminLogin",
-    name: "AdminLogin",
-    component: Login,
-    meta: {
-      title: "登录",
-      keepAlive: false,
-      free: true
-    }
-  },
-  {
     path: "/Error/NoAuth",
     name: "NoAuth",
     component: () => import("../views/Error/NoAuth/index.vue"),
